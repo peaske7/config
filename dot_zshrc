@@ -124,6 +124,7 @@ alias dra="docker rm $(docker ps -aq)" # docker remove all
 
 # git
 alias gm="git merge"
+alias gss="git status --short"
 alias gaa="git add --all"
 alias gbd="$(echo git_default_branch)"
 alias gbD="git branch -D"
@@ -184,7 +185,7 @@ export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 export PATH="/opt/homebrew/opt/cyrus-sasl/sbin:$PATH"
 
 # docker desktop
-source /Users/jay.shimada/.docker/init-zsh.sh || true # Added by Docker Desktop
+source ~/.docker/init-zsh.sh || true # Added by Docker Desktop
 
 # gpg key tool
 export GPG_TTY=$(tty)
