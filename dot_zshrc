@@ -1,0 +1,193 @@
+# ----------------------------
+# standard
+# ----------------------------
+HISTFILE=~/.zsh_history
+export HISTSIZE=1000
+export SAVEHIST=10000
+
+# Path to my oh-my-zsh installation.
+export ZSH="$HOME/.oh-my-zsh"
+source $ZSH/oh-my-zsh.sh
+
+# Preferred editor for local and remote sessions
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR='vim'
+else
+  export EDITOR='nvim'
+fi
+
+# ----------------------------
+# Added by Zinit's installer
+# ----------------------------
+if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
+    print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
+    command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
+    command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" && \
+        print -P "%F{33} %F{34}Installation successful.%f%b" || \
+        print -P "%F{160} The clone has failed.%f%b"
+fi
+
+source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
+
+# Load a few important annexes, without Turbo
+zinit light-mode for \
+    zdharma-continuum/zinit-annex-as-monitor \
+    zdharma-continuum/zinit-annex-bin-gem-node \
+    zdharma-continuum/zinit-annex-patch-dl \
+    zdharma-continuum/zinit-annex-rust
+
+# ----------------------------
+# Zinit plugins
+# ----------------------------
+# powerlevel10k theme
+zinit ice depth"1" # git clone depth
+zinit light romkatv/powerlevel10k
+
+zinit light zsh-users/zsh-autosuggestions
+zinit light zdharma-continuum/fast-syntax-highlighting
+
+# mcfly
+zinit ice lucid wait"0a" from"gh-r" as"program" atload'eval "$(mcfly init zsh)"'
+zinit light cantino/mcfly
+
+# terminal with vim keybindings
+zinit ice depth=1
+zinit light jeffreytse/zsh-vi-mode
+ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
+
+# docker
+zi ice as"completion"
+zi snippet OMZP::docker/_docker
+
+# theme
+zi snippet OMZT::robbyrussell
+
+# ----------------------------
+# functions
+# ----------------------------
+function kp() {
+	port_to_kill="$@"
+	echo $port_to_kill
+	kill -9 $(lsof -ti:"$port_to_kill")
+	port_to_kill="" 
+}
+
+function git_main_branch() {
+	command git rev-parse --git-dir &>/dev/null || return
+	local ref
+	for ref in refs/{heads,remotes/{origin,upstream}}/{main,trunk,mainline,default}; do
+		if command git show-ref -q --verify $ref; then
+			echo ${ref:t}
+			return
+		fi
+	done
+	echo master
+}
+
+function git_set_default_branch() {
+	git remote set-head origin -a
+}
+
+function git_default_branch() {
+	echo $(git rev-parse --abbrev-ref origin/HEAD | cut -c8-)
+}
+
+function grename() {
+	if [[ -z "$1" || -z "$2" ]]; then
+		echo "Usage: $0 old_branch new_branch"
+		return 1
+	fi
+
+	# rename branch locally
+	git branch -m "$1" "$2"
+	# rename branch in origin remote
+	if git push origin :"$1"; then
+		git push --set-upstream origin "$2"
+	fi
+}
+
+function gdnolock() {
+	git diff "$@" ":(exclude)package-lock.json" ":(exclude)*.lock"
+}
+compdef _git gdnolock=git-diff
+
+# ----------------------------
+# alias
+# ----------------------------
+alias c=clear
+
+# docker
+alias dsa="docker stop $(docker ps -aq)" # docker stop all
+alias dra="docker rm $(docker ps -aq)" # docker remove all
+
+# git
+alias gm="git merge"
+alias gaa="git add --all"
+alias gbd="$(echo git_default_branch)"
+alias gbD="git branch -D"
+alias gc!="git commit -v --ammend"
+alias gco="git checkout"
+alias gcam="git commit -a -m"
+alias gcm="git checkout $(git_main_branch)"
+alias gsd="$(git_set_default_branch)"
+alias gcd="git checkout $(git_default_branch)"
+alias gd="git diff"
+alias gds="git diff --staged"
+alias gdup="git diff @{upstream}"
+alias gdd="gd $(git_default_branch)"
+alias gl="git pull"
+alias gp="git push"
+alias gpsup="git push --set-upstream origin $(git_current_branch)"
+alias glgg="git log --graph --decorate --all"
+alias grbi="git rebase -i --autosquash"
+alias grbc="git rebase --continue"
+alias gafr="git commit --fixup HEAD && grbi HEAD~2"
+alias grh="git reset --hard"
+alias gsta="git stash push"
+alias gstc="git stash clear"
+alias gstaa="git stash apply"
+alias gf='git fetch --all'
+
+# ----------------------------
+# configs for native deps
+# ----------------------------
+# openssl
+BREW_PATH="opt/homebrew/opt"
+export PATH="/$BREW_PATH/cyrus-sasl@2.1.27/sbin:$PATH"
+export PATH="/$BREW_PATH/openssl@1.1/bin:$PATH"
+export LDFLAGS="-L/$BREW_PATH/openssl@1.1/lib/ -L/$BREW_PATH/cyrus-sasl/lib"
+export CPPFLAGS="-I/$BREW_PATH/openssl@1.1/include -I/$BREW_PATH/cyrus-sasl/include"
+export PKG_CONFIG_PATH="/$BREW_PATH/cyrus-sasl/lib/pkgconfig"
+
+# nvm 
+export NVM_DIR="$HOME/.nvm"
+[ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # this loads nvm
+[ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # this loads nvm bash_completion
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# ruby
+export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
+eval "$(rbenv init -)"
+
+# java
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export ANDROID_SDK=$ANDROID_HOME
+export ANDROID_NDK_HOME="/opt/homebrew/share/android-ndk"
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/tools
+export PATH=$PATH:$ANDROID_HOME/tools/bin
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
+export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
+export PATH="/opt/homebrew/opt/cyrus-sasl/sbin:$PATH"
+
+# docker desktop
+source /Users/jay.shimada/.docker/init-zsh.sh || true # Added by Docker Desktop
+
+# gpg key tool
+export GPG_TTY=$(tty)
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
