@@ -1,11 +1,14 @@
 require("dr_poppyseed")
 
--- Set <space> as leader key
---  NOTE: Must happen before plugins are required, otherwise wrong leader might be used
+-------------------------------------------------------------------------------
+-- Global mapleader
+-------------------------------------------------------------------------------
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
--- Install package manager
+-------------------------------------------------------------------------------
+-- Bootstrap Package Manager
+-------------------------------------------------------------------------------
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
     vim.fn.system {
@@ -19,22 +22,39 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+-------------------------------------------------------------------------------
+-- Plugins
+-------------------------------------------------------------------------------
 require('lazy').setup({
     -- First, plugins that don't require configuration
     'tpope/vim-fugitive',
     'tpope/vim-sleuth',
     'tpope/vim-surround',
+
     {
         "windwp/nvim-autopairs",
         config = function() 
             require("nvim-autopairs").setup {} 
         end
     },
+
     {
-        "neovim/nvim-lspconfig",
+        'VonHeikemen/lsp-zero.nvim',
+        branch = 'v2.x',
         dependencies = {
-            'williamboman/mason.nvim',
+            -- LSP Support
+            'neovim/nvim-lspconfig',
+            { 
+                'williamboman/mason.nvim',
+                build = ":MasonUpdate"
+            },
             'williamboman/mason-lspconfig.nvim',
+
+            -- Autocompletion
+            'hrsh7th/nvim-cmp',
+            'hrsh7th/cmp-nvim-lsp',
+            'L3MON4D3/LuaSnip',
+            'saadparwaiz1/cmp_luasnip',
 
             -- Useful status updates for LSP
             { 'j-hui/fidget.nvim', opts = {} },
@@ -43,10 +63,7 @@ require('lazy').setup({
             'folke/neodev.nvim',
         }
     },
-    { -- Autocompletion
-        'hrsh7th/nvim-cmp',
-        dependencies = { 'hrsh7th/cmp-nvim-lsp', 'L3MON4D3/LuaSnip', 'saadparwaiz1/cmp_luasnip' },
-    },
+
     { -- nice color theme
         'catppuccin/nvim',
         as = 'catppuccin',
@@ -54,11 +71,13 @@ require('lazy').setup({
             vim.cmd('colorscheme catppuccin')
         end
     },
+
     { -- file explorer
         'nvim-telescope/telescope.nvim',
         branch = '0.1.x',
         requires = { {'nvim-lua/plenary.nvim'} }
     },
+
     { -- Highlight, edit, and navigate code
         'nvim-treesitter/nvim-treesitter',
         dependencies = {
@@ -68,8 +87,10 @@ require('lazy').setup({
             pcall(require('nvim-treesitter.install').update { with_sync = true })
         end,
     },
+
     -- Useful plugin to show you pending keybinds.
     { 'folke/which-key.nvim', opts = {} },
+
     { -- Adds git releated signs to the gutter, as well as utilities for managing changes
         'lewis6991/gitsigns.nvim',
         opts = {
@@ -82,6 +103,7 @@ require('lazy').setup({
             },
         },
     },
+
     { -- Set lualine as statusline
         'nvim-lualine/lualine.nvim',
         opts = {
@@ -92,6 +114,7 @@ require('lazy').setup({
             },
         },
     },
+
     { -- Add indentation guides even on blank lines
         'lukas-reineke/indent-blankline.nvim',
         opts = {
@@ -99,13 +122,16 @@ require('lazy').setup({
             show_trailing_blankline_indent = false,
         },
     },
+
     -- "gc" to comment visual regions/lines
     { 'numToStr/Comment.nvim', opts = {} },
+
     { -- Fuzzy Finder (files, lsp, etc)
         'nvim-telescope/telescope.nvim', 
         version = '*', 
         dependencies = { 'nvim-lua/plenary.nvim' } 
     },
+    
     { -- Fuzzy Finder Algorithm which requires local dependencies to be built.
         'nvim-telescope/telescope-fzf-native.nvim',
         build = 'make',
@@ -114,35 +140,4 @@ require('lazy').setup({
         end,
     },
 }, {})
-
-local options = { noremap = true }
-vim.keymap.set("i", "jk", "<Esc>", options)
-
-vim.keymap.set("n", "<leader>o", vim.cmd.Ex)
-
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
-
-vim.keymap.set("n", "J", "mzJ`z")
-vim.keymap.set("n", "<C-d>", "<C-d>zz")
-vim.keymap.set("n", "<C-u>", "<C-u>zz")
-vim.keymap.set("n", "n", "nzzzv")
-vim.keymap.set("n", "N", "Nzzzv")
-
--- greatest remap ever
-vim.keymap.set("x", "<leader>p", [["_dP]])
-
--- next greatest remap ever : asbjornHaland
-vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])
-vim.keymap.set("n", "<leader>Y", [["+Y]])
-
-vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
-
-vim.keymap.set("n", "Q", "<nop>")
-vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
-
-vim.keymap.set("n", "<C-k>", "<cmd>cnext<CR>zz")
-vim.keymap.set("n", "<C-j>", "<cmd>cprev<CR>zz")
-vim.keymap.set("n", "<leader>k", "<cmd>lnext<CR>zz")
-vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
 
