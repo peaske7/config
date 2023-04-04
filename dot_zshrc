@@ -48,13 +48,19 @@ zinit light romkatv/powerlevel10k
 zinit light zsh-users/zsh-autosuggestions
 zinit light zdharma-continuum/fast-syntax-highlighting
 
-# terminal with vim keybindings
-zi snippet OMZP::vi-mode
-ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
-
 # mcfly
 zinit ice lucid wait"0a" from"gh-r" as"program" atload'eval "$(mcfly init zsh)"'
 zinit light cantino/mcfly
+export MCFLY_FUZZY=2 # Allow fuzzy matching 
+export MCFLY_KEY_SCHEME=vim # Change Mcfly keymap to vim
+export MCFLY_RESULTS=50
+
+# terminal with vim keybindings
+# we use zsh-vi-mode instead of OMZP::vi-mode because the '^R' keybindings 
+# overlaps with mcfly and breaks one or the other.
+zinit ice depth=1
+zinit light jeffreytse/zsh-vi-mode
+ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
 
 # ----------------------------
 # functions
@@ -108,6 +114,14 @@ function gdnolock() {
 # alias
 # ----------------------------
 alias c=clear
+
+# chezmoi
+alias ch="chezmoi"
+alias che="chezmoi edit"
+alias cha="chezmoi apply -v"
+alias chd="chezmoi diff -v"
+alias chu="chezmoi update -v"
+alias chc="chezmoi cd"
 
 # docker
 alias dsa="docker stop $(docker ps -aq)" # docker stop all
