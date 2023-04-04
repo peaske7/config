@@ -48,25 +48,13 @@ zinit light romkatv/powerlevel10k
 zinit light zsh-users/zsh-autosuggestions
 zinit light zdharma-continuum/fast-syntax-highlighting
 
+# terminal with vim keybindings
+zi snippet OMZP::vi-mode
+ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
+
 # mcfly
 zinit ice lucid wait"0a" from"gh-r" as"program" atload'eval "$(mcfly init zsh)"'
 zinit light cantino/mcfly
-
-# terminal with vim keybindings
-zinit ice depth=1
-zinit light jeffreytse/zsh-vi-mode
-ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
-
-# docker
-zi ice from"gh-r" as"program" mv"docker* -> docker-compose" bpick"*linux*"
-zi load docker/compose
-
-# fuzzy finder
-zi ice from"gh-r" as"program"
-zi light junegunn/fzf
-
-# theme
-zi snippet OMZT::robbyrussell
 
 # ----------------------------
 # functions
