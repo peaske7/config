@@ -198,6 +198,9 @@ alias la='ls -a'
 alias lla='ls -la'
 alias lt='ls --tree'
 
+# tmux 
+alias tns='tmux new -s'
+
 # ----------------------------
 # configs for native deps
 # ----------------------------
