@@ -30,7 +30,7 @@ require('lazy').setup({
     'tpope/vim-fugitive',
     'tpope/vim-sleuth',
     'tpope/vim-surround',
-    
+
     -- Foundation of all foundations
     'nvim-lua/plenary.nvim',
 
@@ -40,7 +40,7 @@ require('lazy').setup({
         dependencies = {
             -- LSP Support
             'neovim/nvim-lspconfig',
-            { 
+            {
                 'williamboman/mason.nvim',
                 build = ":MasonUpdate"
             },
@@ -61,15 +61,15 @@ require('lazy').setup({
         }
     },
 
-     -- file icons
+    -- file icons
     'kyazdani42/nvim-web-devicons',
 
     { -- Fuzzy Finder (files, lsp, etc)
-        'nvim-telescope/telescope.nvim', 
-        version = 'v0.1.x', 
-        dependencies = { 'nvim-lua/plenary.nvim' } 
+        'nvim-telescope/telescope.nvim',
+        version = 'v0.1.x',
+        dependencies = { 'nvim-lua/plenary.nvim' }
     },
-    
+
     { -- Fuzzy Finder Algorithm which requires local dependencies to be built.
         'nvim-telescope/telescope-fzf-native.nvim',
         build = 'make',
@@ -102,8 +102,8 @@ require('lazy').setup({
     -- Useful plugin to show you pending keybinds.
     { 'folke/which-key.nvim', opts = {} },
 
-    { "windwp/nvim-autopairs", opts = {}},
-    { 'windwp/nvim-ts-autotag', opts = {}},
+    { "windwp/nvim-autopairs", opts = {} },
+    { 'windwp/nvim-ts-autotag', opts = {} },
 
     -- "gc" to comment visual regions/lines
     { 'numToStr/Comment.nvim', opts = {} },
@@ -141,4 +141,3 @@ require('lazy').setup({
         },
     },
 }, {})
-

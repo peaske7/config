@@ -31,9 +31,10 @@ telescope.setup {
 
 telescope.load_extension('file_browser')
 
-vim.keymap.set('n', '<leader>sf', 
-  function() 
+vim.keymap.set('n', '<leader>sf',
+  function()
     telescope_builtin.find_files({
+      path = "%:p:h",
       hidden = true
     })
   end,
@@ -50,4 +51,3 @@ vim.keymap.set('n', '<leader>fb', function()
     initial_mode = "normal",
   })
 end, { desc = '[F]ile [B]rowser', noremap = true })
-
