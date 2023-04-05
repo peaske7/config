@@ -12,10 +12,6 @@ else
   export EDITOR='nvim'
 fi
 
-# Path to my oh-my-zsh installation.
-export ZSH="$HOME/.oh-my-zsh"
-source $ZSH/oh-my-zsh.sh
-
 # ----------------------------
 # Added by Zinit's installer
 # ----------------------------

@@ -1,4 +1,8 @@
-local lsp = require("lsp-zero")
+local status, lsp = pcall(require, "lsp-zero")
+if (not status) then 
+  print('lsp-zero not installed')
+  return
+end
 
 lsp.preset("recommended")
 
@@ -45,16 +49,35 @@ lsp.set_preferences({
     }
 })
 
-lsp.on_attach(function(client, bufnr)
-  local opts = {buffer = bufnr, remap = false}
-
-  vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
-  vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
-  vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts)
-  vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts)
-  vim.keymap.set("n", "<leader>ca", function() vim.lsp.buf.code_action() end, opts)
-  vim.keymap.set("n", "<leader>rr", function() vim.lsp.buf.references() end, opts)
-  vim.keymap.set("n", "<leader>rn", function() vim.lsp.buf.rename() end, opts)
+lsp.on_attach(function(_, bufnr)
+  vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, {
+    desc = '[G]et [Definition]',
+    buffer = bufnr, remap = false
+  })
+  vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, {
+    desc = 'Hover',
+    buffer = bufnr, remap = false
+  })
+  vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, {
+    desc = 'Next option',
+    buffer = bufnr, remap = false
+  })
+  vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, {
+    desc = 'Previous option',
+    buffer = bufnr, remap = false
+  })
+  vim.keymap.set("n", "<leader>ca", function() vim.lsp.buf.code_action() end, {
+    desc = '[C]ode [A]ction',
+    buffer = bufnr, remap = false
+  })
+  vim.keymap.set("n", "<leader>fr", function() vim.lsp.buf.references() end, {
+    desc = '[F]ind [R]eferences',
+    buffer = bufnr, remap = false
+  })
+  vim.keymap.set("n", "<leader>rn", function() vim.lsp.buf.rename() end, {
+    desc = '[R]e[N]ame',
+    buffer = bufnr, remap = false
+  })
 end)
 
 lsp.setup()

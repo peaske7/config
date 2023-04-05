@@ -30,13 +30,9 @@ require('lazy').setup({
     'tpope/vim-fugitive',
     'tpope/vim-sleuth',
     'tpope/vim-surround',
-
-    {
-        "windwp/nvim-autopairs",
-        config = function() 
-            require("nvim-autopairs").setup {} 
-        end
-    },
+    
+    -- Foundation of all foundations
+    'nvim-lua/plenary.nvim',
 
     {
         'VonHeikemen/lsp-zero.nvim',
@@ -49,6 +45,7 @@ require('lazy').setup({
                 build = ":MasonUpdate"
             },
             'williamboman/mason-lspconfig.nvim',
+            'jose-elias-alvarez/null-ls.nvim',
 
             -- Autocompletion
             'hrsh7th/nvim-cmp',
@@ -64,19 +61,25 @@ require('lazy').setup({
         }
     },
 
-    { -- nice color theme
-        'catppuccin/nvim',
-        as = 'catppuccin',
-        config = function()
-            vim.cmd('colorscheme catppuccin')
-        end
+     -- file icons
+    'kyazdani42/nvim-web-devicons',
+
+    { -- Fuzzy Finder (files, lsp, etc)
+        'nvim-telescope/telescope.nvim', 
+        version = 'v0.1.x', 
+        dependencies = { 'nvim-lua/plenary.nvim' } 
+    },
+    
+    { -- Fuzzy Finder Algorithm which requires local dependencies to be built.
+        'nvim-telescope/telescope-fzf-native.nvim',
+        build = 'make',
+        cond = function()
+            return vim.fn.executable 'make' == 1
+        end,
     },
 
-    { -- file explorer
-        'nvim-telescope/telescope.nvim',
-        branch = '0.1.x',
-        requires = { {'nvim-lua/plenary.nvim'} }
-    },
+    -- File browser extensions for telescope
+    'nvim-telescope/telescope-file-browser.nvim',
 
     { -- Highlight, edit, and navigate code
         'nvim-treesitter/nvim-treesitter',
@@ -88,8 +91,24 @@ require('lazy').setup({
         end,
     },
 
+    { -- nice color theme
+        'catppuccin/nvim',
+        as = 'catppuccin',
+        config = function()
+            vim.cmd('colorscheme catppuccin')
+        end
+    },
+
     -- Useful plugin to show you pending keybinds.
     { 'folke/which-key.nvim', opts = {} },
+
+    { "windwp/nvim-autopairs", opts = {}},
+    { 'windwp/nvim-ts-autotag', opts = {}},
+
+    -- "gc" to comment visual regions/lines
+    { 'numToStr/Comment.nvim', opts = {} },
+
+    { "folke/zen-mode.nvim", opts = {} },
 
     { -- Adds git releated signs to the gutter, as well as utilities for managing changes
         'lewis6991/gitsigns.nvim',
@@ -97,10 +116,8 @@ require('lazy').setup({
             signs = {
                 add = { text = '+' },
                 change = { text = '~' },
-                delete = { text = '_' },
-                topdelete = { text = '‾' },
-                changedelete = { text = '~' },
-            },
+                delete = { text = '-' },
+            }
         },
     },
 
@@ -112,6 +129,7 @@ require('lazy').setup({
                 component_separators = '|',
                 section_separators = '',
             },
+            dependencies = { 'nvim-tree/nvim-web-devicons' }
         },
     },
 
@@ -121,23 +139,6 @@ require('lazy').setup({
             char = '┊',
             show_trailing_blankline_indent = false,
         },
-    },
-
-    -- "gc" to comment visual regions/lines
-    { 'numToStr/Comment.nvim', opts = {} },
-
-    { -- Fuzzy Finder (files, lsp, etc)
-        'nvim-telescope/telescope.nvim', 
-        version = '*', 
-        dependencies = { 'nvim-lua/plenary.nvim' } 
-    },
-    
-    { -- Fuzzy Finder Algorithm which requires local dependencies to be built.
-        'nvim-telescope/telescope-fzf-native.nvim',
-        build = 'make',
-        cond = function()
-            return vim.fn.executable 'make' == 1
-        end,
     },
 }, {})
 
