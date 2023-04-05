@@ -52,37 +52,25 @@ lsp.set_preferences({
 lsp.on_attach(function(_, bufnr)
   lsp.default_keymaps({ buffer = bufnr })
 
-  vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, {
-    desc = '[G]et [Definition]',
-    buffer = bufnr, remap = false
-  })
-  vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, {
-    desc = 'Hover',
-    buffer = bufnr, remap = false
-  })
-  vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, {
-    desc = 'Next option',
-    buffer = bufnr, remap = false
-  })
-  vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, {
-    desc = 'Previous option',
-    buffer = bufnr, remap = false
-  })
   vim.keymap.set("n", "<leader>ca", function() vim.lsp.buf.code_action() end, {
     desc = '[C]ode [A]ction',
-    buffer = bufnr, remap = false
+    buffer = bufnr,
+    remap = false
   })
   vim.keymap.set("n", "<leader>fr", function() vim.lsp.buf.references() end, {
     desc = '[F]ind [R]eferences',
-    buffer = bufnr, remap = false
+    buffer = bufnr,
+    remap = false
   })
   vim.keymap.set("n", "<leader>ff", '<cmd>LspZeroFormat<cr>', {
     desc = '[F]ormat [F]ile',
-    buffer = bufnr, remap = false
+    buffer = bufnr,
+    remap = false
   })
   vim.keymap.set("n", "<leader>rn", function() vim.lsp.buf.rename() end, {
     desc = '[R]e[N]ame',
-    buffer = bufnr, remap = false
+    buffer = bufnr,
+    remap = false
   })
 end)
 

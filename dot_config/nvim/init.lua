@@ -64,13 +64,15 @@ require('lazy').setup({
     -- file icons
     'kyazdani42/nvim-web-devicons',
 
-    { -- Fuzzy Finder (files, lsp, etc)
+    {
+        -- Fuzzy Finder (files, lsp, etc)
         'nvim-telescope/telescope.nvim',
         version = 'v0.1.x',
         dependencies = { 'nvim-lua/plenary.nvim' }
     },
 
-    { -- Fuzzy Finder Algorithm which requires local dependencies to be built.
+    {
+        -- Fuzzy Finder Algorithm which requires local dependencies to be built.
         'nvim-telescope/telescope-fzf-native.nvim',
         build = 'make',
         cond = function()
@@ -78,10 +80,8 @@ require('lazy').setup({
         end,
     },
 
-    -- File browser extensions for telescope
-    'nvim-telescope/telescope-file-browser.nvim',
-
-    { -- Highlight, edit, and navigate code
+    {
+        -- Highlight, edit, and navigate code
         'nvim-treesitter/nvim-treesitter',
         dependencies = {
             'nvim-treesitter/nvim-treesitter-textobjects',
@@ -91,26 +91,20 @@ require('lazy').setup({
         end,
     },
 
-    { -- nice color theme
-        'catppuccin/nvim',
-        as = 'catppuccin',
-        config = function()
-            vim.cmd('colorscheme catppuccin')
-        end
-    },
+    -- color theme
+    { "catppuccin/nvim",        name = 'catppuccin' },
 
     -- Useful plugin to show you pending keybinds.
-    { 'folke/which-key.nvim', opts = {} },
+    { 'folke/which-key.nvim',   opts = {} },
 
-    { "windwp/nvim-autopairs", opts = {} },
+    { "windwp/nvim-autopairs",  opts = {} },
     { 'windwp/nvim-ts-autotag', opts = {} },
 
     -- "gc" to comment visual regions/lines
-    { 'numToStr/Comment.nvim', opts = {} },
+    { 'numToStr/Comment.nvim',  opts = {} },
 
-    { "folke/zen-mode.nvim", opts = {} },
-
-    { -- Adds git releated signs to the gutter, as well as utilities for managing changes
+    {
+        -- Adds git releated signs to the gutter, as well as utilities for managing changes
         'lewis6991/gitsigns.nvim',
         opts = {
             signs = {
@@ -121,10 +115,12 @@ require('lazy').setup({
         },
     },
 
-    { -- Set lualine as statusline
+    {
+        -- Set lualine as statusline
         'nvim-lualine/lualine.nvim',
         opts = {
             options = {
+                theme = "catppuccin",
                 icons_enabled = false,
                 component_separators = '|',
                 section_separators = '',
@@ -133,7 +129,8 @@ require('lazy').setup({
         },
     },
 
-    { -- Add indentation guides even on blank lines
+    {
+        -- Add indentation guides even on blank lines
         'lukas-reineke/indent-blankline.nvim',
         opts = {
             char = '┊',
