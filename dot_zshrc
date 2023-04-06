@@ -1,6 +1,9 @@
 # ----------------------------
 # standard
 # ----------------------------
+# allow zsh to take flight (enable completions)
+autoload -Uz compinit && compinit 
+
 HISTFILE=~/.zsh_history
 export HISTSIZE=1000
 export SAVEHIST=10000
@@ -99,14 +102,7 @@ function kp() {
 }
 
 function git_current_branch() {
-  local ref
-  ref=$(__git_prompt_git symbolic-ref --quiet HEAD 2> /dev/null)
-  local ret=$?
-  if [[ $ret != 0 ]]; then
-    [[ $ret == 128 ]] && return  # no git repo.
-    ref=$(__git_prompt_git rev-parse --short HEAD 2> /dev/null) || return
-  fi
-  echo ${ref#refs/heads/}
+	git rev-parse --abbrev-ref HEAD 2>/dev/null
 }
 
 function git_main_branch() {
@@ -160,6 +156,9 @@ alias chd="chezmoi diff -v"
 alias chu="chezmoi update -v"
 alias chc="chezmoi cd"
 
+alias chez="che ~/.zshrc" # [CHE] [Z]shrc
+alias chen="che ~/.config/nvim" # [CHE] [N]vim config
+
 # docker
 alias dsa="docker stop $(docker ps -aq)" # docker stop all
 alias dra="docker rm $(docker ps -aq)" # docker remove all
@@ -187,7 +186,7 @@ alias gpsup="git push --set-upstream origin $(git_current_branch)"
 alias glgg="git log --graph --decorate --all"
 alias grbi="git rebase -i --autosquash"
 alias grbc="git rebase --continue"
-alias gafr="git commit --fixup HEAD && grbi HEAD~2"
+alias gafr="gaa && git commit --fixup HEAD && grbi HEAD~2" # [G]it [A]dd all [F]ixup [R]ebase
 alias grh="git reset --hard"
 alias gsta="git stash push"
 alias gstc="git stash clear"
