@@ -192,6 +192,7 @@ alias gsta="git stash push"
 alias gstc="git stash clear"
 alias gstaa="git stash apply"
 alias gf='git fetch --all'
+alias gmtl='git mergetool --no-prompt --tool=nvimdiff2'
 
 # ls
 alias ls='exa'
