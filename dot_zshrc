@@ -202,8 +202,8 @@ alias lla='ls -la'
 alias lt='ls --tree'
 
 # tmux 
-# [T]mux [N]ew [S]ession
-alias tns='tmux new -s'
+alias ta='tmux attach -t' # [T]mux [A]ttach
+alias tns='tmux new -s' # [T]mux [N]ew [S]ession
 
 # ----------------------------
 # configs for native deps
