@@ -12,6 +12,9 @@ else
   export EDITOR='nvim'
 fi
 
+# prefixes directory changes with `cd` 
+setopt auto_cd
+
 # ----------------------------
 # Added by Zinit's installer
 # ----------------------------
@@ -199,6 +202,7 @@ alias lla='ls -la'
 alias lt='ls --tree'
 
 # tmux 
+# [T]mux [N]ew [S]ession
 alias tns='tmux new -s'
 
 # ----------------------------
