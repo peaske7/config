@@ -10,6 +10,9 @@ telescope.setup {
         ['q'] = telescope_actions.close
       }
     },
+    file_ignore_patterns = {
+      ".git/", ".cache"
+    }
   },
 }
 
@@ -18,3 +21,4 @@ vim.keymap.set('n', '<leader>sh', telescope_builtin.help_tags, { desc = '[S]earc
 vim.keymap.set('n', '<leader>sw', telescope_builtin.grep_string, { desc = '[S]earch current [W]ord', noremap = true })
 vim.keymap.set('n', '<leader>sg', telescope_builtin.live_grep, { desc = '[S]earch by [G]rep', noremap = true })
 vim.keymap.set('n', '<leader>sd', telescope_builtin.diagnostics, { desc = '[S]earch [D]iagnostics', noremap = true })
+vim.keymap.set('n', '<leader>sr', telescope_builtin.resume, { desc = '[S]earch [R]esume', noremap = true })

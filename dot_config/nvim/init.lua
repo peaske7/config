@@ -71,6 +71,9 @@ require('lazy').setup({
     -- file icons
     'kyazdani42/nvim-web-devicons',
 
+    -- highlight same words under cursor
+    'RRethy/vim-illuminate',
+
     {
         -- Fuzzy Finder (files, lsp, etc)
         'nvim-telescope/telescope.nvim',
