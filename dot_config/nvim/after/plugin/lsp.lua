@@ -62,7 +62,7 @@ lsp.on_attach(function(_, bufnr)
     buffer = bufnr,
     remap = false
   })
-  vim.keymap.set("n", "<leader>ff", '<cmd>LspZeroFormat<cr>', {
+  vim.keymap.set("n", "<leader>ff", '<cmd>LspZeroFormat<CR>', {
     desc = '[F]ormat [F]ile',
     buffer = bufnr,
     remap = false

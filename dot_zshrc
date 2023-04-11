@@ -1,12 +1,15 @@
 # ----------------------------
 # standard
 # ----------------------------
-# allow zsh to take flight (enable completions)
-autoload -Uz compinit && compinit 
-
 HISTFILE=~/.zsh_history
 export HISTSIZE=1000
 export SAVEHIST=10000
+
+# allow zsh to take flight (enable completions)
+autoload -Uz compinit && compinit 
+
+# prefixes directory changes with `cd` 
+setopt auto_cd
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
@@ -14,9 +17,6 @@ if [[ -n $SSH_CONNECTION ]]; then
 else
   export EDITOR='nvim'
 fi
-
-# prefixes directory changes with `cd` 
-setopt auto_cd
 
 # ----------------------------
 # Added by Zinit's installer
@@ -102,7 +102,7 @@ function kp() {
 }
 
 function git_current_branch() {
-	git rev-parse --abbrev-ref HEAD 2>/dev/null
+	echo $(git rev-parse --abbrev-ref HEAD 2>/dev/null)
 }
 
 function git_main_branch() {
@@ -167,7 +167,7 @@ alias dra="docker rm $(docker ps -aq)" # docker remove all
 alias gm="git merge"
 alias gss="git status --short"
 alias gaa="git add --all"
-alias gbd="$(echo git_default_branch)"
+alias gbd="$(git_default_branch)"
 alias gbD="git branch -D"
 alias gc!="git commit -v --ammend"
 alias gco="git checkout"
@@ -182,7 +182,7 @@ alias gdup="git diff @{upstream}"
 alias gdd="gd $(git_default_branch)"
 alias gl="git pull"
 alias gp="git push"
-alias gpsup="git push --set-upstream origin $(git_current_branch)"
+alias gpsup="git push -u origin $(git_current_branch)"
 alias glgg="git log --graph --decorate --all"
 alias grbi="git rebase -i --autosquash"
 alias grbc="git rebase --continue"
