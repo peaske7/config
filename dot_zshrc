@@ -1,24 +1,4 @@
 # ----------------------------
-# standard
-# ----------------------------
-HISTFILE=~/.zsh_history
-export HISTSIZE=1000
-export SAVEHIST=10000
-
-# allow zsh to take flight (enable completions)
-autoload -Uz compinit && compinit 
-
-# prefixes directory changes with `cd` 
-setopt auto_cd
-
-# Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  export EDITOR='nvim'
-fi
-
-# ----------------------------
 # Added by Zinit's installer
 # ----------------------------
 if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
@@ -39,6 +19,31 @@ zinit light-mode for \
     zdharma-continuum/zinit-annex-bin-gem-node \
     zdharma-continuum/zinit-annex-patch-dl \
     zdharma-continuum/zinit-annex-rust
+
+# ----------------------------
+# standard
+# ----------------------------
+HISTFILE=~/.zsh_history
+export HISTSIZE=1000
+export SAVEHIST=10000
+
+# Preferred editor for local and remote sessions
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR='vim'
+else
+  export EDITOR='nvim'
+fi
+
+setopt auto_cd			# prefixes directory changes with `cd` 
+setopt auto_list		# automatically list choices
+setopt auto_menu		# show completion menu
+setopt auto_param_slash		# if completed param is dir, add slash at end
+setopt menu_complete		# don't autoselect first completion entry
+setopt extended_history         # record timestamp of command in HISTFILE
+setopt hist_expire_dups_first   # delete duplicates first when HISTFILE size exceeds HISTSIZE
+
+# allow zsh to take flight (enable completions)
+autoload -Uz compinit && compinit 
 
 # ----------------------------
 # Zinit plugins
@@ -66,13 +71,12 @@ ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
 
 # starship
 zinit ice as"command" from"gh-r" \
-          atclone"./starship init zsh > init.zsh; ./starship completions zsh > _starship" \
-          atpull"%atclone" src"init.zsh"
+	atclone"./starship init zsh > init.zsh; ./starship completions zsh > _starship" \
+        atpull"%atclone" src"init.zsh"
 zinit light starship/starship
 
 # zoxide
-
-zinit ice lucid wait"0a" from"gh-r" as"program" atload'eval "$(zoxide init zsh)"'
+zinit ice lucid wait"0a" from="gh-r" as="program" atload'eval "$(zoxide init zsh)"'
 zinit light ajeetdsouza/zoxide
 
 # exa
@@ -148,7 +152,7 @@ function gddnolock() {
 }
 
 # ----------------------------
-# alias
+# aliases
 # ----------------------------
 alias c=clear
 
@@ -160,36 +164,39 @@ alias chd="chezmoi diff -v"
 alias chu="chezmoi update -v"
 alias chc="chezmoi cd"
 
-alias chez="che ~/.zshrc" # [CHE] [Z]shrc
-alias chen="che ~/.config/nvim" # [CHE] [N]vim config
+alias chez="che ~/.zshrc" # [CH]ezmoi [E]dit [Z]shrc
+alias chen="che ~/.config/nvim" # [CH]ezmoi [E]dit [N]vim
 
 # docker
-alias dsa="docker stop $(docker ps -aq)" # docker stop all
-alias dra="docker rm $(docker ps -aq)" # docker remove all
+alias dsa='docker stop "$(docker ps -aq)"' # [D]ocker [S]top [A]ll
+alias dra="docker rm $(docker ps -aq)" # [D]ocker [R]emove [A]ll
 
 # git
 alias gm="git merge"
 alias gss="git status --short"
 alias gaa="git add --all"
-alias gbd="$(git_default_branch)"
+alias gcam="git commit -a -m"
+alias gbd='"$(git_default_branch)"'
 alias gbD="git branch -D"
+alias gsd='"$(git_set_default_branch)"'
+
 alias gc!="git commit -v --ammend"
 alias gco="git checkout"
 alias gcb="git checkout -b"
-alias gcam="git commit -a -m"
-alias gcm="git checkout $(git_main_branch)"
-alias gsd="$(git_set_default_branch)"
-alias gcd="git checkout $(git_default_branch)"
+alias gci='git checkout "$(git branch -a | fzf)"'
+alias gcm='git checkout "$(git_main_branch)"'
+alias gcd='git checkout "$(git_default_branch)"'
 
 alias gd="git diff"
 alias gds="git diff --staged" # [G]it [D]iff [S]taged
 alias gdup="git diff @{upstream}" # [G]it [D]iff [U]pstream
-alias gdd="gd $(git_default_branch)" # [G]it [D]iff [D]efault
-alias gdi="gd $(git branch -a | fzf)" # [G]it [D]iff [I]nteractive
+alias gdd='gd "$(git_default_branch)"' # [G]it [D]iff [D]efault
+alias gdi='gd "$(git branch -a | fzf)"' # [G]it [D]iff [I]nteractive
 
 alias gl="git pull"
 alias gp="git push"
-alias gpsup="git push -u origin $(git_current_branch)"
+alias gpsup='git push -u origin "$(git_current_branch)"'
+alias glg='git log'
 alias glgg="git log --graph --decorate --all"
 alias grbi="git rebase -i --autosquash"
 alias grbc="git rebase --continue"
@@ -254,4 +261,3 @@ export PATH=$PATH:$HOME/.config/lsp/lua-language-server/bin
 
 # gpg key tool
 export GPG_TTY=$(tty)
-
