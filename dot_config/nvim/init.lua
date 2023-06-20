@@ -103,16 +103,16 @@ require('lazy').setup({
     },
 
     -- color theme
-    { "catppuccin/nvim",        name = 'catppuccin' },
+    { "catppuccin/nvim", name = 'catppuccin' },
 
     -- Useful plugin to show you pending keybinds.
-    { 'folke/which-key.nvim',   opts = {} },
+    { 'folke/which-key.nvim', opts = {} },
 
-    { "windwp/nvim-autopairs",  opts = {} },
+    { "windwp/nvim-autopairs", opts = {} },
     { 'windwp/nvim-ts-autotag', opts = {} },
 
     -- "gc" to comment visual regions/lines
-    { 'numToStr/Comment.nvim',  opts = {} },
+    { 'numToStr/Comment.nvim', opts = {} },
 
     {
         -- Adds git releated signs to the gutter, as well as utilities for managing changes

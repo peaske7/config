@@ -15,10 +15,14 @@ autoload -Uz _zinit
 
 # Load a few important annexes, without Turbo
 zinit light-mode for \
-    zdharma-continuum/zinit-annex-as-monitor \
-    zdharma-continuum/zinit-annex-bin-gem-node \
-    zdharma-continuum/zinit-annex-patch-dl \
-    zdharma-continuum/zinit-annex-rust
+	zdharma-continuum/zinit-annex-as-monitor \
+	zdharma-continuum/zinit-annex-bin-gem-node \
+	zdharma-continuum/zinit-annex-patch-dl \
+	zdharma-continuum/zinit-annex-rust \
+	zdharma-continuum/fast-syntax-highlighting \
+	zsh-users/zsh-autosuggestions \
+	zsh-users/zsh-completions \
+	hlissner/zsh-autopair
 
 # ----------------------------
 # standard
@@ -43,17 +47,23 @@ setopt extended_history         # record timestamp of command in HISTFILE
 setopt hist_expire_dups_first   # delete duplicates first when HISTFILE size exceeds HISTSIZE
 
 # allow zsh to take flight (enable completions)
-autoload -Uz compinit && compinit 
+autoload -Uz compinit
+compinit -i
+
+# completions
+zstyle ':completion:*:*:*:*:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # case insensitive tab completion
 
 # ----------------------------
 # Zinit plugins
 # ----------------------------
-zinit light zsh-users/zsh-autosuggestions
-zinit light zdharma-continuum/fast-syntax-highlighting
-
 # fzf
 zi ice from"gh-r" as"program"
 zi light junegunn/fzf
+
+# docker 
+zi ice from"gh-r" as"program" mv"docker* -> docker-compose"
+zi load docker/compose
 
 # mcfly
 zinit ice lucid wait"0a" from"gh-r" as"program" atload'eval "$(mcfly init zsh)"'
@@ -130,13 +140,18 @@ function git_default_branch() {
 }
 
 function grename() {
-	if [[ -z "$1" || -z "$2" ]]; then
+	# try to rename branch locally
+	if [[ -z "$1" && -z "$2" ]]; then
 		echo "Usage: $0 old_branch new_branch"
 		return 1
+	elif [[ -z "$2" ]]; then
+		echo "Renaming $(git_current_branch) to $1"
+		git branch -m "$(git_current_branch)" "$1"
+	else 
+		echo "Renaming $1 to $2"
+		git branch -m "$1" "$2"
 	fi
 
-	# rename branch locally
-	git branch -m "$1" "$2"
 	# rename branch in origin remote
 	if git push origin :"$1"; then
 		git push --set-upstream origin "$2"
@@ -169,7 +184,7 @@ alias chen="che ~/.config/nvim" # [CH]ezmoi [E]dit [N]vim
 
 # docker
 alias dsa='docker stop "$(docker ps -aq)"' # [D]ocker [S]top [A]ll
-alias dra="docker rm $(docker ps -aq)" # [D]ocker [R]emove [A]ll
+alias dra='docker rm "$(docker ps -aq)"' # [D]ocker [R]emove [A]ll
 
 # git
 alias gm="git merge"
@@ -183,7 +198,7 @@ alias gsd='"$(git_set_default_branch)"'
 alias gc!="git commit -v --ammend"
 alias gco="git checkout"
 alias gcb="git checkout -b"
-alias gci='git checkout "$(git branch -a | fzf)"'
+alias gci='git checkout "$(git branch -a | fzf | xargs)"'
 alias gcm='git checkout "$(git_main_branch)"'
 alias gcd='git checkout "$(git_default_branch)"'
 
@@ -191,7 +206,7 @@ alias gd="git diff"
 alias gds="git diff --staged" # [G]it [D]iff [S]taged
 alias gdup="git diff @{upstream}" # [G]it [D]iff [U]pstream
 alias gdd='gd "$(git_default_branch)"' # [G]it [D]iff [D]efault
-alias gdi='gd "$(git branch -a | fzf)"' # [G]it [D]iff [I]nteractive
+alias gdi='gd "$(git branch -a | fzf | xargs)"' # [G]it [D]iff [I]nteractive
 
 alias gl="git pull"
 alias gp="git push"

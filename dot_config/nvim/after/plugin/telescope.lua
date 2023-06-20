@@ -11,7 +11,7 @@ telescope.setup {
       }
     },
     file_ignore_patterns = {
-      ".git/", ".cache"
+      ".git/", ".cache", ".rustup", ".cargo"
     }
   },
 }
