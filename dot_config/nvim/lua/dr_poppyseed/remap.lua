@@ -3,8 +3,9 @@ vim.keymap.set("i", "jk", "<Esc>", {
 	noremap = true
 })
 
-vim.keymap.set("n", "<leader>o", vim.cmd.Ex, {
-	desc = 'Open netrw'
+vim.keymap.set("n", "<C-e>", vim.cmd.Ex, {
+	desc = 'Open netrw',
+	noremap = true
 })
 
 vim.keymap.set("n", "J", "mzJ`z")

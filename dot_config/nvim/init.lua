@@ -61,9 +61,6 @@ require('lazy').setup({
             'L3MON4D3/LuaSnip',
             'saadparwaiz1/cmp_luasnip',
 
-            -- Useful status updates for LSP
-            { 'j-hui/fidget.nvim', opts = {} },
-
             -- Additional lua configuration, makes nvim stuff amazing!
             'folke/neodev.nvim',
         }
@@ -103,16 +100,27 @@ require('lazy').setup({
     },
 
     -- color theme
-    { "catppuccin/nvim", name = 'catppuccin' },
+    {
+        'projekt0n/github-nvim-theme',
+        lazy = false,    -- make sure we load this during startup if it is your main colorscheme
+        priority = 1000, -- make sure to load this before all the other start plugins
+        config = function()
+            require('github-theme').setup({
+                -- ...
+            })
+
+            vim.cmd('colorscheme github_dark')
+        end,
+    },
 
     -- Useful plugin to show you pending keybinds.
-    { 'folke/which-key.nvim', opts = {} },
+    { 'folke/which-key.nvim',   opts = {} },
 
-    { "windwp/nvim-autopairs", opts = {} },
+    { "windwp/nvim-autopairs",  opts = {} },
     { 'windwp/nvim-ts-autotag', opts = {} },
 
     -- "gc" to comment visual regions/lines
-    { 'numToStr/Comment.nvim', opts = {} },
+    { 'numToStr/Comment.nvim',  opts = {} },
 
     {
         -- Adds git releated signs to the gutter, as well as utilities for managing changes
