@@ -1,5 +1,8 @@
 require("dr_poppyseed")
 
+-- previously impatient.nvim
+vim.loader.enable()
+
 -------------------------------------------------------------------------------
 -- Global mapleader
 -------------------------------------------------------------------------------
@@ -26,10 +29,17 @@ vim.opt.rtp:prepend(lazypath)
 -- Plugins
 -------------------------------------------------------------------------------
 require('lazy').setup({
-    -- First, plugins that don't require configuration
+    -- Git extension
     'tpope/vim-fugitive',
+
+    -- GitHub extension for fugitive.vim
     'tpope/vim-rhubarb',
+
+    -- Heuristically sets buffer options
     'tpope/vim-sleuth',
+
+    -- netrw enchancer
+    'tpope/vim-vinegar',
 
     -- vim-surround++
     'machakann/vim-sandwich',
@@ -37,6 +47,10 @@ require('lazy').setup({
     -- Foundation of all foundations
     'nvim-lua/plenary.nvim',
 
+    -- File icons
+    "nvim-tree/nvim-web-devicons",
+
+    -- LSP
     {
         'VonHeikemen/lsp-zero.nvim',
         branch = 'v2.x',
@@ -63,24 +77,34 @@ require('lazy').setup({
 
             -- Additional lua configuration, makes nvim stuff amazing!
             'folke/neodev.nvim',
+
+            -- Rust powerups like inlay hints
+            'simrat39/rust-tools.nvim'
         }
     },
 
-    -- file icons
-    'kyazdani42/nvim-web-devicons',
-
-    -- highlight same words under cursor
-    'RRethy/vim-illuminate',
-
+    -- LSP progress UI. I've removed it once, missed it, and re-added it.
     {
-        -- Fuzzy Finder (files, lsp, etc)
+        "j-hui/fidget.nvim",
+        tag = "legacy",
+        event = "LspAttach",
+    },
+
+    -- TODO comments
+    {
+        "folke/todo-comments.nvim",
+        dependencies = { "nvim-lua/plenary.nvim" },
+    },
+
+    -- Fuzzy Finder (files, lsp, etc)
+    {
         'nvim-telescope/telescope.nvim',
         version = 'v0.1.x',
         dependencies = { 'nvim-lua/plenary.nvim' }
     },
 
+    -- Fuzzy Finder Algorithm which requires local dependencies to be built.
     {
-        -- Fuzzy Finder Algorithm which requires local dependencies to be built.
         'nvim-telescope/telescope-fzf-native.nvim',
         build = 'make',
         cond = function()
@@ -88,8 +112,8 @@ require('lazy').setup({
         end,
     },
 
+    -- Highlight, edit, and navigate code
     {
-        -- Highlight, edit, and navigate code
         'nvim-treesitter/nvim-treesitter',
         dependencies = {
             'nvim-treesitter/nvim-treesitter-textobjects',
@@ -105,10 +129,7 @@ require('lazy').setup({
         lazy = false,    -- make sure we load this during startup if it is your main colorscheme
         priority = 1000, -- make sure to load this before all the other start plugins
         config = function()
-            require('github-theme').setup({
-                -- ...
-            })
-
+            require('github-theme').setup()
             vim.cmd('colorscheme github_dark')
         end,
     },
@@ -122,24 +143,21 @@ require('lazy').setup({
     -- "gc" to comment visual regions/lines
     { 'numToStr/Comment.nvim',  opts = {} },
 
+    -- Adds git releated signs to the gutter, as well as utilities for managing changes
+    { 'lewis6991/gitsigns.nvim' },
+
+    -- diagnostics
     {
-        -- Adds git releated signs to the gutter, as well as utilities for managing changes
-        'lewis6991/gitsigns.nvim',
-        opts = {
-            signs = {
-                add = { text = '+' },
-                change = { text = '~' },
-                delete = { text = '-' },
-            }
-        },
+        "folke/trouble.nvim",
+        dependencies = { "nvim-tree/nvim-web-devicons" },
     },
 
+    -- Set lualine as statusline
     {
-        -- Set lualine as statusline
         'nvim-lualine/lualine.nvim',
         opts = {
             options = {
-                theme = "catppuccin",
+                theme = "github_dark",
                 icons_enabled = false,
                 component_separators = '|',
                 section_separators = '',
@@ -148,8 +166,8 @@ require('lazy').setup({
         },
     },
 
+    -- Add indentation guides even on blank lines
     {
-        -- Add indentation guides even on blank lines
         'lukas-reineke/indent-blankline.nvim',
         opts = {
             char = '┊',
