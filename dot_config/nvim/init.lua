@@ -95,6 +95,7 @@ require('lazy').setup({
     {
         "folke/todo-comments.nvim",
         dependencies = { "nvim-lua/plenary.nvim" },
+        opts = {}
     },
 
     -- Fuzzy Finder (files, lsp, etc)
@@ -136,16 +137,16 @@ require('lazy').setup({
     },
 
     -- Useful plugin to show you pending keybinds.
-    { 'folke/which-key.nvim',   opts = {} },
+    { 'folke/which-key.nvim',    opts = {} },
 
-    { "windwp/nvim-autopairs",  opts = {} },
-    { 'windwp/nvim-ts-autotag', opts = {} },
+    { "windwp/nvim-autopairs",   opts = {} },
+    { 'windwp/nvim-ts-autotag',  opts = {} },
 
     -- "gc" to comment visual regions/lines
-    { 'numToStr/Comment.nvim',  opts = {} },
+    { 'numToStr/Comment.nvim',   opts = {} },
 
     -- Adds git releated signs to the gutter, as well as utilities for managing changes
-    { 'lewis6991/gitsigns.nvim' },
+    { 'lewis6991/gitsigns.nvim', opts = {} },
 
     -- diagnostics
     {
