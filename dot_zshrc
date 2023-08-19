@@ -170,6 +170,7 @@ function gddnolock() {
 # aliases
 # ----------------------------
 alias c=clear
+alias e="${EDITOR} ." # [E]dit
 
 # chezmoi
 alias ch="chezmoi"
