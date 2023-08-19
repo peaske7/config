@@ -44,12 +44,6 @@ require('lazy').setup({
     -- vim-surround++
     'machakann/vim-sandwich',
 
-    -- Foundation of all foundations
-    'nvim-lua/plenary.nvim',
-
-    -- File icons
-    "nvim-tree/nvim-web-devicons",
-
     -- LSP
     {
         'VonHeikemen/lsp-zero.nvim',
@@ -88,13 +82,6 @@ require('lazy').setup({
         "j-hui/fidget.nvim",
         tag = "legacy",
         event = "LspAttach",
-        opts = {}
-    },
-
-    -- TODO comments
-    {
-        "folke/todo-comments.nvim",
-        dependencies = { "nvim-lua/plenary.nvim" },
         opts = {}
     },
 

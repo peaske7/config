@@ -11,6 +11,7 @@ lsp.ensure_installed({
   'tsserver',
   'lua_ls'
 })
+local rust_lsp = lsp.build_options('rust_analyzer', {})
 
 -- Fix Undefined global 'vim'
 lsp.configure('lua_ls', {
@@ -30,6 +31,13 @@ local cmp_mappings = lsp.defaults.cmp_mappings({
   ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
   ['<CR>'] = cmp.mapping.confirm({ select = true })
 })
+
+-- insert `(` after select function or method item
+local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+cmp.event:on(
+  'confirm_done',
+  cmp_autopairs.on_confirm_done()
+)
 
 cmp_mappings['<Tab>'] = nil
 cmp_mappings['<S-Tab>'] = nil
@@ -68,3 +76,6 @@ lsp.setup()
 vim.diagnostic.config({
   virtual_text = true
 })
+
+-- Initialize rust_analyzer with rust-tools
+require('rust-tools').setup({ server = rust_lsp })
