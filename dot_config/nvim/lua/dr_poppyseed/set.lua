@@ -1,6 +1,3 @@
--- Remove top banner for netrw
-vim.g.netrw_banner = 0
-
 -- Set highlight on search
 vim.o.hlsearch = false
 

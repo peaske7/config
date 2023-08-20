@@ -1,10 +1,5 @@
-local status, _ = pcall(require, 'nvim-treesitter')
-if (not status) then return end
-local ts_configs = require('nvim-treesitter.configs')
-
-ts_configs.setup {
-  ensure_installed = { "help", "tsx", "html", "toml", "json", "css", "c", "rust", "lua", "javascript",
-    "typescript", "vim" },
+require('nvim-treesitter.configs').setup {
+  ensure_installed = { "tsx", "json", "c", "rust", "lua", "javascript", "vim", "typescript" },
   sync_install = false,
   auto_install = true,
   highlight = {

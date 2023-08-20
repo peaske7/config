@@ -29,16 +29,9 @@ vim.opt.rtp:prepend(lazypath)
 -- Plugins
 -------------------------------------------------------------------------------
 require('lazy').setup({
-    -- Git extension
     'tpope/vim-fugitive',
-
-    -- GitHub extension for fugitive.vim
     'tpope/vim-rhubarb',
-
-    -- Heuristically sets buffer options
     'tpope/vim-sleuth',
-
-    -- netrw enchancer
     'tpope/vim-vinegar',
 
     -- vim-surround++
@@ -147,7 +140,6 @@ require('lazy').setup({
         opts = {
             options = {
                 theme = "github_dark",
-                icons_enabled = false,
                 component_separators = '|',
                 section_separators = '',
             },

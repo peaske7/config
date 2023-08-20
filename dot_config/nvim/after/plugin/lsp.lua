@@ -1,28 +1,15 @@
-local status, lsp = pcall(require, "lsp-zero")
-if (not status) then
-  print('lsp-zero not installed')
-  return
-end
+local lsp = require("lsp-zero")
 
 lsp.preset("recommended")
 
 lsp.ensure_installed({
   'rust_analyzer',
-  'tsserver',
-  'lua_ls'
+  'tsserver'
 })
 local rust_lsp = lsp.build_options('rust_analyzer', {})
 
 -- Fix Undefined global 'vim'
-lsp.configure('lua_ls', {
-  settings = {
-    Lua = {
-      diagnostics = {
-        globals = { 'vim' }
-      }
-    }
-  }
-})
+lsp.nvim_workspace()
 
 local cmp = require('cmp')
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
@@ -47,28 +34,13 @@ lsp.setup_nvim_cmp({
 })
 
 lsp.on_attach(function(_, bufnr)
+  local opts = { buffer = bufnr, remap = false }
   lsp.default_keymaps({ buffer = bufnr })
 
-  vim.keymap.set("n", "<leader>ca", function() vim.lsp.buf.code_action() end, {
-    desc = '[C]ode [A]ction',
-    buffer = bufnr,
-    remap = false
-  })
-  vim.keymap.set("n", "<leader>fr", function() vim.lsp.buf.references() end, {
-    desc = '[F]ind [R]eferences',
-    buffer = bufnr,
-    remap = false
-  })
-  vim.keymap.set("n", "<leader>ff", '<cmd>LspZeroFormat<CR>', {
-    desc = '[F]ormat [F]ile',
-    buffer = bufnr,
-    remap = false
-  })
-  vim.keymap.set("n", "<leader>rn", function() vim.lsp.buf.rename() end, {
-    desc = '[R]e[N]ame',
-    buffer = bufnr,
-    remap = false
-  })
+  vim.keymap.set("n", "<leader>ca", function() vim.lsp.buf.code_action() end, opts)
+  vim.keymap.set("n", "<leader>fr", function() vim.lsp.buf.references() end, opts)
+  vim.keymap.set("n", "<leader>ff", '<cmd>LspZeroFormat<CR>', opts)
+  vim.keymap.set("n", "<leader>rn", function() vim.lsp.buf.rename() end, opts)
 end)
 
 lsp.setup()
