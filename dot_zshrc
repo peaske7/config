@@ -119,18 +119,6 @@ function git_current_branch() {
 	echo $(git rev-parse --abbrev-ref HEAD 2>/dev/null)
 }
 
-function git_main_branch() {
-	command git rev-parse --git-dir &>/dev/null || return
-	local ref
-	for ref in refs/{heads,remotes/{origin,upstream}}/{main,trunk,mainline,default}; do
-		if command git show-ref -q --verify $ref; then
-			echo ${ref:t}
-			return
-		fi
-	done
-	echo master
-}
-
 function git_set_default_branch() {
 	git remote set-head origin -a
 }
@@ -192,7 +180,6 @@ alias gm="git merge"
 alias gss="git status --short"
 alias gaa="git add --all"
 alias gcam="git commit -a -m"
-alias gbd='"$(git_default_branch)"'
 alias gbD="git branch -D"
 alias gsd='"$(git_set_default_branch)"'
 
@@ -200,13 +187,11 @@ alias gc!="git commit -v --ammend"
 alias gco="git checkout"
 alias gcb="git checkout -b"
 alias gci='git checkout "$(git branch -a | fzf | xargs)"'
-alias gcm='git checkout "$(git_main_branch)"'
 alias gcd='git checkout "$(git_default_branch)"'
 
 alias gd="git diff"
-alias gds="git diff --staged" # [G]it [D]iff [S]taged
-alias gdup="git diff @{upstream}" # [G]it [D]iff [U]pstream
 alias gdd='gd "$(git_default_branch)"' # [G]it [D]iff [D]efault
+alias gdds='gd "$(git_default_branch)" --stat' # [G]it [D]iff [D]efault [S]tats
 alias gdi='gd "$(git branch -a | fzf | xargs)"' # [G]it [D]iff [I]nteractive
 
 alias gl="git pull"
