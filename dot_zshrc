@@ -115,6 +115,10 @@ function kp() {
 	port_to_kill="" 
 }
 
+function mkd() {
+	mkdir "$@" && z "$@"
+}
+
 function git_current_branch() {
 	echo $(git rev-parse --abbrev-ref HEAD 2>/dev/null)
 }
