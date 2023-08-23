@@ -78,6 +78,7 @@ require('lazy').setup({
         opts = {}
     },
 
+
     -- Fuzzy Finder (files, lsp, etc)
     {
         'nvim-telescope/telescope.nvim',
@@ -102,6 +103,15 @@ require('lazy').setup({
         },
         config = function()
             pcall(require('nvim-treesitter.install').update { with_sync = true })
+        end,
+    },
+
+    -- shows latest crates.io versions in Cargo.toml
+    {
+        'saecki/crates.nvim',
+        dependencies = { 'nvim-lua/plenary.nvim' },
+        config = function()
+            require('crates').setup()
         end,
     },
 

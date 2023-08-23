@@ -2,36 +2,13 @@ local lsp = require("lsp-zero")
 
 lsp.preset("recommended")
 
+-- Fix Undefined global 'vim'
+lsp.nvim_workspace()
 lsp.ensure_installed({
   'rust_analyzer',
   'tsserver'
 })
 local rust_lsp = lsp.build_options('rust_analyzer', {})
-
--- Fix Undefined global 'vim'
-lsp.nvim_workspace()
-
-local cmp = require('cmp')
-local cmp_select = { behavior = cmp.SelectBehavior.Select }
-local cmp_mappings = lsp.defaults.cmp_mappings({
-  ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
-  ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
-  ['<CR>'] = cmp.mapping.confirm({ select = true })
-})
-
--- insert `(` after select function or method item
-local cmp_autopairs = require('nvim-autopairs.completion.cmp')
-cmp.event:on(
-  'confirm_done',
-  cmp_autopairs.on_confirm_done()
-)
-
-cmp_mappings['<Tab>'] = nil
-cmp_mappings['<S-Tab>'] = nil
-
-lsp.setup_nvim_cmp({
-  mapping = cmp_mappings
-})
 
 lsp.on_attach(function(_, bufnr)
   local opts = { buffer = bufnr, remap = false }
@@ -51,3 +28,26 @@ vim.diagnostic.config({
 
 -- Initialize rust_analyzer with rust-tools
 require('rust-tools').setup({ server = rust_lsp })
+
+local cmp = require('cmp')
+
+-- insert `(` after select function or method item
+local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+cmp.event:on(
+  'confirm_done',
+  cmp_autopairs.on_confirm_done()
+)
+
+cmp.setup({
+  sources = {
+    { name = 'nvim_lsp' },
+    { name = 'buffer' },
+    { name = 'path' },
+    { name = 'crates' },
+    { name = 'luasnip' },
+    { name = 'vsnip' }
+  },
+  mapping = {
+    ['<CR>'] = cmp.mapping.confirm({ select = true })
+  }
+})
