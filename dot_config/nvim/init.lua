@@ -138,6 +138,16 @@ require('lazy').setup({
     -- Adds git releated signs to the gutter, as well as utilities for managing changes
     { 'lewis6991/gitsigns.nvim', opts = {} },
 
+    -- Adding file icons to netrw
+    {
+        'prichrd/netrw.nvim',
+        config = function()
+            require('netrw').setup({
+                use_devicons = true
+            })
+        end
+    },
+
     -- diagnostics
     {
         "folke/trouble.nvim",
