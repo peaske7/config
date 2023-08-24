@@ -1,5 +1,5 @@
 require('nvim-treesitter.configs').setup {
-  ensure_installed = { "tsx", "json", "c", "rust", "lua", "javascript", "vim", "typescript", "terraform" },
+  ensure_installed = { "tsx", "json", "c", "rust", "lua", "javascript", "vim", "typescript", "terraform", "hcl" },
   sync_install = false,
   auto_install = true,
   highlight = {
