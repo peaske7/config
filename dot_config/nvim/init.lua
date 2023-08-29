@@ -4,10 +4,45 @@ require("dr_poppyseed")
 vim.loader.enable()
 
 -------------------------------------------------------------------------------
--- Global mapleader
+-- Keymaps and options
 -------------------------------------------------------------------------------
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
+
+vim.keymap.set("i", "jk", "<Esc>", {
+    desc = 'Escape insert mode',
+    noremap = true
+})
+
+vim.keymap.set("n", "J", "mzJ`z")
+
+vim.keymap.set("n", "<C-d>", "<C-d>zz")
+vim.keymap.set("n", "<C-u>", "<C-u>zz")
+
+vim.keymap.set("n", "n", "nzzzv")
+vim.keymap.set("n", "N", "Nzzzv")
+
+-- Set highlight on search
+vim.o.hlsearch = false
+vim.wo.number = true
+vim.wo.signcolumn = 'yes'
+vim.o.mouse = 'a'
+vim.o.clipboard = 'unnamedplus'
+vim.o.breakindent = true
+vim.o.undofile = true
+vim.o.termguicolors = true
+
+-- Case insensitive searching UNLESS /C or capital in search
+vim.o.ignorecase = true
+vim.o.smartcase = true
+
+-- Decrease update time
+vim.o.updatetime = 250
+vim.o.timeout = true
+vim.o.timeoutlen = 300
+
+-- Set completeopt to have a better completion experience
+vim.o.completeopt = 'menuone,noselect'
 
 -------------------------------------------------------------------------------
 -- Bootstrap Package Manager
@@ -134,7 +169,9 @@ require('lazy').setup({
         lazy = false,    -- make sure we load this during startup if it is your main colorscheme
         priority = 1000, -- make sure to load this before all the other start plugins
         config = function()
-            require('github-theme').setup()
+            require('github-theme').setup({
+                options = { transparent = true }
+            })
             vim.cmd('colorscheme github_dark')
         end,
     },
