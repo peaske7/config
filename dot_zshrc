@@ -168,10 +168,8 @@ alias e="${EDITOR} ." # [E]dit
 alias ch="chezmoi"
 alias che="chezmoi edit"
 alias cha="chezmoi apply -v"
-alias chd="chezmoi diff -v"
 alias chu="chezmoi update -v"
 alias chc="chezmoi cd"
-
 alias chez="che ~/.zshrc" # [CH]ezmoi [E]dit [Z]shrc
 alias chen="che ~/.config/nvim" # [CH]ezmoi [E]dit [N]vim
 
