@@ -49,7 +49,6 @@ require('lazy').setup({
                 build = ":MasonUpdate"
             },
             'williamboman/mason-lspconfig.nvim',
-            'jose-elias-alvarez/null-ls.nvim',
 
             -- Autocompletion
             'hrsh7th/nvim-cmp',
@@ -58,9 +57,7 @@ require('lazy').setup({
             'hrsh7th/cmp-vsnip',
             'hrsh7th/cmp-path',
             'hrsh7th/cmp-buffer',
-            'hrsh7th/vim-vsnip',
             'L3MON4D3/LuaSnip',
-            'saadparwaiz1/cmp_luasnip',
 
             -- Additional lua configuration, makes nvim stuff amazing!
             'folke/neodev.nvim',
@@ -68,6 +65,22 @@ require('lazy').setup({
             -- Rust powerups like inlay hints
             'simrat39/rust-tools.nvim'
         }
+    },
+
+    -- integration with github copilot
+    {
+        "zbirenbaum/copilot.lua",
+        cmd = "Copilot",
+        event = "InsertEnter",
+        config = function()
+            require("copilot").setup({})
+        end,
+    },
+    {
+        "zbirenbaum/copilot-cmp",
+        config = function()
+            require("copilot_cmp").setup()
+        end
     },
 
     -- LSP progress UI. I've removed it once, missed it, and re-added it.

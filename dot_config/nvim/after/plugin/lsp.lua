@@ -53,12 +53,12 @@ cmp.event:on(
 
 cmp.setup({
   sources = {
-    { name = 'nvim_lsp' },
-    { name = 'buffer' },
-    { name = 'path' },
-    { name = 'crates' },
-    { name = 'luasnip' },
-    { name = 'vsnip' }
+    { name = "copilot",  group_index = 2 },
+    { name = 'nvim_lsp', group_index = 2 },
+    { name = 'buffer',   group_index = 2 },
+    { name = 'path',     group_index = 2 },
+    { name = 'crates',   group_index = 2 },
+    { name = 'luasnip',  group_index = 2 },
   },
   mapping = {
     ['<CR>'] = cmp.mapping.confirm({ select = true })
