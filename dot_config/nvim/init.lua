@@ -3,9 +3,7 @@ require("dr_poppyseed")
 -- previously impatient.nvim
 vim.loader.enable()
 
--------------------------------------------------------------------------------
 -- Keymaps and options
--------------------------------------------------------------------------------
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
@@ -44,9 +42,7 @@ vim.o.timeoutlen = 300
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
 
--------------------------------------------------------------------------------
 -- Bootstrap Package Manager
--------------------------------------------------------------------------------
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
     vim.fn.system {
@@ -60,24 +56,20 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--------------------------------------------------------------------------------
 -- Plugins
--------------------------------------------------------------------------------
 require('lazy').setup({
     'tpope/vim-fugitive',
     'tpope/vim-rhubarb',
     'tpope/vim-sleuth',
     'tpope/vim-vinegar',
-
-    -- vim-surround++
     'machakann/vim-sandwich',
+    'lukas-reineke/indent-blankline.nvim',
 
     -- LSP
     {
         'VonHeikemen/lsp-zero.nvim',
         branch = 'v2.x',
         dependencies = {
-            -- LSP Support
             'neovim/nvim-lspconfig',
             {
                 'williamboman/mason.nvim',
@@ -123,9 +115,12 @@ require('lazy').setup({
         "j-hui/fidget.nvim",
         tag = "legacy",
         event = "LspAttach",
-        opts = {}
+        opts = {
+            window = {
+                blend = 0
+            }
+        }
     },
-
 
     -- Fuzzy Finder (files, lsp, etc)
     {
@@ -133,15 +128,7 @@ require('lazy').setup({
         version = 'v0.1.x',
         dependencies = { 'nvim-lua/plenary.nvim' }
     },
-
-    -- Fuzzy Finder Algorithm which requires local dependencies to be built.
-    {
-        'nvim-telescope/telescope-fzf-native.nvim',
-        build = 'make',
-        cond = function()
-            return vim.fn.executable 'make' == 1
-        end,
-    },
+    { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
 
     -- Highlight, edit, and navigate code
     {
@@ -170,25 +157,20 @@ require('lazy').setup({
         priority = 1000, -- make sure to load this before all the other start plugins
         config = function()
             require('github-theme').setup({
-                options = { transparent = true }
+                options = {
+                    transparent = true,
+                    terminal_colors = true,
+                }
             })
             vim.cmd('colorscheme github_dark')
         end,
     },
 
-    -- Useful plugin to show you pending keybinds.
-    { 'folke/which-key.nvim',    opts = {} },
-
-    { "windwp/nvim-autopairs",   opts = {} },
-    { 'windwp/nvim-ts-autotag',  opts = {} },
-
-    -- "gc" to comment visual regions/lines
-    { 'numToStr/Comment.nvim',   opts = {} },
-
-    -- Adds git releated signs to the gutter, as well as utilities for managing changes
-    { 'lewis6991/gitsigns.nvim', opts = {} },
-
-    -- diagnostics
+    { 'folke/which-key.nvim',                     opts = {} },
+    { "windwp/nvim-autopairs",                    opts = {} },
+    { 'windwp/nvim-ts-autotag',                   opts = {} },
+    { 'numToStr/Comment.nvim',                    opts = {} },
+    { 'lewis6991/gitsigns.nvim',                  opts = {} },
     {
         "folke/trouble.nvim",
         dependencies = { "nvim-tree/nvim-web-devicons" },
@@ -198,21 +180,7 @@ require('lazy').setup({
     {
         'nvim-lualine/lualine.nvim',
         opts = {
-            options = {
-                theme = "github_dark",
-                component_separators = '|',
-                section_separators = '',
-            },
             dependencies = { 'nvim-tree/nvim-web-devicons' }
-        },
-    },
-
-    -- Add indentation guides even on blank lines
-    {
-        'lukas-reineke/indent-blankline.nvim',
-        opts = {
-            char = '┊',
-            show_trailing_blankline_indent = false,
         },
     },
 }, {})
