@@ -144,9 +144,12 @@ function grename() {
 		git branch -m "$1" "$2"
 	fi
 
-	# rename branch in origin remote
-	if git push origin :"$1"; then
-		git push --set-upstream origin "$2"
+	# check if branch in remote origin
+	if git config --get branch.$(git_current_branch).remote; then
+		# rename branch in origin remote
+		if git push origin :"$1"; then
+			git push --set-upstream origin "$2"
+		fi
 	fi
 }
 
