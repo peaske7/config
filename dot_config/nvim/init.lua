@@ -152,17 +152,39 @@ require('lazy').setup({
 
     -- color theme
     {
-        'projekt0n/github-nvim-theme',
+        'catppuccin/nvim',
         lazy = false,    -- make sure we load this during startup if it is your main colorscheme
         priority = 1000, -- make sure to load this before all the other start plugins
         config = function()
-            require('github-theme').setup({
-                options = {
-                    transparent = true,
-                    terminal_colors = true,
+            require('catppuccin').setup({
+                flavour = "frappe",
+                transparent_background = true,
+                term_colors = true,
+                integrations = {
+                    cmp = true,
+                    gitsigns = true,
+                    treesitter = true,
+                    native_lsp = {
+                        enabled = true,
+                        virtual_text = {
+                            errors = { "italic" },
+                            hints = { "italic" },
+                            warnings = { "italic" },
+                            information = { "italic" },
+                        },
+                        underlines = {
+                            errors = { "underline" },
+                            hints = { "underline" },
+                            warnings = { "underline" },
+                            information = { "underline" },
+                        },
+                        inlay_hints = {
+                            background = true,
+                        },
+                    },
                 }
             })
-            vim.cmd('colorscheme github_dark')
+            vim.cmd('colorscheme catppuccin-frappe')
         end,
     },
 
@@ -182,5 +204,12 @@ require('lazy').setup({
         opts = {
             dependencies = { 'nvim-tree/nvim-web-devicons' }
         },
+        config = function()
+            require('lualine').setup({
+                options = {
+                    theme = 'catppuccin-frappe',
+                },
+            })
+        end
     },
 }, {})

@@ -177,6 +177,8 @@ alias chez="che ~/.zshrc" # [CH]ezmoi [E]dit [Z]shrc
 alias chen="che ~/.config/nvim" # [CH]ezmoi [E]dit [N]vim
 
 # docker
+alias dcu='docker compose up' # [D]ocker [C]ompose [U]p
+alias dcbu='docker compose build && docker compose up' # [D]ocker [C]ompose [B]uild and [U]p
 alias dsa='docker stop "$(docker ps -aq)"' # [D]ocker [S]top [A]ll
 alias dra='docker rm "$(docker ps -aq)"' # [D]ocker [R]emove [A]ll
 
