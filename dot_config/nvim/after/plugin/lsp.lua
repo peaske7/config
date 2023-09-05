@@ -8,6 +8,7 @@ lsp.ensure_installed({
   'rust_analyzer',
   'terraformls',
   'tsserver',
+  'clangd',
   'eslint'
 })
 local rust_lsp = lsp.build_options('rust_analyzer', {})
