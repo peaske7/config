@@ -7,11 +7,7 @@ vim.loader.enable()
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
-vim.keymap.set("i", "jk", "<Esc>", {
-    desc = 'Escape insert mode',
-    noremap = true
-})
-
+vim.keymap.set("i", "jk", "<Esc>", { noremap = true })
 vim.keymap.set("n", "J", "mzJ`z")
 
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
@@ -153,8 +149,8 @@ require('lazy').setup({
     -- color theme
     {
         'catppuccin/nvim',
-        lazy = false,    -- make sure we load this during startup if it is your main colorscheme
-        priority = 1000, -- make sure to load this before all the other start plugins
+        name = "catppuccin",
+        priority = 1000,
         config = function()
             require('catppuccin').setup({
                 flavour = "frappe",
@@ -164,9 +160,16 @@ require('lazy').setup({
                     cmp = true,
                     gitsigns = true,
                     treesitter = true,
+                    native_lsp = {
+                        enabled = true,
+                    },
+                    indent_blankline = {
+                        enabled = true,
+                        colored_indent_levels = false,
+                    },
                 }
             })
-            vim.cmd('colorscheme catppuccin-frappe')
+            vim.cmd.colorscheme "catppuccin-frappe"
         end,
     },
 
