@@ -152,24 +152,19 @@ require('lazy').setup({
         name = "catppuccin",
         priority = 1000,
         config = function()
-            require('catppuccin').setup({
-                flavour = "frappe",
-                transparent_background = true,
+            local catp = require("catppuccin")
+            vim.g.catppuccin_flavour = "frappe"
+            catp.setup({
                 term_colors = true,
+                compile_path = vim.fn.stdpath "cache" .. "/catppuccin",
                 integrations = {
                     cmp = true,
                     gitsigns = true,
                     treesitter = true,
-                    native_lsp = {
-                        enabled = true,
-                    },
-                    indent_blankline = {
-                        enabled = true,
-                        colored_indent_levels = false,
-                    },
                 }
             })
-            vim.cmd.colorscheme "catppuccin-frappe"
+
+            vim.cmd("colorscheme catppuccin")
         end,
     },
 
