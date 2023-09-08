@@ -57,14 +57,6 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # case insensitive tab
 # ----------------------------
 # Zinit plugins
 # ----------------------------
-# fzf
-zi ice from"gh-r" as"program"
-zi light junegunn/fzf
-
-# docker 
-zi ice from"gh-r" as"program" mv"docker* -> docker-compose"
-zi load docker/compose
-
 # mcfly
 zinit ice lucid wait"0a" from"gh-r" as"program" atload'eval "$(mcfly init zsh)"'
 zinit light cantino/mcfly
@@ -92,18 +84,6 @@ zinit light ajeetdsouza/zoxide
 # exa
 zinit ice as"program" from"gh-r" mv"exa* -> exa"
 zinit light ogham/exa
-
-# bat
-zinit ice as"program" from"gh-r" mv"bat* -> bat" pick"bat/bat"
-zinit light sharkdp/bat
-
-# fd
-zinit ice as"program" from"gh-r" mv"fd* -> fd" pick"fd/fd"
-zinit light sharkdp/fd
-
-# ripgrep
-zinit ice as"program" from"gh-r" mv"ripgrep* -> rg" pick"rg/rg"
-zinit light BurntSushi/ripgrep
 
 # ----------------------------
 # functions
@@ -280,3 +260,11 @@ export GPG_TTY=$(tty)
 # support for Google Cloud SDK
 if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
 if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
+
+# try to source nix 
+if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix.sh" ]; then 
+    source "/nix/var/nix/profiles/default/etc/profile.d/nix.sh"
+fi
+if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then 
+    source "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
+fi
