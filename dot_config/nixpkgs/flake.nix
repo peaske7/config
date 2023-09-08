@@ -10,7 +10,7 @@
     homeConfigurations = {
       PDYMBP-00401 = inputs.home-manager.lib.homeManagerConfiguration {
         pkgs = inputs.nixpkgs.legacyPackages.aarch64-darwin;
-        modules = [ ./home-manager.nix ];
+        modules = [ ./PDYMBP-00401.nix ];
       };
     };
   };
