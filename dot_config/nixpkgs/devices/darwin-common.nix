@@ -1,8 +1,5 @@
 { config, pkgs, libs, ... }:
 {
-  home.username = "jay.shimada";
-  home.homeDirectory = "/Users/jay.shimada";
-
   home.packages = with pkgs; [
     # development
     docker
