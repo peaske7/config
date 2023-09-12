@@ -1,8 +1,5 @@
 require("dr_poppyseed")
 
--- previously impatient.nvim
-vim.loader.enable()
-
 -- Keymaps and options
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
@@ -111,11 +108,13 @@ require('lazy').setup({
         "j-hui/fidget.nvim",
         tag = "legacy",
         event = "LspAttach",
-        opts = {
-            window = {
-                blend = 0
+        config = function()
+            require("fidget").setup {
+                window = {
+                    blend = 0,
+                },
             }
-        }
+        end
     },
 
     -- Fuzzy Finder (files, lsp, etc)
@@ -151,25 +150,16 @@ require('lazy').setup({
         'catppuccin/nvim',
         name = "catppuccin",
         priority = 1000,
-        config = function()
-            local catp = require("catppuccin")
-            vim.g.catppuccin_flavour = "frappe"
-            catp.setup({
-                term_colors = true,
-                compile_path = vim.fn.stdpath "cache" .. "/catppuccin",
-                integrations = {
-                    cmp = true,
-                    gitsigns = true,
-                    treesitter = true,
-                }
-            })
-
-            vim.cmd("colorscheme catppuccin")
-        end,
+        lazy = false,
     },
 
-    { 'folke/which-key.nvim',                     opts = {} },
-    { "windwp/nvim-autopairs",                    opts = {} },
+    {
+        "windwp/nvim-autopairs",
+        event = "InsertEnter",
+        opts = {}
+    },
+
+    { 'folke/which-key.nvim',                     lazy = true },
     { 'windwp/nvim-ts-autotag',                   opts = {} },
     { 'numToStr/Comment.nvim',                    opts = {} },
     { 'lewis6991/gitsigns.nvim',                  opts = {} },
@@ -187,7 +177,7 @@ require('lazy').setup({
         config = function()
             require('lualine').setup({
                 options = {
-                    theme = 'catppuccin-frappe',
+                    theme = 'catppuccin',
                 },
             })
         end
