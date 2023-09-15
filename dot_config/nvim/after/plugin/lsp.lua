@@ -11,7 +11,7 @@ lsp.ensure_installed({
   'clangd',
   'eslint'
 })
-local rust_lsp = lsp.build_options('rust_analyzer', {})
+-- local rust_lsp = lsp.build_options('rust_analyzer', {})
 
 lsp.on_attach(function(_, bufnr)
   local opts = { buffer = bufnr, remap = false }
@@ -24,16 +24,6 @@ lsp.on_attach(function(_, bufnr)
 end)
 
 lsp.setup_servers({ 'tsserver', 'eslint', 'rust_analyzer', 'terraformls' })
-
--- Fix terraform support
-require('lspconfig').terraformls.setup({})
-vim.api.nvim_create_autocmd({ "BufWritePre" }, {
-  pattern = { "*.tf", "*.tfvars" },
-  callback = function()
-    vim.lsp.buf.format()
-  end,
-})
-
 lsp.setup()
 
 vim.diagnostic.config({
@@ -41,7 +31,7 @@ vim.diagnostic.config({
 })
 
 -- Initialize rust_analyzer with rust-tools
-require('rust-tools').setup({ server = rust_lsp })
+-- require('rust-tools').setup({ server = rust_lsp })
 
 local cmp = require('cmp')
 
@@ -57,11 +47,11 @@ cmp.setup({
     { name = "copilot",                 group_index = 2 },
     { name = 'nvim_lsp',                group_index = 2 },
     { name = "nvim_lsp_signature_help", group_index = 2 },
-    { name = "vsnip",                   group_index = 2 },
+    -- { name = "vsnip",                   group_index = 2 },
     { name = 'buffer',                  group_index = 2 },
     { name = 'path',                    group_index = 2 },
     { name = 'crates',                  group_index = 2 },
-    { name = 'luasnip',                 group_index = 2 },
+    -- { name = 'luasnip',                 group_index = 2 },
   },
   mapping = {
     ['<CR>'] = cmp.mapping.confirm({ select = true })
