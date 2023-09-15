@@ -1,8 +1,6 @@
 local lsp = require("lsp-zero")
 
 lsp.preset("recommended")
-
--- Fix Undefined global 'vim'
 lsp.nvim_workspace()
 lsp.ensure_installed({
   'rust_analyzer',
@@ -11,7 +9,6 @@ lsp.ensure_installed({
   'clangd',
   'eslint'
 })
--- local rust_lsp = lsp.build_options('rust_analyzer', {})
 
 lsp.on_attach(function(_, bufnr)
   local opts = { buffer = bufnr, remap = false }
@@ -23,15 +20,12 @@ lsp.on_attach(function(_, bufnr)
   vim.keymap.set("n", "<leader>rn", function() vim.lsp.buf.rename() end, opts)
 end)
 
-lsp.setup_servers({ 'tsserver', 'eslint', 'rust_analyzer', 'terraformls' })
+lsp.setup_servers({ 'tsserver', 'eslint', 'clangd', 'rust_analyzer', 'terraformls' })
 lsp.setup()
 
 vim.diagnostic.config({
   virtual_text = true
 })
-
--- Initialize rust_analyzer with rust-tools
--- require('rust-tools').setup({ server = rust_lsp })
 
 local cmp = require('cmp')
 
@@ -44,14 +38,12 @@ cmp.event:on(
 
 cmp.setup({
   sources = {
-    { name = "copilot",                 group_index = 2 },
-    { name = 'nvim_lsp',                group_index = 2 },
-    { name = "nvim_lsp_signature_help", group_index = 2 },
-    -- { name = "vsnip",                   group_index = 2 },
-    { name = 'buffer',                  group_index = 2 },
-    { name = 'path',                    group_index = 2 },
-    { name = 'crates',                  group_index = 2 },
-    -- { name = 'luasnip',                 group_index = 2 },
+    { name = "copilot" },
+    { name = 'nvim_lsp' },
+    { name = "nvim_lsp_signature_help" },
+    { name = 'buffer' },
+    { name = 'path' },
+    { name = 'crates' },
   },
   mapping = {
     ['<CR>'] = cmp.mapping.confirm({ select = true })
