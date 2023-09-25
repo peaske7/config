@@ -99,7 +99,6 @@ require('lazy').setup({
         version = 'v0.1.x',
         dependencies = { 'nvim-lua/plenary.nvim' }
     },
-    { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
     {
         'nvim-treesitter/nvim-treesitter',
         dependencies = {
@@ -126,6 +125,12 @@ require('lazy').setup({
 
     {
         "windwp/nvim-autopairs",
+        event = "InsertEnter",
+        lazy = true,
+        opts = {}
+    },
+    {
+        "windwp/nvim-ts-autotag",
         event = "InsertEnter",
         lazy = true,
         opts = {}
