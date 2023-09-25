@@ -122,7 +122,6 @@ require('lazy').setup({
     {
         'catppuccin/nvim',
         name = "catppuccin",
-        lazy = false,
     },
 
     {
@@ -134,7 +133,6 @@ require('lazy').setup({
 
     {
         'numToStr/Comment.nvim',
-        lazy = true,
         opts = {}
     },
     {
