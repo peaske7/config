@@ -155,6 +155,7 @@ alias chu="chezmoi update -v"
 alias chc="chezmoi cd"
 alias chez="che ~/.zshrc" # [CH]ezmoi [E]dit [Z]shrc
 alias chen="che ~/.config/nvim" # [CH]ezmoi [E]dit [N]vim
+alias chep="che ~/.config/nixpkgs" # [CH]ezmoi [E]dit [P]kgs
 
 # docker
 alias dcu='docker compose up' # [D]ocker [C]ompose [U]p
