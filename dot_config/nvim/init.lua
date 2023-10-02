@@ -42,7 +42,6 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
     'tpope/vim-fugitive',
     'tpope/vim-rhubarb',
-    'tpope/vim-sleuth',
     'tpope/vim-vinegar',
     'machakann/vim-sandwich',
     'lukas-reineke/indent-blankline.nvim',
@@ -63,6 +62,20 @@ require('lazy').setup({
             'hrsh7th/cmp-path',
             'hrsh7th/cmp-buffer',
         }
+    },
+
+    {
+        "ray-x/go.nvim",
+        dependencies = {
+            "ray-x/guihua.lua",
+            "neovim/nvim-lspconfig",
+            "nvim-treesitter/nvim-treesitter",
+        },
+        config = function()
+            require("go").setup()
+        end,
+        event = { "CmdlineEnter" },
+        ft = { "go", 'gomod' },
     },
 
     {
@@ -143,6 +156,12 @@ require('lazy').setup({
     {
         'lewis6991/gitsigns.nvim',
         lazy = true,
+        opts = {}
+    },
+
+    {
+        'prichrd/netrw.nvim',
+        dependencies = { "nvim-tree/nvim-web-devicons" },
         opts = {}
     },
 

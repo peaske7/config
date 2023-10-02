@@ -1,5 +1,5 @@
 require("catppuccin").setup({
-  flavour = "frappe",
+  flavour = "mocha",
   term_colors = true,
   integrations = {
     fidget = true,
