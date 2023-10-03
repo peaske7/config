@@ -1,11 +1,11 @@
 local telescope_builtin = require('telescope.builtin')
 
 require('telescope').setup {
-  pickers = {
-    find_files = {
-      find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/*" },
-    },
-  },
+	pickers = {
+		find_files = {
+			find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/*" },
+		},
+	},
 }
 
 local opts = { noremap = true }
