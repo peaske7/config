@@ -65,11 +65,13 @@ require('lazy').setup({
 			'hrsh7th/cmp-nvim-lsp-signature-help',
 			'hrsh7th/cmp-path',
 			'hrsh7th/cmp-buffer',
+			"L3MON4D3/LuaSnip",
 		}
 	},
 
 	{
 		"ray-x/go.nvim",
+		lazy = true,
 		dependencies = {
 			"ray-x/guihua.lua",
 			"neovim/nvim-lspconfig",
@@ -86,12 +88,14 @@ require('lazy').setup({
 		"zbirenbaum/copilot.lua",
 		cmd = "Copilot",
 		event = "InsertEnter",
+		lazy = true,
 		config = function()
 			require("copilot").setup({})
 		end,
 	},
 	{
 		"zbirenbaum/copilot-cmp",
+		lazy = true,
 		config = function()
 			require("copilot_cmp").setup()
 		end
@@ -116,6 +120,7 @@ require('lazy').setup({
 		version = 'v0.1.x',
 		dependencies = { 'nvim-lua/plenary.nvim' }
 	},
+
 	{
 		'nvim-treesitter/nvim-treesitter',
 		dependencies = {
@@ -135,10 +140,7 @@ require('lazy').setup({
 		end,
 	},
 
-	{
-		'catppuccin/nvim',
-		name = "catppuccin",
-	},
+	{ 'catppuccin/nvim',         name = "catppuccin", },
 
 	{
 		"windwp/nvim-autopairs",
@@ -146,6 +148,7 @@ require('lazy').setup({
 		lazy = true,
 		opts = {}
 	},
+
 	{
 		"windwp/nvim-ts-autotag",
 		event = "InsertEnter",
@@ -153,29 +156,25 @@ require('lazy').setup({
 		opts = {}
 	},
 
-	{
-		'numToStr/Comment.nvim',
-		opts = {}
-	},
-	{
-		'lewis6991/gitsigns.nvim',
-		lazy = true,
-		opts = {}
-	},
+	{ 'numToStr/Comment.nvim',   lazy = true,         opts = {} },
+	{ 'lewis6991/gitsigns.nvim', lazy = true,         opts = {} },
 
 	{
 		'prichrd/netrw.nvim',
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		opts = {}
 	},
+
 	{
 		"folke/trouble.nvim",
+		lazy = true,
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		opts = {},
 	},
 
 	{
 		'nvim-lualine/lualine.nvim',
+		lazy = true,
 		opts = {
 			dependencies = { 'nvim-tree/nvim-web-devicons' }
 		},
