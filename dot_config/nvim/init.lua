@@ -1,5 +1,3 @@
-require("dr_poppyseed")
-
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
