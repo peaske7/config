@@ -7,6 +7,7 @@ lsp.ensure_installed({
 	'terraformls',
 	'tsserver',
 	'clangd',
+	'svelte',
 	'eslint'
 })
 
@@ -20,7 +21,7 @@ lsp.on_attach(function(_, bufnr)
 	vim.keymap.set("n", "<leader>rn", function() vim.lsp.buf.rename() end, opts)
 end)
 
-lsp.setup_servers({ 'tsserver', 'eslint', 'clangd', 'rust_analyzer', 'terraformls' })
+lsp.setup_servers({ 'tsserver', 'svelte', 'eslint', 'clangd', 'rust_analyzer', 'terraformls' })
 lsp.setup()
 
 vim.diagnostic.config({

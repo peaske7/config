@@ -69,7 +69,6 @@ require('lazy').setup({
 
 	{
 		"ray-x/go.nvim",
-		lazy = true,
 		dependencies = {
 			"ray-x/guihua.lua",
 			"neovim/nvim-lspconfig",
@@ -86,14 +85,12 @@ require('lazy').setup({
 		"zbirenbaum/copilot.lua",
 		cmd = "Copilot",
 		event = "InsertEnter",
-		lazy = true,
 		config = function()
 			require("copilot").setup({})
 		end,
 	},
 	{
 		"zbirenbaum/copilot-cmp",
-		lazy = true,
 		config = function()
 			require("copilot_cmp").setup()
 		end
@@ -103,7 +100,6 @@ require('lazy').setup({
 		"j-hui/fidget.nvim",
 		tag = "legacy",
 		event = "LspAttach",
-		lazy = true,
 		config = function()
 			require("fidget").setup {
 				window = {
@@ -132,7 +128,6 @@ require('lazy').setup({
 	{
 		'saecki/crates.nvim',
 		dependencies = { 'nvim-lua/plenary.nvim' },
-		lazy = true,
 		config = function()
 			require('crates').setup()
 		end,
@@ -143,19 +138,17 @@ require('lazy').setup({
 	{
 		"windwp/nvim-autopairs",
 		event = "InsertEnter",
-		lazy = true,
 		opts = {}
 	},
 
 	{
 		"windwp/nvim-ts-autotag",
 		event = "InsertEnter",
-		lazy = true,
 		opts = {}
 	},
 
 	{ 'numToStr/Comment.nvim',   opts = {} },
-	{ 'lewis6991/gitsigns.nvim', lazy = true,         opts = {} },
+	{ 'lewis6991/gitsigns.nvim', opts = {} },
 
 	{
 		'prichrd/netrw.nvim',
@@ -165,14 +158,12 @@ require('lazy').setup({
 
 	{
 		"folke/trouble.nvim",
-		lazy = true,
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		opts = {},
 	},
 
 	{
 		'nvim-lualine/lualine.nvim',
-		lazy = true,
 		opts = {
 			dependencies = { 'nvim-tree/nvim-web-devicons' }
 		},

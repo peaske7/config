@@ -7,5 +7,9 @@ yabai -m config \
 	layout bsp \
 	auto_balance on \
 
-yabai -m \
-	rule --add app="^System Settings$" manage=off
+yabai -m rule --add app="^System Settings$" manage=off
+yabai -m rule --add app="^Activity Monitor$" manage=off
+yabai -m rule --add app="^Finder$" manage=off
+yabai -m rule --add app="^Spotify$" manage=off
+yabai -m rule --add app="^LINE$" manage=off
+yabai -m rule --add app="^1Password$" manage=off
