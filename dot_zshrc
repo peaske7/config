@@ -134,7 +134,7 @@ function grename() {
 }
 
 function gdnolock() {
-	git diff "$@" ":(exclude)package-lock.json" ":(exclude)pnpm-lock.yaml" ":(exclude)*.lock"
+	git diff "$@" ":(exclude)**/package-lock.json" ":(exclude)**/pnpm-lock.yaml" ":(exclude)**/*.lock"
 }
 
 function gddnolock() {

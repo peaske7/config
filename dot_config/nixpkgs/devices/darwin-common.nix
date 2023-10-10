@@ -7,6 +7,7 @@
     jq
     bat
     neovim
+		circleci-cli
 
     # productivity
     fd
