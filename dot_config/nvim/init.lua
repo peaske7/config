@@ -116,6 +116,13 @@ require('lazy').setup({
 	},
 
 	{
+		"nvim-telescope/telescope-frecency.nvim",
+		config = function()
+			require("telescope").load_extension "frecency"
+		end,
+	},
+
+	{
 		'nvim-treesitter/nvim-treesitter',
 		dependencies = {
 			'nvim-treesitter/nvim-treesitter-textobjects',

@@ -14,6 +14,7 @@
     ripgrep
     yabai
     skhd
+		curl
   ];
 
   home.stateVersion = "23.11";
