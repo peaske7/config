@@ -87,6 +87,7 @@ require('lazy').setup({
 		event = "InsertEnter",
 		config = function()
 			require("copilot").setup({})
+			vim.g.copilot_filetypes = { VimspectorPrompt = false }
 		end,
 	},
 	{
