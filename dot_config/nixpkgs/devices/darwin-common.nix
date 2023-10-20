@@ -1,20 +1,23 @@
 { config, pkgs, libs, ... }:
 {
   home.packages = with pkgs; [
-    # development
     docker
     fzf
     jq
     bat
     neovim
 		circleci-cli
-
-    # productivity
     fd
     ripgrep
     yabai
     skhd
 		curl
+		gh
+		httpie
+    chezmoi
+    tmux
+    kcat
+		llvm
   ];
 
   home.stateVersion = "23.11";
