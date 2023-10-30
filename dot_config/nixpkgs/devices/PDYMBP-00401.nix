@@ -6,8 +6,7 @@
   home.homeDirectory = "/Users/jay.shimada";
 
   home.packages = with pkgs; [
-    chezmoi
-    tmux
     kcat
+		postgresql
   ];
 }
