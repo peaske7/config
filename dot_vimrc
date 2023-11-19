@@ -1,0 +1,13 @@
+set number
+set smartindent
+set mouse=a
+set clipboard=unnamed,autoselect
+
+syntax on
+
+inoremap jk <Esc>
+
+augroup source-vimrc
+  autocmd!
+  autocmd BufWritePost *vimrc source $MYVIMRC | set foldmethod=marker
+augroup END

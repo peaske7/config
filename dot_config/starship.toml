@@ -8,13 +8,10 @@ $git_status\
 $line_break\
 $character"""
 
-[directory]
-style = "#8caaee"
-
 [character]
-success_symbol = "[❯](#85c1dc)"
-error_symbol = "[❯](#e78284)"
-vimcmd_symbol = "[❮](#a6d189)"
+success_symbol = "❯"
+error_symbol = "❯"
+vimcmd_symbol = "❮"
 
 [git_branch]
 format = "[$branch]($style)"
@@ -22,7 +19,6 @@ style = "bright-black"
 
 [git_status]
 format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style)"
-style = "#babbf1"
 conflicted = "​"
 untracked = "​"
 modified = "​"

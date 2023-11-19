@@ -26,7 +26,6 @@ vim.o.completeopt = 'menuone,noselect'
 
 vim.o.tabstop = 2
 vim.o.shiftwidth = 2
-vim.o.shiftwidth = '2 smarttab'
 
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
@@ -102,13 +101,7 @@ require('lazy').setup({
 		"j-hui/fidget.nvim",
 		tag = "legacy",
 		event = "LspAttach",
-		config = function()
-			require("fidget").setup {
-				window = {
-					blend = 0,
-				},
-			}
-		end
+		opts = {}
 	},
 
 	{
@@ -142,7 +135,14 @@ require('lazy').setup({
 		end,
 	},
 
-	{ 'catppuccin/nvim',         name = "catppuccin", },
+	{
+		'sainnhe/gruvbox-material',
+		lazy = false,
+		priority = 1000,
+		config = function()
+			vim.cmd('colorscheme gruvbox-material')
+		end,
+	},
 
 	{
 		"windwp/nvim-autopairs",
@@ -160,28 +160,34 @@ require('lazy').setup({
 	{ 'lewis6991/gitsigns.nvim', opts = {} },
 
 	{
-		'prichrd/netrw.nvim',
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-		opts = {}
-	},
-
-	{
 		"folke/trouble.nvim",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-		opts = {},
+		opts = {
+			{
+				icons = false,
+				fold_open = "v",
+				fold_closed = ">",
+				indent_lines = false,
+				signs = {
+					error = "error",
+					warning = "warn",
+					hint = "hint",
+					information = "info"
+				},
+				use_diagnostic_signs = true
+			}
+		},
 	},
 
 	{
 		'nvim-lualine/lualine.nvim',
 		opts = {
-			dependencies = { 'nvim-tree/nvim-web-devicons' }
+			options = {
+				icons_enabled = false,
+				theme = 'gruvbox-material',
+				component_separators = '|',
+				section_separators = '',
+			},
 		},
-		config = function()
-			require('lualine').setup({
-				options = {
-					theme = 'catppuccin',
-				},
-			})
-		end
 	},
-}, {})
+
+})
