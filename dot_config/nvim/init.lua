@@ -160,6 +160,13 @@ require('lazy').setup({
 	{ 'lewis6991/gitsigns.nvim', opts = {} },
 
 	{
+		"smjonas/inc-rename.nvim",
+		config = function()
+			require("inc_rename").setup()
+		end,
+	},
+
+	{
 		"folke/trouble.nvim",
 		opts = {
 			{
