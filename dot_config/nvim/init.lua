@@ -27,6 +27,8 @@ vim.o.completeopt = 'menuone,noselect'
 vim.o.tabstop = 2
 vim.o.shiftwidth = 2
 
+vim.o.colorcolumn = '80'
+
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
 	vim.fn.system {
@@ -47,25 +49,21 @@ require('lazy').setup({
 	'machakann/vim-sandwich',
 	'lukas-reineke/indent-blankline.nvim',
 
-	{
-		'VonHeikemen/lsp-zero.nvim',
-		branch = 'v2.x',
-		dependencies = {
-			'neovim/nvim-lspconfig',
-			{
-				'williamboman/mason.nvim',
-				build = ":MasonUpdate"
-			},
-			'williamboman/mason-lspconfig.nvim',
-			'hrsh7th/nvim-cmp',
-			'hrsh7th/cmp-nvim-lsp',
-			'hrsh7th/cmp-nvim-lsp-signature-help',
-			'hrsh7th/cmp-path',
-			'hrsh7th/cmp-buffer',
-			"L3MON4D3/LuaSnip",
-			'simrat39/rust-tools.nvim'
-		}
-	},
+	{ 'VonHeikemen/lsp-zero.nvim', branch = 'v3.x' },
+
+	-- LSP Support
+	'neovim/nvim-lspconfig',
+	'williamboman/mason.nvim',
+	'williamboman/mason-lspconfig.nvim',
+
+	-- Autocompletion
+	'hrsh7th/nvim-cmp',
+	'hrsh7th/cmp-nvim-lsp',
+	'hrsh7th/cmp-nvim-lsp-signature-help',
+	'hrsh7th/cmp-path',
+	'hrsh7th/cmp-buffer',
+	"L3MON4D3/LuaSnip",
+	'simrat39/rust-tools.nvim',
 
 	{
 		"zbirenbaum/copilot.lua",
@@ -76,11 +74,10 @@ require('lazy').setup({
 			vim.g.copilot_filetypes = { VimspectorPrompt = false }
 		end,
 	},
+
 	{
 		"zbirenbaum/copilot-cmp",
-		config = function()
-			require("copilot_cmp").setup()
-		end
+		opts = {}
 	},
 
 	{
@@ -88,6 +85,11 @@ require('lazy').setup({
 		tag = "legacy",
 		event = "LspAttach",
 		opts = {}
+	},
+
+	{
+		"SmiteshP/nvim-navic",
+		dependencies = { "neovim/nvim-lspconfig" }
 	},
 
 	{
@@ -142,8 +144,8 @@ require('lazy').setup({
 		opts = {}
 	},
 
-	{ 'numToStr/Comment.nvim',   opts = {} },
-	{ 'lewis6991/gitsigns.nvim', opts = {} },
+	{ 'numToStr/Comment.nvim',     opts = {} },
+	{ 'lewis6991/gitsigns.nvim',   opts = {} },
 
 	{
 		"smjonas/inc-rename.nvim",
@@ -152,24 +154,7 @@ require('lazy').setup({
 		end,
 	},
 
-	{
-		"folke/trouble.nvim",
-		opts = {
-			{
-				icons = false,
-				fold_open = "v",
-				fold_closed = ">",
-				indent_lines = false,
-				signs = {
-					error = "error",
-					warning = "warn",
-					hint = "hint",
-					information = "info"
-				},
-				use_diagnostic_signs = true
-			}
-		},
-	},
+	{ "folke/trouble.nvim" },
 
 	{
 		'nvim-lualine/lualine.nvim',
