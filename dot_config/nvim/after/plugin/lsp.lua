@@ -4,11 +4,7 @@ lsp.preset("recommended")
 lsp.nvim_workspace()
 lsp.ensure_installed({
 	'rust_analyzer',
-	'terraformls',
 	'tsserver',
-	'clangd',
-	'svelte',
-	'eslint'
 })
 local rust_lsp = lsp.build_options('rust_analyzer', {})
 
@@ -24,7 +20,7 @@ lsp.on_attach(function(_, bufnr)
 	end, { expr = true })
 end)
 
-lsp.setup_servers({ 'tsserver', 'svelte', 'eslint', 'clangd', 'rust_analyzer', 'terraformls' })
+lsp.setup_servers({ 'tsserver', 'rust_analyzer' })
 lsp.setup()
 
 vim.diagnostic.config({
@@ -32,16 +28,6 @@ vim.diagnostic.config({
 })
 
 require('rust-tools').setup({ server = rust_lsp })
-
--- Run gofmt + goimport on save
-local format_sync_grp = vim.api.nvim_create_augroup("GoImport", {})
-vim.api.nvim_create_autocmd("BufWritePre", {
-	pattern = "*.go",
-	callback = function()
-		require('go.format').goimport()
-	end,
-	group = format_sync_grp,
-})
 
 local cmp = require('cmp')
 
