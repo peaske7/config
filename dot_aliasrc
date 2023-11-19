@@ -1,0 +1,116 @@
+# ----------------------------
+# functions
+# ----------------------------
+function kp() {
+	port_to_kill="$@"
+	echo $port_to_kill
+	kill -9 $(lsof -ti:"$port_to_kill")
+	port_to_kill="" 
+}
+
+function mkd() {
+	mkdir "$@" && z "$@"
+}
+
+function git_current_branch() {
+	echo $(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+}
+
+function git_set_default_branch() {
+	git remote set-head origin -a
+}
+
+function git_default_branch() {
+	echo $(git rev-parse --abbrev-ref origin/HEAD | cut -c8-)
+}
+
+function grename() {
+	# try to rename branch locally
+	if [[ -z "$1" && -z "$2" ]]; then
+		echo "Usage: $0 old_branch new_branch"
+		return 1
+	elif [[ -z "$2" ]]; then
+		echo "Renaming $(git_current_branch) to $1"
+		git branch -m "$(git_current_branch)" "$1"
+	else 
+		echo "Renaming $1 to $2"
+		git branch -m "$1" "$2"
+	fi
+
+	# check if branch in remote origin
+	if git config --get branch.$(git_current_branch).remote; then
+		# rename branch in origin remote
+		if git push origin :"$1"; then
+			git push --set-upstream origin "$2"
+		fi
+	fi
+}
+
+function gdnolock() {
+	git diff "$@" ":(exclude)**/package-lock.json" ":(exclude)**/pnpm-lock.yaml" ":(exclude)**/*.lock"
+}
+
+function gddnolock() {
+	git diff "$(git_default_branch)" "$@" ":(exclude)package-lock.json" ":(exclude)pnpm-lock.yaml" ":(exclude)*.lock"
+}
+
+# ----------------------------
+# aliases
+# ----------------------------
+alias c=clear
+alias e="${EDITOR} ." # [E]dit
+
+# chezmoi
+alias ch="chezmoi"
+alias che="chezmoi edit"
+alias cha="chezmoi apply -v"
+alias chu="chezmoi update -v"
+alias chc="chezmoi cd"
+alias chez="che ~/.zshrc" # [CH]ezmoi [E]dit [Z]shrc
+alias chen="che ~/.config/nvim" # [CH]ezmoi [E]dit [N]vim
+alias chep="che ~/.config/nixpkgs" # [CH]ezmoi [E]dit [P]kgs
+
+# docker
+alias dcu='docker compose up' # [D]ocker [C]ompose [U]p
+alias dcbu='docker compose build && docker compose up' # [D]ocker [C]ompose [B]uild and [U]p
+alias dsa='docker stop "$(docker ps -aq)"' # [D]ocker [S]top [A]ll
+alias dra='docker rm "$(docker ps -aq)"' # [D]ocker [R]emove [A]ll
+
+# git
+alias gm="git merge"
+alias gss="git status --short"
+alias gaa="git add --all"
+alias gcam="git commit -a -m"
+alias gbD="git branch -D"
+alias gsd='"$(git_set_default_branch)"'
+
+alias gc!="git commit -v --ammend"
+alias gco="git checkout"
+alias gcb="git checkout -b"
+alias gci='git checkout "$(git branch -a | fzf | xargs)"'
+alias gcd='git checkout "$(git_default_branch)"'
+
+alias gd="git diff"
+alias gdd='gd "$(git_default_branch)"' # [G]it [D]iff [D]efault
+alias gdds='gd "$(git_default_branch)" --stat' # [G]it [D]iff [D]efault [S]tats
+alias gdi='gd "$(git branch -a | fzf | xargs)"' # [G]it [D]iff [I]nteractive
+
+alias gl="git pull"
+alias gp="git push"
+alias gpsup='git push -u origin "$(git_current_branch)"'
+alias glg='git log'
+alias glgg="git log --graph --decorate --all"
+alias grbi="git rebase -i --autosquash"
+alias grbc="git rebase --continue"
+alias gafr="gaa && git commit --fixup HEAD && grbi HEAD~2" # [G]it [A]dd all [F]ixup [R]ebase
+alias grh="git reset --hard"
+alias gsta="git stash push"
+alias gstc="git stash clear"
+alias gstaa="git stash apply"
+alias gf='git fetch --all'
+alias gmtl='git mergetool --no-prompt --tool=nvimdiff2'
+
+# tmux 
+alias ta='tmux attach -t' # [T]mux [A]ttach
+alias tns='tmux new -s' # [T]mux [N]ew [S]ession
+
