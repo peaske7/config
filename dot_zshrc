@@ -71,81 +71,9 @@ zinit ice depth=1
 zinit light jeffreytse/zsh-vi-mode
 ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
 
-# starship
-zinit ice as"command" from"gh-r" \
-	atclone"./starship init zsh > init.zsh; ./starship completions zsh > _starship" \
-        atpull"%atclone" src"init.zsh"
-zinit light starship/starship
-
-# zoxide
-zinit ice lucid wait"0a" from="gh-r" as="program" atload'eval "$(zoxide init zsh)"'
-zinit light ajeetdsouza/zoxide
-
 # ----------------------------
 # functions and aliases
 # ----------------------------
 if [[ -r ~/.aliasrc ]]; then
 	. ~/.aliasrc
-fi
-
-# ----------------------------
-# configs for native deps
-# ----------------------------
-# openssl
-BREW_PATH="opt/homebrew/opt"
-export PATH="/$BREW_PATH/cyrus-sasl@2.1.27/sbin:$PATH"
-export PATH="/$BREW_PATH/openssl@1.1/bin:$PATH"
-export LDFLAGS="-L/$BREW_PATH/openssl@1.1/lib/ -L/$BREW_PATH/cyrus-sasl/lib"
-export CPPFLAGS="-I/$BREW_PATH/openssl@1.1/include -I/$BREW_PATH/cyrus-sasl/include"
-export PKG_CONFIG_PATH="/$BREW_PATH/cyrus-sasl/lib/pkgconfig"
-
-# nvm 
-export NVM_DIR="$HOME/.nvm"
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-
-# pnpm
-export PNPM_HOME="/$HOME/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-
-# rust
-export PATH="$HOME/.cargo/bin:$PATH"
-export PATH="$HOME/.cargo/env:$PATH"
-
-# ruby
-export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
-eval "$(rbenv init -)"
-
-# java
-export ANDROID_HOME=$HOME/Library/Android/sdk
-export ANDROID_SDK=$ANDROID_HOME
-export ANDROID_NDK_HOME="/opt/homebrew/share/android-ndk"
-export PATH=$PATH:$ANDROID_HOME/emulator
-export PATH=$PATH:$ANDROID_HOME/tools
-export PATH=$PATH:$ANDROID_HOME/tools/bin
-export PATH=$PATH:$ANDROID_HOME/platform-tools
-export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
-export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
-export PATH="/opt/homebrew/opt/cyrus-sasl/sbin:$PATH"
-
-# lua
-export PATH=$PATH:$HOME/.config/lsp/lua-language-server/bin
-
-# gpg key tool
-export GPG_TTY=$(tty)
-
-# support for Google Cloud SDK
-if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
-if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
-
-# try to source nix 
-if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix.sh" ]; then 
-    source "/nix/var/nix/profiles/default/etc/profile.d/nix.sh"
-fi
-if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then 
-    source "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
 fi
