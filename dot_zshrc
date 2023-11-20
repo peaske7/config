@@ -16,9 +16,7 @@ autoload -Uz _zinit
 # Load a few important annexes, without Turbo
 zinit light-mode for \
 	zdharma-continuum/zinit-annex-as-monitor \
-	zdharma-continuum/zinit-annex-bin-gem-node \
 	zdharma-continuum/zinit-annex-patch-dl \
-	zdharma-continuum/zinit-annex-rust \
 	zdharma-continuum/fast-syntax-highlighting \
 	zsh-users/zsh-autosuggestions \
 	zsh-users/zsh-completions \
@@ -57,13 +55,6 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # case insensitive tab
 # ----------------------------
 # Zinit plugins
 # ----------------------------
-# mcfly
-zinit ice lucid wait"0a" from"gh-r" as"program" atload'eval "$(mcfly init zsh)"'
-zinit light cantino/mcfly
-export MCFLY_FUZZY=2 # Allow fuzzy matching 
-export MCFLY_KEY_SCHEME=vim # Change Mcfly keymap to vim
-export MCFLY_RESULTS=50
-
 # terminal with vim keybindings
 # we use zsh-vi-mode instead of OMZP::vi-mode because the '^R' keybindings 
 # overlaps with mcfly and breaks one or the other.
