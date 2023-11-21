@@ -45,9 +45,15 @@ require('mason-lspconfig').setup({
 				}
 			})
 		end,
-
 	}
 })
+
+local null_ls = require 'null-ls'
+null_ls.setup()
+require('mason-null-ls').setup({
+	handlers = {},
+})
+
 
 vim.diagnostic.config({
 	virtual_text = true

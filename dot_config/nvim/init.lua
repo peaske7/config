@@ -55,6 +55,7 @@ require('lazy').setup({
 	'neovim/nvim-lspconfig',
 	'williamboman/mason.nvim',
 	'williamboman/mason-lspconfig.nvim',
+	'nvimtools/none-ls.nvim',
 
 	-- Autocompletion
 	'hrsh7th/nvim-cmp',
@@ -64,6 +65,12 @@ require('lazy').setup({
 	'hrsh7th/cmp-buffer',
 	"L3MON4D3/LuaSnip",
 	'simrat39/rust-tools.nvim',
+
+	{
+		"jay-babu/mason-null-ls.nvim",
+		event = { "BufReadPre", "BufNewFile" },
+		opts = {}
+	},
 
 	{
 		"zbirenbaum/copilot.lua",
