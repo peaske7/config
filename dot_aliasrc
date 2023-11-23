@@ -114,3 +114,5 @@ alias gmtl='git mergetool --no-prompt --tool=nvimdiff2'
 alias ta='tmux attach -t' # [T]mux [A]ttach
 alias tns='tmux new -s' # [T]mux [N]ew [S]ession
 
+# ssh
+alias es='nvim ~/.ssh/config' # [E]dit [S]sh configs
