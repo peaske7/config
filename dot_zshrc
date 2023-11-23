@@ -68,3 +68,11 @@ ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
 if [[ -r ~/.aliasrc ]]; then
 	. ~/.aliasrc
 fi
+
+# ----------------------------
+# environment
+# ----------------------------
+# sets up asdf so we can use alp
+. "$HOME/.asdf/asdf.sh"
+fpath=(${ASDF_DIR}/completions $fpath) # append completions to fpath
+autoload -Uz compinit && compinit # initialise completions with ZSH's compinit
