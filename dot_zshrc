@@ -55,6 +55,12 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # case insensitive tab
 # ----------------------------
 # Zinit plugins
 # ----------------------------
+# starship
+zinit ice as"command" from"gh-r" \
+	atclone"./starship init zsh > init.zsh; ./starship completions zsh > _starship" \
+        atpull"%atclone" src"init.zsh"
+zinit light starship/starship
+
 # terminal with vim keybindings
 # we use zsh-vi-mode instead of OMZP::vi-mode because the '^R' keybindings 
 # overlaps with mcfly and breaks one or the other.
