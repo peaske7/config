@@ -1,5 +1,5 @@
 require('nvim-treesitter.configs').setup {
-	ensure_installed = { "rust", "lua", "javascript", "vim", "typescript" },
+	ensure_installed = { "go" },
 	auto_install = true,
 	autotag = {
 		enable = true

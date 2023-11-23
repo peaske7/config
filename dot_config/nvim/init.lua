@@ -64,7 +64,6 @@ require('lazy').setup({
 	'hrsh7th/cmp-path',
 	'hrsh7th/cmp-buffer',
 	"L3MON4D3/LuaSnip",
-	'simrat39/rust-tools.nvim',
 
 	{
 		"jay-babu/mason-null-ls.nvim",
@@ -73,30 +72,10 @@ require('lazy').setup({
 	},
 
 	{
-		"zbirenbaum/copilot.lua",
-		cmd = "Copilot",
-		event = "InsertEnter",
-		config = function()
-			require("copilot").setup({})
-			vim.g.copilot_filetypes = { VimspectorPrompt = false }
-		end,
-	},
-
-	{
-		"zbirenbaum/copilot-cmp",
-		opts = {}
-	},
-
-	{
 		"j-hui/fidget.nvim",
 		tag = "legacy",
 		event = "LspAttach",
 		opts = {}
-	},
-
-	{
-		"SmiteshP/nvim-navic",
-		dependencies = { "neovim/nvim-lspconfig" }
 	},
 
 	{
@@ -119,14 +98,6 @@ require('lazy').setup({
 		},
 		config = function()
 			pcall(require('nvim-treesitter.install').update { with_sync = true })
-		end,
-	},
-
-	{
-		'saecki/crates.nvim',
-		dependencies = { 'nvim-lua/plenary.nvim' },
-		config = function()
-			require('crates').setup()
 		end,
 	},
 
@@ -174,5 +145,4 @@ require('lazy').setup({
 			},
 		},
 	},
-
 })

@@ -25,26 +25,8 @@ end)
 
 require('mason').setup({})
 require('mason-lspconfig').setup({
-	ensure_installed = { 'rust_analyzer' },
 	handlers = {
 		lsp.default_setup,
-		lua_ls = function()
-			local lua_opts = lsp.nvim_lua_ls()
-			require('lspconfig').lua_ls.setup(lua_opts)
-		end,
-		rust_analyzer = function()
-			local rust_tools = require('rust-tools')
-			rust_tools.setup({
-				server = {
-					on_attach = function(_, bufnr)
-						vim.keymap.set('n', '<leader>ca',
-							rust_tools.hover_actions.hover_actions,
-							{ buffer = bufnr }
-						)
-					end
-				}
-			})
-		end,
 	}
 })
 
@@ -71,12 +53,10 @@ cmp.event:on(
 cmp.setup({
 	formatting = lsp.cmp_format(),
 	sources = {
-		{ name = "copilot" },
 		{ name = 'nvim_lsp' },
 		{ name = "nvim_lsp_signature_help" },
 		{ name = 'buffer' },
 		{ name = 'path' },
-		{ name = 'crates' },
 		{ name = 'luasnip' }
 	},
 	mapping = {
