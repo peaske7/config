@@ -1,7 +1,19 @@
 set number
-set smartindent
-set mouse=a
+
+set mouse=a " enable mouse mode 
+
 set clipboard=unnamed,autoselect
+
+set autoindent " indent when creating newline
+set smartindent " add an indent level inside braces
+
+set expandtab " default to spaces instead of tabs
+set shiftwidth=2 " softtabs are 2 spaces for expandtab
+set softtabstop=-2
+set tabstop=4
+set noshiftround
+set smarttab
+set backspace=indent,eol,start " bs anything
 
 syntax on
 
