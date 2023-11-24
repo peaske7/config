@@ -2,6 +2,14 @@
 pcall(require('telescope').load_extension, 'fzf')
 local telescope_builtin = require('telescope.builtin')
 
+local opts = { noremap = true }
+vim.keymap.set('n', '<leader>sf', telescope_builtin.find_files, opts)
+vim.keymap.set('n', '<leader>sg', telescope_builtin.live_grep, opts)
+vim.keymap.set('n', '<leader>sd', telescope_builtin.diagnostics, opts)
+vim.keymap.set('n', '<leader>sb', telescope_builtin.buffers, opts)
+vim.keymap.set('n', '<leader>sr', telescope_builtin.resume, opts)
+vim.keymap.set('n', '<leader>se', "<Cmd>Telescope frecency workspace=CWD<CR>", opts)
+
 require('telescope').setup {
   pickers = {
     find_files = {
@@ -22,11 +30,3 @@ require('telescope').setup {
     }
   },
 }
-
-local opts = { noremap = true }
-vim.keymap.set('n', '<leader>sf', telescope_builtin.find_files, opts)
-vim.keymap.set('n', '<leader>sg', telescope_builtin.live_grep, opts)
-vim.keymap.set('n', '<leader>sd', telescope_builtin.diagnostics, opts)
-vim.keymap.set('n', '<leader>sb', telescope_builtin.buffers, opts)
-vim.keymap.set('n', '<leader>sr', telescope_builtin.resume, opts)
-vim.keymap.set('n', '<leader>se', "<Cmd>Telescope frecency workspace=CWD<CR>", opts)

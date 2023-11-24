@@ -46,12 +46,12 @@ function grename() {
 	fi
 }
 
-function gdnolock() {
-	git diff "$@" ":(exclude)**/package-lock.json" ":(exclude)**/pnpm-lock.yaml" ":(exclude)**/*.lock"
+function gdnl() {
+	git diff -- ":(exclude)package-lock.json" ":(exclude)pnpm-lock.yaml" ":(exclude)*.lock"
 }
 
-function gddnolock() {
-	git diff "$(git_default_branch)" "$@" ":(exclude)package-lock.json" ":(exclude)pnpm-lock.yaml" ":(exclude)*.lock"
+function gddnl() {
+	git diff "$(git_default_branch)" "$@" -- ":(exclude)package-lock.json" ":(exclude)pnpm-lock.yaml" ":(exclude)*.lock"
 }
 
 # ----------------------------
