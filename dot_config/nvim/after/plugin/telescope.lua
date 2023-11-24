@@ -1,24 +1,26 @@
+-- Enable fzf native
+pcall(require('telescope').load_extension, 'fzf')
 local telescope_builtin = require('telescope.builtin')
 
 require('telescope').setup {
-	pickers = {
-		find_files = {
-			find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/*" },
-		},
-	},
-	extensions = {
-		frecency = {
-			show_scores = false,
-			show_unindexed = true,
-			ignore_patterns = { "*.git/*", "*/tmp/*" },
-			disable_devicons = false,
-			workspaces = {
-				["conf"]      = "~/.config",
-				["data"]      = "~/.local/share",
-				["developer"] = "~/Developer",
-			}
-		}
-	},
+  pickers = {
+    find_files = {
+      find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/*" },
+    },
+  },
+  extensions = {
+    frecency = {
+      show_scores = false,
+      show_unindexed = true,
+      ignore_patterns = { "*.git/*", "*/tmp/*" },
+      disable_devicons = false,
+      workspaces = {
+        ["conf"]      = "~/.config",
+        ["data"]      = "~/.local/share",
+        ["developer"] = "~/Developer",
+      }
+    }
+  },
 }
 
 local opts = { noremap = true }

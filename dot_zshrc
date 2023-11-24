@@ -1,3 +1,4 @@
+# zmodload zsh/zprof
 # ----------------------------
 # Added by Zinit's installer
 # ----------------------------
@@ -13,23 +14,14 @@ source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
 autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
 
-# Load a few important annexes, without Turbo
-zinit light-mode for \
-	zdharma-continuum/zinit-annex-as-monitor \
-	zdharma-continuum/zinit-annex-bin-gem-node \
-	zdharma-continuum/zinit-annex-patch-dl \
-	zdharma-continuum/zinit-annex-rust \
-	zdharma-continuum/fast-syntax-highlighting \
-	zsh-users/zsh-autosuggestions \
-	zsh-users/zsh-completions \
-	hlissner/zsh-autopair
-
 # ----------------------------
 # standard
 # ----------------------------
 HISTFILE=~/.zsh_history
 export HISTSIZE=1000
-export SAVEHIST=10000
+export SAVEHIST=1000
+export SHELL_SESSIONS_DISABLE=1
+setopt SHARE_HISTORY
 
 # Preferred editor for local and remote sessions
 if [[ -n $SSH_CONNECTION ]]; then
@@ -57,12 +49,20 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # case insensitive tab
 # ----------------------------
 # Zinit plugins
 # ----------------------------
+# Load a few important annexes, without Turbo
+zinit light-mode for \
+	zdharma-continuum/fast-syntax-highlighting \
+	zsh-users/zsh-autosuggestions \
+	zsh-users/zsh-completions \
+	hlissner/zsh-autopair
+
 # mcfly
 zinit ice lucid wait"0a" from"gh-r" as"program" atload'eval "$(mcfly init zsh)"'
 zinit light cantino/mcfly
 export MCFLY_FUZZY=2 # Allow fuzzy matching 
 export MCFLY_KEY_SCHEME=vim # Change Mcfly keymap to vim
 export MCFLY_RESULTS=50
+export MCFLY_DISABLE_MENU=TRUE
 
 # terminal with vim keybindings
 # we use zsh-vi-mode instead of OMZP::vi-mode because the '^R' keybindings 
@@ -100,10 +100,24 @@ export CPPFLAGS="-I/$BREW_PATH/openssl@1.1/include -I/$BREW_PATH/cyrus-sasl/incl
 export PKG_CONFIG_PATH="/$BREW_PATH/cyrus-sasl/lib/pkgconfig"
 
 # nvm 
-export NVM_DIR="$HOME/.nvm"
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+# https://gist.github.com/grrowl/cec975ecfe690d13918f40ff5827fecb
+function lazy_nvm {
+  unset -f nvm
+  unset -f npm
+  unset -f node
+  unset -f npx
+
+  if [ -d "${HOME}/.nvm" ]; then
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+    [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+  fi
+}
+function nvm { lazy_nvm; nvm "$@"; }
+function npm { lazy_nvm; npm "$@"; }
+function node { lazy_nvm; node "$@"; }
+function npx { lazy_nvm; npx "$@"; }
 
 # pnpm
 export PNPM_HOME="/$HOME/Library/pnpm"
@@ -138,9 +152,18 @@ export PATH=$PATH:$HOME/.config/lsp/lua-language-server/bin
 # gpg key tool
 export GPG_TTY=$(tty)
 
-# support for Google Cloud SDK
-if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
-if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
+# lazy Google Cloud SDK
+function lazy_gcloud {
+  unset -f gcloud
+
+  if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then 
+    . "$HOME/google-cloud-sdk/path.zsh.inc"; 
+  fi
+  if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then 
+    . "$HOME/google-cloud-sdk/completion.zsh.inc"; 
+  fi
+}
+function gcloud { lazy_gcloud; gcloud "$@"; }
 
 # try to source nix 
 if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix.sh" ]; then 
@@ -149,3 +172,4 @@ fi
 if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then 
     source "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
 fi
+# zprof
