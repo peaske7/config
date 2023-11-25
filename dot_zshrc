@@ -1,4 +1,4 @@
-# zmodload zsh/zprof
+zmodload zsh/zprof
 # ----------------------------
 # Added by Zinit's installer
 # ----------------------------
@@ -73,7 +73,7 @@ zinit light jeffreytse/zsh-vi-mode
 ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
 
 # starship
-zinit ice as"command" from"gh-r" \
+zinit ice lucid wait as"command" from"gh-r" \
 	atclone"./starship init zsh > init.zsh; ./starship completions zsh > _starship" \
         atpull"%atclone" src"init.zsh"
 zinit light starship/starship
@@ -173,4 +173,4 @@ fi
 if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then 
     source "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
 fi
-# zprof
+zprof

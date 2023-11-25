@@ -104,6 +104,7 @@ require('lazy').setup({
 
       {
         "j-hui/fidget.nvim",
+        event = "BufReadPre",
         opts = {}
       },
     }
@@ -111,6 +112,7 @@ require('lazy').setup({
 
   {
     'hrsh7th/nvim-cmp',
+    event = "InsertEnter",
     dependencies = {
       'L3MON4D3/LuaSnip',
       'saadparwaiz1/cmp_luasnip',
@@ -133,6 +135,7 @@ require('lazy').setup({
 
   {
     "zbirenbaum/copilot-cmp",
+    event = "InsertEnter",
     config = function()
       require("copilot").setup({
         suggestion = { enabled = false },
@@ -150,7 +153,7 @@ require('lazy').setup({
   {
     'nvim-telescope/telescope.nvim',
     branch = '0.1.x',
-    lazy = true,
+    event = "InsertEnter",
     dependencies = {
       'nvim-lua/plenary.nvim',
       {
@@ -166,7 +169,7 @@ require('lazy').setup({
   {
     -- Adds latest used file search for telescope
     "nvim-telescope/telescope-frecency.nvim",
-    lazy = true,
+    event = "InsertEnter",
     config = function()
       require("telescope").load_extension "frecency"
     end,
@@ -174,6 +177,7 @@ require('lazy').setup({
 
   {
     'nvim-treesitter/nvim-treesitter',
+    event = "InsertEnter",
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
     },
@@ -214,24 +218,20 @@ require('lazy').setup({
 
   {
     'numToStr/Comment.nvim',
+    event = "InsertEnter",
     opts = {}
   },
 
   {
     'lewis6991/gitsigns.nvim',
-    on_attach = function(bufnr)
-      -- shows preview hunk
-      vim.keymap.set('n', '<leader>hp', require('gitsigns').preview_hunk, {
-        buffer = bufnr
-      })
-    end,
+    event = "BufReadPre",
     opts = {}
   },
 
   {
     -- Adds pretty animation when renaming variables
     "smjonas/inc-rename.nvim",
-    lazy = true,
+    event = "InsertEnter",
     config = function()
       require("inc_rename").setup()
     end,
@@ -246,6 +246,7 @@ require('lazy').setup({
 
   {
     'nvim-lualine/lualine.nvim',
+    lazy = true,
     opts = {
       options = {
         icons_enabled = false,
