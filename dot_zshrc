@@ -61,6 +61,10 @@ zinit ice as"command" from"gh-r" \
         atpull"%atclone" src"init.zsh"
 zinit light starship/starship
 
+# i tried making it work without it, but I just can't 
+zinit ice lucid wait"0a" from"gh-r" as"program" atload'eval "$(mcfly init zsh)"'
+zinit light cantino/mcfly
+
 # terminal with vim keybindings
 # we use zsh-vi-mode instead of OMZP::vi-mode because the '^R' keybindings 
 # overlaps with mcfly and breaks one or the other.
