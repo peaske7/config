@@ -126,7 +126,6 @@ require('lazy').setup({
   {
     "zbirenbaum/copilot.lua",
     cmd = "Copilot",
-    event = "InsertEnter",
     lazy = true,
     config = function()
       require("copilot").setup({})
@@ -135,7 +134,7 @@ require('lazy').setup({
 
   {
     "zbirenbaum/copilot-cmp",
-    event = "InsertEnter",
+    lazy = true,
     config = function()
       require("copilot").setup({
         suggestion = { enabled = false },
@@ -218,7 +217,6 @@ require('lazy').setup({
 
   {
     'numToStr/Comment.nvim',
-    event = "InsertEnter",
     opts = {}
   },
 

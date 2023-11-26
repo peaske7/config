@@ -1,4 +1,4 @@
-zmodload zsh/zprof
+# zmodload zsh/zprof
 # ----------------------------
 # Added by Zinit's installer
 # ----------------------------
@@ -23,20 +23,13 @@ export SAVEHIST=1000
 export SHELL_SESSIONS_DISABLE=1
 setopt SHARE_HISTORY
 
-# Preferred editor for local and remote sessions
-if [[ -n $SSH_CONNECTION ]]; then
-  export EDITOR='vim'
-else
-  export EDITOR='nvim'
-fi
-
-setopt auto_cd			# prefixes directory changes with `cd` 
-setopt auto_list		# automatically list choices
-setopt auto_menu		# show completion menu
-setopt auto_param_slash		# if completed param is dir, add slash at end
-setopt menu_complete		# don't autoselect first completion entry
-setopt extended_history         # record timestamp of command in HISTFILE
-setopt hist_expire_dups_first   # delete duplicates first when HISTFILE size exceeds HISTSIZE
+setopt auto_cd # prefixes directory changes with `cd` 
+setopt auto_list # automatically list choices
+setopt auto_menu # show completion menu
+setopt auto_param_slash	# if completed param is dir, add slash at end
+setopt menu_complete # don't autoselect first completion entry
+setopt extended_history # record timestamp of command in HISTFILE
+setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
 
 # allow zsh to take flight (enable completions)
 autoload -Uz compinit
@@ -49,6 +42,10 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # case insensitive tab
 # ----------------------------
 # Zinit plugins
 # ----------------------------
+# evalcache
+zinit ice lucid wait"0a"
+zinit load mroth/evalcache
+
 # Load a few important annexes, without Turbo
 zinit wait lucid blockf light-mode for \
     @'zsh-users/zsh-autosuggestions' \
@@ -56,9 +53,8 @@ zinit wait lucid blockf light-mode for \
     @'zdharma-continuum/fast-syntax-highlighting' \
     @'hlissner/zsh-autopair'
 
-
 # mcfly
-zinit ice lucid wait"0a" from"gh-r" as"program" atload'eval "$(mcfly init zsh)"'
+zinit ice lucid wait"0a" from"gh-r" as"program" atload'_evalcache mcfly init zsh'
 zinit light cantino/mcfly
 export MCFLY_FUZZY=2 # Allow fuzzy matching 
 export MCFLY_KEY_SCHEME=vim # Change Mcfly keymap to vim
@@ -79,7 +75,7 @@ zinit ice lucid wait as"command" from"gh-r" \
 zinit light starship/starship
 
 # zoxide
-zinit ice lucid wait"0a" from="gh-r" as="program" atload'eval "$(zoxide init zsh)"'
+zinit ice lucid wait"0a" from="gh-r" as="program" atload'_evalcache zoxide init zsh'
 zinit light ajeetdsouza/zoxide
 
 # ----------------------------
@@ -88,6 +84,24 @@ zinit light ajeetdsouza/zoxide
 if [[ -r ~/.aliasrc ]]; then
 	. ~/.aliasrc
 fi
+
+# ----------------------------
+# speed hacks
+# ----------------------------
+# automatically compiles zshrc for faster startup time
+# https://zenn.dev/fuzmare/articles/zsh-source-zcompile-all
+function source {
+  ensure_zcompiled $1
+  builtin source $1
+}
+function ensure_zcompiled {
+  local compiled="$1.zwc"
+  if [[ ! -r "$compiled" || "$1" -nt "$compiled" ]]; then
+    echo "Compiling $1"
+    zcompile $1
+  fi
+}
+ensure_zcompiled ~/.zshrc
 
 # ----------------------------
 # configs for native deps
@@ -131,10 +145,6 @@ esac
 export PATH="$HOME/.cargo/bin:$PATH"
 export PATH="$HOME/.cargo/env:$PATH"
 
-# ruby
-export RUBY_CONFIGURE_OPTS="--with-openssl-dir=$(brew --prefix openssl@1.1)"
-eval "$(rbenv init -)"
-
 # java
 export ANDROID_HOME=$HOME/Library/Android/sdk
 export ANDROID_SDK=$ANDROID_HOME
@@ -167,10 +177,10 @@ function lazy_gcloud {
 function gcloud { lazy_gcloud; gcloud "$@"; }
 
 # try to source nix 
-if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix.sh" ]; then 
-    source "/nix/var/nix/profiles/default/etc/profile.d/nix.sh"
-fi
-if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then 
-    source "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
-fi
-zprof
+# if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix.sh" ]; then 
+#     source "/nix/var/nix/profiles/default/etc/profile.d/nix.sh"
+# fi
+# if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then 
+#     source "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
+# fi
+# zprof
