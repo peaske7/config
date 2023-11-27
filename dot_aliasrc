@@ -81,14 +81,13 @@ alias gm="git merge"
 alias gss="git status --short"
 alias gaa="git add --all"
 alias gcam="git commit -a -m"
-alias gbD="git branch -D"
+alias gbd="git branch -D"
 alias gsd='"$(git_set_default_branch)"'
 
-alias gc!="git commit -v --ammend"
 alias gco="git checkout"
-alias gcb="git checkout -b"
-alias gci='git checkout "$(git branch -a | fzf | xargs)"'
-alias gcd='git checkout "$(git_default_branch)"'
+alias gcb="git checkout -b" # creates branch
+alias gci='git checkout "$(git branch -a | fzf | xargs)"' # [G]it [C]heckoout [I]nteractive
+alias gcd='git checkout "$(git_default_branch)"' # [G]it [C]heckout [D]efault
 
 alias gd="git diff"
 alias gdd='gd "$(git_default_branch)"' # [G]it [D]iff [D]efault
@@ -103,10 +102,10 @@ alias glgg="git log --graph --decorate --all"
 alias grbi="git rebase -i --autosquash"
 alias grbc="git rebase --continue"
 alias gafr="gaa && git commit --fixup HEAD && grbi HEAD~2" # [G]it [A]dd all [F]ixup [R]ebase
-alias grh="git reset --hard"
-alias gsta="git stash push"
-alias gstc="git stash clear"
-alias gstaa="git stash apply"
+alias grh="git reset --hard" # [G]it [R]eset [H]ard
+alias gsta="git stash push" # [G]it [STA]sh
+alias gstc="git stash clear" # [G]it [ST]ash [C]lear
+alias gstaa="git stash apply" # [G]it [STA]sh [A]pply
 alias gf='git fetch --all'
 alias gmtl='git mergetool --no-prompt --tool=nvimdiff2'
 
