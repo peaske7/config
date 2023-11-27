@@ -17,7 +17,8 @@ autoload -Uz _zinit
 # ----------------------------
 # standard
 # ----------------------------
-HISTFILE=~/.zsh_history
+export ZSHRC=~/.zshrc
+export HISTFILE=~/.zsh_history
 export HISTSIZE=1000
 export SAVEHIST=1000
 export SHELL_SESSIONS_DISABLE=1
@@ -42,41 +43,40 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # case insensitive tab
 # ----------------------------
 # Zinit plugins
 # ----------------------------
-# Load a few important annexes, without Turbo
 zinit wait lucid blockf light-mode for \
   @'zsh-users/zsh-autosuggestions' \
   @'zsh-users/zsh-completions' \
+  @'zsh-users/zsh-history-substring-search' \
   @'zdharma-continuum/fast-syntax-highlighting' \
   @'hlissner/zsh-autopair'
 
 # mcfly
-zinit ice lucid wait"0a" from"gh-r" as"program" atload'eval "$(mcfly init zsh)"'
+zinit ice lucid wait"0a" depth"1" from"gh-r" as"program" atload'eval "$(mcfly init zsh)"'
 zinit light cantino/mcfly
 export MCFLY_FUZZY=2 # Allow fuzzy matching 
 export MCFLY_KEY_SCHEME=vim # Change Mcfly keymap to vim
 export MCFLY_RESULTS=50
 export MCFLY_DISABLE_MENU=TRUE
 
-# terminal with vim keybindings
 # we use zsh-vi-mode instead of OMZP::vi-mode because the '^R' keybindings 
 # overlaps with mcfly and breaks one or the other.
-zinit ice depth=1
+zinit ice depth"1" lucid
 zinit light jeffreytse/zsh-vi-mode
 ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
 
 # starship
-zinit ice lucid wait as"command" from"gh-r" \
+zinit ice lucid wait depth"1" as"command" from"gh-r" \
   atclone"./starship init zsh > init.zsh; ./starship completions zsh > _starship" \
   atpull"%atclone" src"init.zsh"
 zinit light starship/starship
 
 # zoxide
-zinit ice lucid wait"0a" from="gh-r" as="program" atload'eval "$(zoxide init zsh)"'
+zinit ice lucid wait"0a" depth"1" from="gh-r" as="program" atload'eval "$(zoxide init zsh)"'
 zinit light ajeetdsouza/zoxide
 
-# asdf
-zinit ice lucid wait 
-zinit light asdf-vm/asdf
+# ghq
+zinit ice lucid wait"1" depth"1" completions
+zinit light x-motemen/ghq
 
 # ----------------------------
 # functions and aliases
@@ -89,23 +89,39 @@ fi
 # speed hacks
 # ----------------------------
 # automatically compiles zshrc for faster startup time
-# https://zenn.dev/fuzmare/articles/zsh-source-zcompile-all
+# modified https://zenn.dev/fuzmare/articles/zsh-source-zcompile-all
 function source {
-  ensure_zcompiled $1
-  builtin source $1
+  if [[ $1 == $ZSHRC ]]; then
+    builtin source $1
+    ensure_zcompiled $1 $2
+  else
+    builtin source $1
+  fi
 }
+
 function ensure_zcompiled {
   local compiled="$1.zwc"
   if [[ ! -r "$compiled" || "$1" -nt "$compiled" ]]; then
-    echo "Compiling $1"
+    # show message if `--verbose` flag is set
+    if [[ $2 == "--verbose" ]]; then
+      echo "compiling $1"
+    fi
     zcompile $1
   fi
 }
+
 ensure_zcompiled ~/.zshrc
 
 # ----------------------------
 # configs for native deps
 # ----------------------------
+# Preferred editor for local and remote sessions
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR='vim'
+else
+  export EDITOR='nvim'
+fi
+
 # openssl
 BREW_PATH="opt/homebrew/opt"
 export PATH="/$BREW_PATH/cyrus-sasl@2.1.27/sbin:$PATH"
@@ -113,6 +129,26 @@ export PATH="/$BREW_PATH/openssl@1.1/bin:$PATH"
 export LDFLAGS="-L/$BREW_PATH/openssl@1.1/lib/ -L/$BREW_PATH/cyrus-sasl/lib"
 export CPPFLAGS="-I/$BREW_PATH/openssl@1.1/include -I/$BREW_PATH/cyrus-sasl/include"
 export PKG_CONFIG_PATH="/$BREW_PATH/cyrus-sasl/lib/pkgconfig"
+
+# nvm 
+# https://gist.github.com/grrowl/cec975ecfe690d13918f40ff5827fecb
+function lazy_nvm {
+  unset -f nvm
+  unset -f npm
+  unset -f node
+  unset -f npx
+
+  if [ -d "${HOME}/.nvm" ]; then
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+    [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+  fi
+}
+function nvm { lazy_nvm; nvm "$@"; }
+function npm { lazy_nvm; npm "$@"; }
+function node { lazy_nvm; node "$@"; }
+function npx { lazy_nvm; npx "$@"; }
 
 # pnpm
 export PNPM_HOME="/$HOME/Library/pnpm"
@@ -140,6 +176,9 @@ export PATH="/opt/homebrew/opt/cyrus-sasl/sbin:$PATH"
 # lua
 export PATH=$PATH:$HOME/.config/lsp/lua-language-server/bin
 
+# brew
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # gpg key tool
 export GPG_TTY=$(tty)
 
@@ -157,13 +196,13 @@ function lazy_gcloud {
 function gcloud { lazy_gcloud; gcloud "$@"; }
 
 # ghq
-export GHQ_ROOT="~/Developer"
+export GHQ_ROOT="Developer"
 
-# try to source nix 
-# if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix.sh" ]; then 
-#     source "/nix/var/nix/profiles/default/etc/profile.d/nix.sh"
-# fi
-# if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then 
-#     source "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
-# fi
+# source nix 
+if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix.sh" ]; then 
+    source "/nix/var/nix/profiles/default/etc/profile.d/nix.sh"
+fi
+if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then 
+    source "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
+fi
 # zprof
