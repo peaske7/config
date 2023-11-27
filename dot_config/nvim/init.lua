@@ -18,8 +18,8 @@ vim.o.smartcase = true
 vim.o.hlsearch = false
 
 -- Decrease update time
-vim.o.updatetime = 250
-vim.o.timeoutlen = 300
+vim.o.updatetime = 150
+vim.o.timeoutlen = 250
 
 vim.o.completeopt = 'menuone,noselect'
 
@@ -55,10 +55,6 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 
--- asbjornHaland; `y` makes sense now
-vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]])
-vim.keymap.set("n", "<leader>Y", [["+Y]])
-
 -- Highlight on yank
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
@@ -86,7 +82,6 @@ require('lazy').setup({
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
   'tpope/vim-vinegar',
-
   'machakann/vim-sandwich',
 
   {
@@ -240,18 +235,5 @@ require('lazy').setup({
     "folke/trouble.nvim",
     lazy = true,
     opts = {}
-  },
-
-  {
-    'nvim-lualine/lualine.nvim',
-    lazy = true,
-    opts = {
-      options = {
-        icons_enabled = false,
-        theme = 'gruvbox-material',
-        component_separators = '|',
-        section_separators = '',
-      },
-    },
   },
 })
