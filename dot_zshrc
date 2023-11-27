@@ -42,10 +42,6 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # case insensitive tab
 # ----------------------------
 # Zinit plugins
 # ----------------------------
-# evalcache
-zinit ice lucid wait"0a"
-zinit load mroth/evalcache
-
 # Load a few important annexes, without Turbo
 zinit wait lucid blockf light-mode for \
   @'zsh-users/zsh-autosuggestions' \
@@ -54,7 +50,7 @@ zinit wait lucid blockf light-mode for \
   @'hlissner/zsh-autopair'
 
 # mcfly
-zinit ice lucid wait"0a" from"gh-r" as"program" atload'_evalcache mcfly init zsh'
+zinit ice lucid wait"0a" from"gh-r" as"program" atload'eval "$(mcfly init zsh)"'
 zinit light cantino/mcfly
 export MCFLY_FUZZY=2 # Allow fuzzy matching 
 export MCFLY_KEY_SCHEME=vim # Change Mcfly keymap to vim
@@ -75,8 +71,12 @@ zinit ice lucid wait as"command" from"gh-r" \
 zinit light starship/starship
 
 # zoxide
-zinit ice lucid wait"0a" from="gh-r" as="program" atload'_evalcache zoxide init zsh'
+zinit ice lucid wait"0a" from="gh-r" as="program" atload'eval "$(zoxide init zsh)"'
 zinit light ajeetdsouza/zoxide
+
+# asdf
+zinit ice lucid wait 
+zinit light asdf-vm/asdf
 
 # ----------------------------
 # functions and aliases
@@ -113,26 +113,6 @@ export PATH="/$BREW_PATH/openssl@1.1/bin:$PATH"
 export LDFLAGS="-L/$BREW_PATH/openssl@1.1/lib/ -L/$BREW_PATH/cyrus-sasl/lib"
 export CPPFLAGS="-I/$BREW_PATH/openssl@1.1/include -I/$BREW_PATH/cyrus-sasl/include"
 export PKG_CONFIG_PATH="/$BREW_PATH/cyrus-sasl/lib/pkgconfig"
-
-# nvm 
-# https://gist.github.com/grrowl/cec975ecfe690d13918f40ff5827fecb
-function lazy_nvm {
-  unset -f nvm
-  unset -f npm
-  unset -f node
-  unset -f npx
-
-  if [ -d "${HOME}/.nvm" ]; then
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-    [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-  fi
-}
-function nvm { lazy_nvm; nvm "$@"; }
-function npm { lazy_nvm; npm "$@"; }
-function node { lazy_nvm; node "$@"; }
-function npx { lazy_nvm; npx "$@"; }
 
 # pnpm
 export PNPM_HOME="/$HOME/Library/pnpm"
@@ -175,6 +155,9 @@ function lazy_gcloud {
   fi
 }
 function gcloud { lazy_gcloud; gcloud "$@"; }
+
+# ghq
+export GHQ_ROOT="~/Developer"
 
 # try to source nix 
 # if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix.sh" ]; then 
