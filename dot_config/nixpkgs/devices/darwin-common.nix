@@ -18,6 +18,7 @@
     tmux
     kcat
 		llvm
+    sccache
   ];
 
   home.stateVersion = "23.11";
