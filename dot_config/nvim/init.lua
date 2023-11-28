@@ -65,6 +65,26 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   pattern = '*',
 })
 
+-- Open files at last seen position
+vim.api.nvim_create_autocmd("BufReadPost", {
+  callback = function()
+    local mark = vim.api.nvim_buf_get_mark(0, '"')
+    local lcount = vim.api.nvim_buf_line_count(0)
+    if mark[1] > 0 and mark[1] <= lcount then
+      pcall(vim.api.nvim_win_set_cursor, 0, mark)
+    end
+  end,
+})
+
+-- Fix svelte syntax highlighting issue with treesitter
+-- https://github.com/nvim-treesitter/nvim-treesitter/tree/582a92ee120532a603b75239f40cba06b9a5ec07#i-experience-weird-highlighting-issues-similar-to-78
+vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+  pattern = "*.svelte",
+  callback = function()
+    vim.cmd('write | edit | TSBufEnable highlight')
+  end
+})
+
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system {
@@ -235,6 +255,22 @@ require('lazy').setup({
     "folke/trouble.nvim",
     lazy = true,
     opts = {}
+  },
+
+  {
+    'shortcuts/no-neck-pain.nvim',
+    config = function()
+      require('no-neck-pain').setup({
+        buffers = {
+          wo = {
+            fillchars = "eob: ",
+          },
+        },
+      })
+      vim.keymap.set('n', '<leader>nn', "<Cmd>NoNeckPain<CR>", {
+        noremap = true
+      })
+    end
   },
 
   {
