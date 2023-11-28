@@ -18,10 +18,12 @@ require('telescope').setup {
   },
   extensions = {
     frecency = {
-      show_scores = false,
+      show_scores = true,
       show_unindexed = true,
       ignore_patterns = { "*.git/*", "*/tmp/*" },
-      disable_devicons = false,
+      disable_devicons = true,
+      db_safe_mode = false,
+      auto_validate = true,
       workspaces = {
         ["conf"]      = "~/.config",
         ["data"]      = "~/.local/share",

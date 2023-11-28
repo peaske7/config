@@ -1,8 +1,13 @@
 local lsp_zero = require("lsp-zero")
 
-lsp_zero.on_attach(function(_, bufnr)
+lsp_zero.on_attach(function(client, bufnr)
   local opts = { buffer = bufnr, remap = false }
   lsp_zero.default_keymaps({ buffer = bufnr })
+
+  if client.name == "rust-analyzer" or client.name == "tsserver" then
+    client.server_capabilities.documentFormattingProvider = false
+    client.server_capabilities.documentFormattingRangeProvider = false
+  end
 
   vim.keymap.set("n", "<leader>ca", function()
     vim.lsp.buf.code_action()
@@ -19,6 +24,19 @@ lsp_zero.on_attach(function(_, bufnr)
 end)
 
 require('mason').setup({})
+require('mason-null-ls').setup({
+  ensure_installed = nil,
+  automatic_installation = true,
+  handlers = {},
+})
+
+local null_opts = lsp_zero.build_options('null-ls', {})
+require('null-ls').setup({
+  on_attach = function(client, bufnr)
+    null_opts.on_attach(client, bufnr)
+  end,
+})
+
 require('mason-lspconfig').setup({
   ensure_installed = { 'tsserver', 'rust_analyzer' },
   handlers = {

@@ -96,6 +96,8 @@ require('lazy').setup({
     dependencies = {
       'williamboman/mason.nvim',
       'williamboman/mason-lspconfig.nvim',
+      'nvimtools/none-ls.nvim',
+      'jay-babu/mason-null-ls.nvim',
 
       {
         "j-hui/fidget.nvim",
@@ -121,7 +123,6 @@ require('lazy').setup({
   {
     "zbirenbaum/copilot.lua",
     cmd = "Copilot",
-    lazy = true,
     config = function()
       require("copilot").setup({})
     end,
@@ -129,7 +130,6 @@ require('lazy').setup({
 
   {
     "zbirenbaum/copilot-cmp",
-    lazy = true,
     config = function()
       require("copilot").setup({
         suggestion = { enabled = false },
