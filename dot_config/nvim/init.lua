@@ -259,6 +259,7 @@ require('lazy').setup({
 
   {
     'shortcuts/no-neck-pain.nvim',
+    lazy = true,
     config = function()
       require('no-neck-pain').setup({
         buffers = {
@@ -276,6 +277,7 @@ require('lazy').setup({
   {
     -- Review PRs
     "ldelossa/gh.nvim",
+    lazy = true,
     dependencies = {
       {
         "ldelossa/litee.nvim",
