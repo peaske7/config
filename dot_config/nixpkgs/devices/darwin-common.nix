@@ -19,6 +19,7 @@
     kcat
 		llvm
     sccache
+    bottom
   ];
 
   home.stateVersion = "23.11";

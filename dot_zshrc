@@ -75,7 +75,7 @@ zinit ice lucid wait"0a" depth"1" from="gh-r" as="program" atload'eval "$(zoxide
 zinit light ajeetdsouza/zoxide
 
 # ghq
-zinit ice lucid wait"1" depth"1" completions
+zinit ice lucid wait"0a"
 zinit light x-motemen/ghq
 
 # ----------------------------
