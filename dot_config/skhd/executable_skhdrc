@@ -13,9 +13,18 @@ ctrl + alt - l : yabai -m window --swap east
 # toggle fullscreen
 ctrl + cmd - f : yabai -m window --toggle zoom-fullscreen
 
-# balance window size
-ctrl + cmd - 0 : yabai -m window space --balance
+# balance 
+ctrl + cmd - e : yabai -m space --balance
 
 # float/unfloat window and center on screen
 ctrl + cmd - t : yabai -m window --toggle float;\
   yabai -m window --grid 4:4:1:1:2:2
+
+# moves window to space
+ctrl + cmd - p : yabai -m window --space prev;
+ctrl + cmd - n : yabai -m window --space next;
+
+ctrl + cmd - 1 : yabai -m window --space 1;
+ctrl + cmd - 1 : yabai -m window --space 2;
+ctrl + cmd - 1 : yabai -m window --space 3;
+ctrl + cmd - 1 : yabai -m window --space 4;

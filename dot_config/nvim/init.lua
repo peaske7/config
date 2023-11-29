@@ -29,8 +29,8 @@ vim.o.expandtab = true
 vim.o.smartindent = true
 
 -- These can get annoying fast so disable them
-vim.opt.swapfile = false
-vim.opt.backup = false
+vim.o.swapfile = false
+vim.o.backup = false
 
 vim.o.colorcolumn = '80'
 
