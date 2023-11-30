@@ -26,7 +26,7 @@ end)
 require('mason').setup({})
 require('mason-null-ls').setup({
   ensure_installed = nil,
-  automatic_installation = true,
+  automatic_installation = false,
   handlers = {},
 })
 
@@ -38,7 +38,6 @@ require('null-ls').setup({
 })
 
 require('mason-lspconfig').setup({
-  ensure_installed = { 'tsserver', 'rust_analyzer' },
   handlers = {
     lsp_zero.default_setup,
     lua_ls = function()
