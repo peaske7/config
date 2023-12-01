@@ -164,6 +164,14 @@ require('lazy').setup({
   },
 
   {
+    -- highlight words under the cursor
+    'RRethy/vim-illuminate',
+    config = function()
+      require('illuminate').configure({})
+    end
+  },
+
+  {
     'nvim-telescope/telescope.nvim',
     branch = '0.1.x',
     event = "InsertEnter",
