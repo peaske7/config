@@ -196,7 +196,7 @@ function lazy_gcloud {
 function gcloud { lazy_gcloud; gcloud "$@"; }
 
 # ghq
-export GHQ_ROOT="Developer"
+export GHQ_ROOT="~/Developer"
 
 # source nix 
 if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix.sh" ]; then 

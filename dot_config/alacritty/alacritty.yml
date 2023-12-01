@@ -1,5 +1,5 @@
 import:
-  - ~/.config/alacritty/themes/themes/gruvbox_dark.yaml
+  - ~/.config/alacritty/gruvbox-material-alacritty.yml
 
 env:
   TERM: xterm-256color
@@ -23,5 +23,5 @@ font:
   italic:
     family: JetBrainsMono Nerd Font
     style: Italic
-    
+
   size: 14.0

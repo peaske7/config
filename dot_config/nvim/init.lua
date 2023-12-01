@@ -130,12 +130,20 @@ require('lazy').setup({
   {
     'hrsh7th/nvim-cmp',
     dependencies = {
-      'L3MON4D3/LuaSnip',
       'saadparwaiz1/cmp_luasnip',
       'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-nvim-lsp-signature-help',
       'hrsh7th/cmp-path',
       'hrsh7th/cmp-buffer',
       'simrat39/rust-tools.nvim',
+
+      {
+        "L3MON4D3/LuaSnip",
+        dependencies = {
+          "rafamadriz/friendly-snippets",
+        },
+      },
+
     },
   },
 
@@ -206,10 +214,8 @@ require('lazy').setup({
   },
 
   {
-    -- Shows outdated crates in a cargo.toml. Maybe not necessary
     'saecki/crates.nvim',
     dependencies = { 'nvim-lua/plenary.nvim' },
-    lazy = true,
     config = function()
       require('crates').setup()
     end,
