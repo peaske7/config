@@ -4,6 +4,7 @@ vim.g.maplocalleader = ' '
 
 -- Set highlight on search
 vim.wo.nu = true
+vim.wo.rnu = true
 vim.wo.signcolumn = 'yes'
 
 vim.o.mouse = 'a'
@@ -150,6 +151,7 @@ require('lazy').setup({
   {
     "zbirenbaum/copilot.lua",
     cmd = "Copilot",
+    event = "InsertEnter",
     config = function()
       require("copilot").setup({})
     end,
@@ -162,6 +164,7 @@ require('lazy').setup({
         suggestion = { enabled = false },
         panel = { enabled = false },
       })
+      require('copilot_cmp').setup()
     end
   },
 
@@ -245,6 +248,7 @@ require('lazy').setup({
 
   {
     'numToStr/Comment.nvim',
+    event = "BufReadPre",
     opts = {}
   },
 
@@ -272,7 +276,6 @@ require('lazy').setup({
 
   {
     'shortcuts/no-neck-pain.nvim',
-    lazy = true,
     config = function()
       require('no-neck-pain').setup({
         buffers = {
@@ -285,6 +288,14 @@ require('lazy').setup({
         noremap = true
       })
     end
+  },
+
+  {
+    'romgrk/barbar.nvim',
+    event = "BufReadPre",
+    init = function()
+      vim.g.barbar_auto_setup = false
+    end,
   },
 
   {
