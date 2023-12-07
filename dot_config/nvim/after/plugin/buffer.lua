@@ -21,7 +21,9 @@ vim.keymap.set('n', '<leader>9', "<Cmd>BufferGoto 9<CR>", opts)
 
 bar.setup({
   animation = false,
+  separator_at_end = false,
   icons = {
+    buffer_index = true,
     filetype = {
       enabled = false
     }
