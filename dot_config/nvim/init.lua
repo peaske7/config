@@ -282,12 +282,25 @@ require('lazy').setup({
           wo = {
             fillchars = "eob: ",
           },
+          scratchPad = {
+            enabled = true,
+            location = "~/Documents/",
+          },
         },
       })
       vim.keymap.set('n', '<leader>nn', "<Cmd>NoNeckPain<CR>", {
         noremap = true
       })
     end
+  },
+
+  {
+    'nvim-lualine/lualine.nvim',
+    opts = {
+      options = {
+        theme = 'gruvbox_dark',
+      }
+    },
   },
 
   {
