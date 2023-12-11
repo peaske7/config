@@ -259,7 +259,6 @@ require('lazy').setup({
   },
 
   {
-    -- Adds pretty animation when renaming variables
     "smjonas/inc-rename.nvim",
     event = "InsertEnter",
     config = function()
@@ -299,6 +298,7 @@ require('lazy').setup({
     opts = {
       options = {
         theme = 'gruvbox_dark',
+        icons_enabled = false,
       }
     },
   },
