@@ -17,3 +17,4 @@ yabai -m rule --add app="^Discord$" manage=off
 yabai -m rule --add app="^Focus$" manage=off
 yabai -m rule --add app="^OpenVPN Connect$" manage=off
 yabai -m rule --add app="^Docker Desktop$" manage=off
+yabai -m rule --add app="^Postman$" manage=off
