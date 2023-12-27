@@ -12,7 +12,6 @@ vim.keymap.set('v', '<leader>sg', 'zy:Telescope grep_string default_text=<C-r>z<
 vim.keymap.set('n', '<leader>sd', telescope_builtin.diagnostics, opts)
 vim.keymap.set('n', '<leader>sb', telescope_builtin.buffers, opts)
 vim.keymap.set('n', '<leader>sr', telescope_builtin.resume, opts)
-vim.keymap.set('n', '<leader>se', "<Cmd>Telescope frecency workspace=CWD<CR>", opts)
 
 require('telescope').setup {
   pickers = {
