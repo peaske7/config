@@ -123,9 +123,13 @@ else
 fi
 
 # openssl
-BREW_PATH="opt/homebrew/opt"
-export PATH="/$BREW_PATH/cyrus-sasl@2.1.27/sbin:$PATH"
-export PATH="/$BREW_PATH/openssl@1.1/bin:$PATH"
+if [ $(hostname) = "m1mbp" ]; then
+  BREW_PATH="/opt/homebrew/opt"
+elif [ $(hostname) = "PDYMBP-00401" ]; then
+  BREW_PATH="$HOME/homebrew/opt"
+fi
+export PATH="$BREW_PATH/cyrus-sasl@2.1.27/sbin:$PATH"
+export PATH="$BREW_PATH/openssl@1.1/bin:$PATH"
 export LDFLAGS="-L/$BREW_PATH/openssl@1.1/lib/ -L/$BREW_PATH/cyrus-sasl/lib"
 export CPPFLAGS="-I/$BREW_PATH/openssl@1.1/include -I/$BREW_PATH/cyrus-sasl/include"
 export PKG_CONFIG_PATH="/$BREW_PATH/cyrus-sasl/lib/pkgconfig"
@@ -140,8 +144,8 @@ function lazy_nvm {
 
   if [ -d "${HOME}/.nvm" ]; then
     export NVM_DIR="$HOME/.nvm"
-    [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-    [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+    [ -s "$BREW_PATH/nvm/nvm.sh" ] && \. "$BREW_PATH/nvm/nvm.sh"
+    [ -s "$BREW_PATH/nvm/etc/bash_completion.d/nvm" ] && \. "$BREW_PATH/nvm/etc/bash_completion.d/nvm"
     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
   fi
 }
@@ -164,20 +168,20 @@ export PATH="$HOME/.cargo/env:$PATH"
 # java
 export ANDROID_HOME=$HOME/Library/Android/sdk
 export ANDROID_SDK=$ANDROID_HOME
-export ANDROID_NDK_HOME="/opt/homebrew/share/android-ndk"
+export ANDROID_NDK_HOME="$HOME/homebrew/share/android-ndk"
 export PATH=$PATH:$ANDROID_HOME/emulator
 export PATH=$PATH:$ANDROID_HOME/tools
 export PATH=$PATH:$ANDROID_HOME/tools/bin
 export PATH=$PATH:$ANDROID_HOME/platform-tools
-export PATH="/opt/homebrew/opt/openjdk@11/bin:$PATH"
-export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
-export PATH="/opt/homebrew/opt/cyrus-sasl/sbin:$PATH"
+export PATH="$BREW_PATH/openjdk@11/bin:$PATH"
+export PATH="$BREW_PATH/llvm/bin:$PATH"
+export PATH="$BREW_PATH/cyrus-sasl/sbin:$PATH"
 
 # lua
 export PATH=$PATH:$HOME/.config/lsp/lua-language-server/bin
 
 # brew
-eval "$(/opt/homebrew/bin/brew shellenv)"
+eval "$($HOME/homebrew/bin/brew shellenv)"
 
 # gpg key tool
 export GPG_TTY=$(tty)
