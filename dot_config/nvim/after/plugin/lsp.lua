@@ -23,7 +23,8 @@ lsp_zero.on_attach(function(client, bufnr)
   end, { expr = true })
 end)
 
-require('mason').setup({})
+require('mason').setup()
+require("mason-nvim-dap").setup()
 require('mason-null-ls').setup({
   ensure_installed = nil,
   automatic_installation = false,

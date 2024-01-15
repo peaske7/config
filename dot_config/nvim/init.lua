@@ -117,8 +117,14 @@ require('lazy').setup({
     dependencies = {
       'williamboman/mason.nvim',
       'williamboman/mason-lspconfig.nvim',
+      "jay-babu/mason-nvim-dap.nvim",
       'nvimtools/none-ls.nvim',
-      'jay-babu/mason-null-ls.nvim',
+
+      {
+        'jay-babu/mason-null-ls.nvim',
+        event = { "BufReadPre", "BufNewFile" },
+
+      },
 
       {
         "j-hui/fidget.nvim",
@@ -245,9 +251,21 @@ require('lazy').setup({
       require('nvim-treesitter.configs').setup {
         ensure_installed = { "rust", "lua", "javascript", "typescript" },
         auto_install = true,
+        highlight = {
+          enable = true,
+        },
         autotag = {
           enable = true
-        }
+        },
+
+        -- disable slow treesitter highlight for large files
+        disable = function(_, buf)
+          local max_filesize = 3000 * 1024 -- 3000 KB
+          local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
+          if ok and stats and stats.size > max_filesize then
+            return true
+          end
+        end,
       }
     end,
     build = ':TSUpdate',
