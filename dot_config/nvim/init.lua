@@ -123,7 +123,6 @@ require('lazy').setup({
       {
         'jay-babu/mason-null-ls.nvim',
         event = { "BufReadPre", "BufNewFile" },
-
       },
 
       {
@@ -143,43 +142,6 @@ require('lazy').setup({
       'hrsh7th/cmp-path',
       'hrsh7th/cmp-buffer',
       -- 'simrat39/rust-tools.nvim',
-
-      {
-        "mrcjkb/rustaceanvim",
-        version = "^3",
-        ft = { "rust" },
-        opts = {
-          settings = {
-            -- rust-analyzer language server configuration
-            ["rust-analyzer"] = {
-              cargo = {
-                allFeatures = true,
-                loadOutDirsFromCheck = true,
-                runBuildScripts = true,
-              },
-              -- Add clippy lints for Rust.
-              checkOnSave = {
-                allFeatures = true,
-                command = "clippy",
-                extraArgs = { "--no-deps" },
-              },
-              procMacro = {
-                enable = true,
-                ignored = {
-                  ["async-trait"] = { "async_trait" },
-                  ["napi-derive"] = { "napi" },
-                  ["async-recursion"] = { "async_recursion" },
-                },
-              },
-            },
-          },
-        },
-        config = function(_, opts)
-          vim.g.rustaceanvim = vim.tbl_deep_extend("force",
-            {},
-            opts or {})
-        end
-      },
 
       {
         "L3MON4D3/LuaSnip",
@@ -280,6 +242,42 @@ require('lazy').setup({
   },
 
   {
+    "mrcjkb/rustaceanvim",
+    version = "^3",
+    ft = { "rust" },
+    opts = {
+      settings = {
+        -- rust-analyzer language server configuration
+        ["rust-analyzer"] = {
+          cargo = {
+            allFeatures = true,
+            loadOutDirsFromCheck = true,
+            runBuildScripts = true,
+          },
+          -- Add clippy lints for Rust.
+          checkOnSave = {
+            allFeatures = true,
+            command = "clippy",
+            extraArgs = { "--no-deps" },
+          },
+          procMacro = {
+            enable = true,
+            ignored = {
+              ["async-trait"] = { "async_trait" },
+            },
+          },
+        },
+      },
+    },
+    config = function(_, opts)
+      vim.g.rustaceanvim = vim.tbl_deep_extend("force",
+        {},
+        opts or {})
+    end
+  },
+
+
+  {
     -- A colorscheme thats easy on the eyes
     'sainnhe/gruvbox-material',
     lazy = false,
@@ -331,7 +329,10 @@ require('lazy').setup({
   {
     "rcarriga/nvim-dap-ui",
     lazy = true,
-    dependencies = { "mfussenegger/nvim-dap" }
+    dependencies = { "mfussenegger/nvim-dap" },
+    config = function()
+      require("dapui").setup()
+    end
   },
 
   {

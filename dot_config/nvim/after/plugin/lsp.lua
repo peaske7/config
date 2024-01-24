@@ -4,10 +4,10 @@ lsp_zero.on_attach(function(client, bufnr)
   local opts = { buffer = bufnr, remap = false }
   lsp_zero.default_keymaps({ buffer = bufnr })
 
-  if client.name == "rust-analyzer" or client.name == "tsserver" then
-    client.server_capabilities.documentFormattingProvider = false
-    client.server_capabilities.documentFormattingRangeProvider = false
-  end
+  -- if client.name == "rust-analyzer" or client.name == "tsserver" then
+  --   client.server_capabilities.documentFormattingProvider = false
+  --   client.server_capabilities.documentFormattingRangeProvider = false
+  -- end
 
   vim.keymap.set("n", "<leader>ca", function()
     vim.lsp.buf.code_action()
@@ -89,12 +89,12 @@ cmp.setup({
     completeopt = 'menu,menuone,noinsert'
   },
   sources = {
-    { name = "copilot" },
     { name = 'nvim_lsp' },
     { name = 'nvim_lsp_signature_help' },
+    { name = "copilot" },
+    { name = 'luasnip' },
     { name = 'path' },
     { name = 'buffer' },
-    { name = 'luasnip' }
   },
   mapping = {
     -- Tab completion for copilot

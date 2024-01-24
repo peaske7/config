@@ -5,7 +5,6 @@
     fzf
     jq
     bat
-    neovim
 		circleci-cli
     fd
     ripgrep
