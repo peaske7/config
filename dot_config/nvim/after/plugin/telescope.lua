@@ -13,6 +13,10 @@ vim.keymap.set('n', '<leader>sd', telescope_builtin.diagnostics, opts)
 vim.keymap.set('n', '<leader>sb', telescope_builtin.buffers, opts)
 vim.keymap.set('n', '<leader>sr', telescope_builtin.resume, opts)
 
+vim.keymap.set('n', '<leader>st',  '<cmd>TodoTelescope<cr>', opts)
+
+vim.keymap.set('n', '<leader><leader>', '<cmd>Telescope cmdline<cr>', opts)
+
 require('telescope').setup {
   pickers = {
     find_files = {
@@ -35,3 +39,5 @@ require('telescope').setup {
     }
   },
 }
+
+require("telescope").load_extension('cmdline')

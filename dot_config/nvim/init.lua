@@ -192,6 +192,7 @@ require('lazy').setup({
     branch = '0.1.x',
     event = "InsertEnter",
     dependencies = {
+      'jonarrien/telescope-cmdline.nvim',
       'nvim-lua/plenary.nvim',
       {
         'nvim-telescope/telescope-fzf-native.nvim',
@@ -276,7 +277,6 @@ require('lazy').setup({
     end
   },
 
-
   {
     -- A colorscheme thats easy on the eyes
     'sainnhe/gruvbox-material',
@@ -303,6 +303,13 @@ require('lazy').setup({
     'numToStr/Comment.nvim',
     event = "BufReadPre",
     opts = {}
+  },
+
+  {
+    "folke/todo-comments.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    opts = {
+    }
   },
 
   {
