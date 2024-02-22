@@ -192,7 +192,6 @@ require('lazy').setup({
     branch = '0.1.x',
     event = "InsertEnter",
     dependencies = {
-      'jonarrien/telescope-cmdline.nvim',
       'nvim-lua/plenary.nvim',
       {
         'nvim-telescope/telescope-fzf-native.nvim',
@@ -348,6 +347,8 @@ require('lazy').setup({
       options = {
         theme = 'gruvbox_dark',
         icons_enabled = false,
+        section_separators = '',
+        component_separators = ''
       }
     },
   },

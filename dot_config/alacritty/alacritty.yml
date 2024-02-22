@@ -13,15 +13,15 @@ window:
 
 font:
   normal:
-    family: JetBrainsMono Nerd Font
+    family: M PLUS 1 Code
     style: Regular
 
   bold:
-    family: JetBrainsMono Nerd Font
+    family: M PLUS 1 Code
     style: Bold
 
   italic:
-    family: JetBrainsMono Nerd Font
-    style: Italic
+    family: M PLUS 1 Code
+    style: ExtraLight
 
   size: 14.0
