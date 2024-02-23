@@ -23,19 +23,5 @@ require('telescope').setup {
       find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/*" },
     },
   },
-  extensions = {
-    frecency = {
-      show_scores = true,
-      show_unindexed = true,
-      ignore_patterns = { "*.git/*", "*/tmp/*" },
-      disable_devicons = true,
-      db_safe_mode = false,
-      auto_validate = true,
-      workspaces = {
-        ["conf"]      = "~/.config",
-        ["data"]      = "~/.local/share",
-        ["developer"] = "~/Developer",
-      }
-    }
-  },
+  extensions = {},
 }

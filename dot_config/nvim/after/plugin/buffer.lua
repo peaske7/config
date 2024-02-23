@@ -23,7 +23,6 @@ bar.setup({
   animation = false,
   separator_at_end = false,
   icons = {
-    button       = 'x',
     buffer_index = true,
     filetype     = {
       enabled = false

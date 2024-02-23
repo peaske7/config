@@ -13,15 +13,15 @@ window:
 
 font:
   normal:
-    family: M PLUS 1 Code
+    family: M+1Code Nerd Font
     style: Regular
 
   bold:
-    family: M PLUS 1 Code
+    family: M+1Code Nerd Font
     style: Bold
 
   italic:
-    family: M PLUS 1 Code
+    family: M+1Code Nerd Font
     style: ExtraLight
 
   size: 14.0

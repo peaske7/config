@@ -4,11 +4,6 @@ lsp_zero.on_attach(function(client, bufnr)
   local opts = { buffer = bufnr, remap = false }
   lsp_zero.default_keymaps({ buffer = bufnr })
 
-  -- if client.name == "rust-analyzer" or client.name == "tsserver" then
-  --   client.server_capabilities.documentFormattingProvider = false
-  --   client.server_capabilities.documentFormattingRangeProvider = false
-  -- end
-
   vim.keymap.set("n", "<leader>ca", function()
     vim.lsp.buf.code_action()
   end, opts)

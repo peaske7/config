@@ -141,7 +141,6 @@ require('lazy').setup({
       'hrsh7th/cmp-nvim-lsp-signature-help',
       'hrsh7th/cmp-path',
       'hrsh7th/cmp-buffer',
-      -- 'simrat39/rust-tools.nvim',
 
       {
         "L3MON4D3/LuaSnip",
@@ -307,8 +306,7 @@ require('lazy').setup({
   {
     "folke/todo-comments.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
-    opts = {
-    }
+    opts = {}
   },
 
   {
@@ -346,9 +344,6 @@ require('lazy').setup({
     opts = {
       options = {
         theme = 'gruvbox_dark',
-        icons_enabled = false,
-        section_separators = '',
-        component_separators = ''
       }
     },
   },
