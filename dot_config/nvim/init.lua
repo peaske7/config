@@ -259,12 +259,6 @@ require('lazy').setup({
             command = "clippy",
             extraArgs = { "--no-deps" },
           },
-          procMacro = {
-            enable = true,
-            ignored = {
-              ["async-trait"] = { "async_trait" },
-            },
-          },
         },
       },
     },

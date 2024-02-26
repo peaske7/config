@@ -72,9 +72,12 @@ alias chep="che ~/.config/nixpkgs" # [CH]ezmoi [E]dit [P]kgs
 
 # docker
 alias dcu='docker compose up' # [D]ocker [C]ompose [U]p
-alias dcbu='docker compose build && docker compose up' # [D]ocker [C]ompose [B]uild and [U]p
+alias dcd='docker compose down' # [D]ocker [C]ompose [D]own
+alias dcbu='docker compose build && dcu' # [D]ocker [C]ompose [B]uild and [U]p
 alias dsa='docker stop "$(docker ps -aq)"' # [D]ocker [S]top [A]ll
 alias dra='docker rm "$(docker ps -aq)"' # [D]ocker [R]emove [A]ll
+alias dvp='docker volume prune' # [D]ocker [V]olume [P]rune
+alias drs='dcd && dvp && dcbu' # [D]ocker [R]e[S]tart
 
 # git
 alias gm="git merge"
