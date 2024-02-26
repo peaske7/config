@@ -104,6 +104,7 @@ require('lazy').setup({
   'tpope/vim-rhubarb',
   'tpope/vim-vinegar',
   'machakann/vim-sandwich',
+  'nvim-lua/plenary.nvim',
 
   {
     'VonHeikemen/lsp-zero.nvim',
@@ -123,6 +124,7 @@ require('lazy').setup({
       {
         'jay-babu/mason-null-ls.nvim',
         event = { "BufReadPre", "BufNewFile" },
+        opts = {}
       },
 
       {
@@ -173,25 +175,10 @@ require('lazy').setup({
   },
 
   {
-    'lukas-reineke/indent-blankline.nvim',
-    main = 'ibl',
-    opts = {},
-  },
-
-  {
-    -- highlight words under the cursor
-    'RRethy/vim-illuminate',
-    config = function()
-      require('illuminate').configure({})
-    end
-  },
-
-  {
     'nvim-telescope/telescope.nvim',
     branch = '0.1.x',
     event = "InsertEnter",
     dependencies = {
-      'nvim-lua/plenary.nvim',
       {
         'nvim-telescope/telescope-fzf-native.nvim',
         build = 'make',
@@ -234,7 +221,6 @@ require('lazy').setup({
 
   {
     'saecki/crates.nvim',
-    dependencies = { 'nvim-lua/plenary.nvim' },
     config = function()
       require('crates').setup()
     end,
@@ -246,14 +232,12 @@ require('lazy').setup({
     ft = { "rust" },
     opts = {
       settings = {
-        -- rust-analyzer language server configuration
         ["rust-analyzer"] = {
           cargo = {
             allFeatures = true,
             loadOutDirsFromCheck = true,
             runBuildScripts = true,
           },
-          -- Add clippy lints for Rust.
           checkOnSave = {
             allFeatures = true,
             command = "clippy",
@@ -267,6 +251,21 @@ require('lazy').setup({
         {},
         opts or {})
     end
+  },
+
+  {
+    "rcarriga/nvim-dap-ui",
+    lazy = true,
+    dependencies = { "mfussenegger/nvim-dap" },
+    config = function()
+      require("dapui").setup()
+    end
+  },
+
+  {
+    "folke/trouble.nvim",
+    lazy = true,
+    opts = {}
   },
 
   {
@@ -299,7 +298,6 @@ require('lazy').setup({
 
   {
     "folke/todo-comments.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" },
     opts = {}
   },
 
@@ -315,31 +313,6 @@ require('lazy').setup({
     config = function()
       require("inc_rename").setup()
     end,
-  },
-
-  {
-    -- A single interface to handle diagnostics across multiple files
-    "folke/trouble.nvim",
-    lazy = true,
-    opts = {}
-  },
-
-  {
-    "rcarriga/nvim-dap-ui",
-    lazy = true,
-    dependencies = { "mfussenegger/nvim-dap" },
-    config = function()
-      require("dapui").setup()
-    end
-  },
-
-  {
-    'nvim-lualine/lualine.nvim',
-    opts = {
-      options = {
-        theme = 'gruvbox_dark',
-      }
-    },
   },
 
   {
