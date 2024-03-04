@@ -21,5 +21,6 @@ yabai -m rule --add app="^Postman$" manage=off
 yabai -m rule --add app="^CleanMyMac X$" manage=off
 yabai -m rule --add app="^Preview$" manage=off
 yabai -m rule --add app="^zoom.us$" manage=off
-yabai -m rule --add app="^DBeaver$" manage=off
+yabai -m rule --add app="^DBeaver" manage=off
 yabai -m rule --add app="^Slack$" manage=off
+yabai -m rule --add app="^Obsidian$" manage=off

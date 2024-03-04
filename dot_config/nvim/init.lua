@@ -165,6 +165,7 @@ require('lazy').setup({
 
   {
     "zbirenbaum/copilot-cmp",
+    event = "BufReadPre",
     config = function()
       require("copilot").setup({
         suggestion = { enabled = false },
@@ -221,6 +222,7 @@ require('lazy').setup({
 
   {
     'saecki/crates.nvim',
+    event = "BufReadPre",
     config = function()
       require('crates').setup()
     end,
@@ -228,6 +230,7 @@ require('lazy').setup({
 
   {
     "mrcjkb/rustaceanvim",
+    event = "BufReadPre",
     version = "^3",
     ft = { "rust" },
     opts = {
@@ -264,7 +267,7 @@ require('lazy').setup({
 
   {
     "folke/trouble.nvim",
-    lazy = true,
+    event = "BufReadPre",
     opts = {}
   },
 
@@ -298,6 +301,7 @@ require('lazy').setup({
 
   {
     "folke/todo-comments.nvim",
+    event = "BufReadPre",
     opts = {}
   },
 
