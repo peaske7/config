@@ -146,6 +146,7 @@ require('lazy').setup({
 
       {
         "L3MON4D3/LuaSnip",
+        event = "BufReadPre",
         dependencies = {
           "rafamadriz/friendly-snippets",
         },
@@ -222,7 +223,7 @@ require('lazy').setup({
 
   {
     'saecki/crates.nvim',
-    event = "BufReadPre",
+    event = { "BufRead Cargo.toml" },
     config = function()
       require('crates').setup()
     end,
@@ -231,7 +232,7 @@ require('lazy').setup({
   {
     "mrcjkb/rustaceanvim",
     event = "BufReadPre",
-    version = "^3",
+    version = "^4",
     ft = { "rust" },
     opts = {
       settings = {
@@ -244,7 +245,6 @@ require('lazy').setup({
           checkOnSave = {
             allFeatures = true,
             command = "clippy",
-            extraArgs = { "--no-deps" },
           },
         },
       },

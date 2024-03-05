@@ -40,9 +40,7 @@ require('mason-lspconfig').setup({
       local lua_opts = lsp_zero.nvim_lua_ls()
       require('lspconfig').lua_ls.setup(lua_opts)
     end,
-    rust_analyzer = function()
-      return true
-    end,
+    rust_analyzer = lsp_zero.noop,
   }
 })
 
@@ -80,6 +78,7 @@ cmp.setup({
       luasnip.lsp_expand(args.body)
     end,
   },
+  preselect = 'item',
   completion = {
     completeopt = 'menu,menuone,noinsert'
   },
@@ -87,9 +86,9 @@ cmp.setup({
     { name = 'nvim_lsp' },
     { name = 'nvim_lsp_signature_help' },
     { name = "copilot" },
-    { name = 'luasnip' },
     { name = 'path' },
-    { name = 'buffer' },
+    { name = 'luasnip',                keyword_length = 2 },
+    { name = 'buffer',                 keyword_length = 3 },
   },
   mapping = {
     -- Tab completion for copilot
@@ -111,5 +110,5 @@ cmp.setup({
     ['<C-f>'] = cmp_action.luasnip_jump_forward(),
     ['<C-b>'] = cmp_action.luasnip_jump_backward(),
   },
-  formatting = lsp_zero.cmp_format(),
+  formatting = lsp_zero.cmp_format({ details = false }),
 })
