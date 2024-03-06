@@ -24,3 +24,5 @@ yabai -m rule --add app="^zoom.us$" manage=off
 yabai -m rule --add app="^DBeaver" manage=off
 yabai -m rule --add app="^Slack$" manage=off
 yabai -m rule --add app="^Obsidian$" manage=off
+yabai -m rule --add app="^draw.io$" manage=off
+yabai -m rule --add app="^Rize$" manage=off
