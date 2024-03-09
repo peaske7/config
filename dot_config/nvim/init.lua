@@ -62,6 +62,9 @@ vim.o.foldlevel = 99
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true
 
+-- source nvim config
+vim.keymap.set("n", "<leader>rl", "!chezmoi apply", { remap = false })
+
 -- Highlight on yank
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
