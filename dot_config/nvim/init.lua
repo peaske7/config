@@ -330,6 +330,13 @@ require('lazy').setup({
     },
   },
 
+  {
+    "otavioschwanck/arrow.nvim",
+    event = "BufReadPre",
+    opts = {
+      leader_key = ';'
+    }
+  },
 
   {
     'lewis6991/gitsigns.nvim',
