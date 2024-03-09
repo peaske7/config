@@ -56,6 +56,12 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 
+-- ufo folding
+vim.o.foldcolumn = '0'
+vim.o.foldlevel = 99
+vim.o.foldlevelstart = 99
+vim.o.foldenable = true
+
 -- Highlight on yank
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
@@ -304,6 +310,26 @@ require('lazy').setup({
     event = "BufReadPre",
     opts = {}
   },
+
+  {
+    -- I don't usually use it, but it's super helpful when I do
+    "kevinhwang91/nvim-ufo",
+    dependencies = {
+      "kevinhwang91/promise-async",
+      "anuvyklack/keymap-amend.nvim",
+      {
+        "anuvyklack/fold-preview.nvim",
+        config = true
+      },
+    },
+    event = "BufReadPost",
+    opts = {
+      provider_selector = function()
+        return { "treesitter", "indent" }
+      end,
+    },
+  },
+
 
   {
     'lewis6991/gitsigns.nvim',
