@@ -362,7 +362,6 @@ require('lazy').setup({
   {
     -- Review PRs
     "ldelossa/gh.nvim",
-    event = "BufReadPre",
     dependencies = {
       {
         "ldelossa/litee.nvim",
