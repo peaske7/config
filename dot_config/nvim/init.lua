@@ -4,7 +4,6 @@ vim.g.maplocalleader = ' '
 
 -- Set highlight on search
 vim.wo.nu = true
-vim.wo.rnu = true
 vim.wo.signcolumn = 'yes'
 
 vim.o.mouse = 'a'
@@ -33,7 +32,7 @@ vim.o.smartindent = true
 vim.o.swapfile = false
 vim.o.backup = false
 
-vim.o.colorcolumn = '80'
+-- vim.o.colorcolumn = '80'
 
 -- Keymaps for better default experience
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
@@ -63,7 +62,7 @@ vim.o.foldlevelstart = 99
 vim.o.foldenable = true
 
 -- source nvim config
-vim.keymap.set("n", "<leader>rl", "!chezmoi apply", { remap = false })
+vim.keymap.set("n", "<leader>chea", "!chezmoi apply", { remap = false })
 
 -- Highlight on yank
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
@@ -325,7 +324,6 @@ require('lazy').setup({
         config = true
       },
     },
-    event = "BufReadPost",
     opts = {
       provider_selector = function()
         return { "treesitter", "indent" }
@@ -350,18 +348,16 @@ require('lazy').setup({
   {
     "smjonas/inc-rename.nvim",
     event = "InsertEnter",
-    config = function()
-      require("inc_rename").setup()
-    end,
+    opts = {}
   },
 
-  {
-    'romgrk/barbar.nvim',
-    event = "BufReadPre",
-    init = function()
-      vim.g.barbar_auto_setup = false
-    end,
-  },
+  -- {
+  --   'romgrk/barbar.nvim',
+  --   event = "BufReadPre",
+  --   init = function()
+  --     vim.g.barbar_auto_setup = false
+  --   end,
+  -- },
 
   {
     -- Review PRs
