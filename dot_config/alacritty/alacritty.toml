@@ -1,0 +1,27 @@
+import = ["/Users/jay/.config/alacritty/gruvbox-material-alacritty.toml"]
+
+[env]
+TERM = "xterm-256color"
+
+[font]
+size = 14.0
+
+[font.bold]
+family = "M+1Code Nerd Font"
+style = "Bold"
+
+[font.italic]
+family = "M+1Code Nerd Font"
+style = "ExtraLight"
+
+[font.normal]
+family = "M+1Code Nerd Font"
+style = "Regular"
+
+[window]
+decorations = "buttonless"
+dynamic_padding = false
+
+[window.padding]
+x = 25
+y = 20
