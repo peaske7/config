@@ -64,6 +64,10 @@ vim.o.foldenable = true
 -- source nvim config
 vim.keymap.set("n", "<leader>chea", "!chezmoi apply", { remap = false })
 
+-- inherit colorscheme from terminal
+vim.cmd('hi Normal ctermbg=none guibg=none')
+
+
 -- Highlight on yank
 local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
@@ -279,15 +283,15 @@ require('lazy').setup({
     opts = {}
   },
 
-  {
-    -- A colorscheme thats easy on the eyes
-    'sainnhe/gruvbox-material',
-    lazy = false,
-    priority = 1000,
-    config = function()
-      vim.cmd('colorscheme gruvbox-material')
-    end,
-  },
+  -- {
+  --   -- A colorscheme thats easy on the eyes
+  --   'sainnhe/gruvbox-material',
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function()
+  --     vim.cmd('colorscheme gruvbox-material')
+  --   end,
+  -- },
 
   {
     "windwp/nvim-autopairs",
