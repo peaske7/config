@@ -130,7 +130,6 @@ require('lazy').setup({
     dependencies = {
       'williamboman/mason.nvim',
       'williamboman/mason-lspconfig.nvim',
-      "jay-babu/mason-nvim-dap.nvim",
       'nvimtools/none-ls.nvim',
 
       {
@@ -265,15 +264,6 @@ require('lazy').setup({
       vim.g.rustaceanvim = vim.tbl_deep_extend("force",
         {},
         opts or {})
-    end
-  },
-
-  {
-    "rcarriga/nvim-dap-ui",
-    lazy = true,
-    dependencies = { "mfussenegger/nvim-dap" },
-    config = function()
-      require("dapui").setup()
     end
   },
 
