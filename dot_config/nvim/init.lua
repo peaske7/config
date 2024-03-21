@@ -345,14 +345,6 @@ require('lazy').setup({
     opts = {}
   },
 
-  -- {
-  --   'romgrk/barbar.nvim',
-  --   event = "BufReadPre",
-  --   init = function()
-  --     vim.g.barbar_auto_setup = false
-  --   end,
-  -- },
-
   {
     -- Review PRs
     "ldelossa/gh.nvim",
