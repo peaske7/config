@@ -284,6 +284,19 @@ require('lazy').setup({
   },
 
   {
+    'brenoprata10/nvim-highlight-colors',
+    event = "BufReadPre",
+    config = function()
+      require('nvim-highlight-colors').setup({
+        render = 'background',
+        virtual_symbol = '■',
+        enable_named_colors = true,
+        enable_tailwind = false,
+      })
+    end
+  },
+
+  {
     "windwp/nvim-autopairs",
     event = "InsertEnter",
     opts = {}
