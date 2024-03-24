@@ -92,6 +92,8 @@ alias gcb="git checkout -b" # creates branch
 alias gci='git checkout "$(git branch -a | fzf | xargs)"' # [G]it [C]heckoout [I]nteractive
 alias gcd='git checkout "$(git_default_branch)"' # [G]it [C]heckout [D]efault
 
+alias gfp='git fetch --prune' # [G]it [F]etch [P]rune
+
 alias gd="git diff"
 alias gdd='gd "$(git_default_branch)"' # [G]it [D]iff [D]efault
 alias gdds='gd "$(git_default_branch)" --stat' # [G]it [D]iff [D]efault [S]tats
