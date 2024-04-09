@@ -358,13 +358,14 @@ require('lazy').setup({
   },
 
   {
-    -- idea: would love it if we can save arrows by git branch
-    -- maybe even have an option to switch between branch-specific 
-    -- to general codebase-specific arrows.
     "otavioschwanck/arrow.nvim",
     event = "BufReadPre",
     opts = {
-      leader_key = ';'
+      always_show_path = true,
+      separate_by_branch = true,
+      window = {
+        border = "",
+      }
     }
   },
 
@@ -386,20 +387,4 @@ require('lazy').setup({
     ft = { "markdown" },
     build = function() vim.fn["mkdp#util#install"]() end,
   },
-
-  {
-    -- Review PRs
-    "ldelossa/gh.nvim",
-    dependencies = {
-      {
-        "ldelossa/litee.nvim",
-        config = function()
-          require("litee.lib").setup()
-        end,
-      },
-    },
-    config = function()
-      require("litee.gh").setup()
-    end,
-  }
 })
