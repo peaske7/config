@@ -121,7 +121,7 @@ require('lazy').setup({
   {
     'VonHeikemen/lsp-zero.nvim',
     branch = 'v3.x',
-    lazy = true,
+    lazy = false,
     config = false,
   },
 
@@ -134,13 +134,11 @@ require('lazy').setup({
 
       {
         'jay-babu/mason-null-ls.nvim',
-        event = { "BufReadPre", "BufNewFile" },
         opts = {}
       },
 
       {
         "j-hui/fidget.nvim",
-        event = "BufReadPre",
         opts = {}
       },
     }
@@ -157,7 +155,6 @@ require('lazy').setup({
 
       {
         "L3MON4D3/LuaSnip",
-        event = "BufReadPre",
         dependencies = {
           "rafamadriz/friendly-snippets",
         },
@@ -218,7 +215,6 @@ require('lazy').setup({
 
   {
     'nvim-treesitter/nvim-treesitter',
-    event = "InsertEnter",
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
     },
@@ -256,7 +252,6 @@ require('lazy').setup({
 
   {
     "mrcjkb/rustaceanvim",
-    event = "BufReadPre",
     version = "^4",
     ft = { "rust" },
     opts = {
