@@ -2,7 +2,10 @@ local lsp_zero = require("lsp-zero")
 
 lsp_zero.on_attach(function(client, bufnr)
   local opts = { buffer = bufnr, remap = false }
-  lsp_zero.default_keymaps({ buffer = bufnr })
+  lsp_zero.default_keymaps({
+    buffer = bufnr,
+    preserve_mappings = false,
+  })
 
   vim.keymap.set("n", "<leader>ca", function()
     vim.lsp.buf.code_action()
@@ -17,6 +20,23 @@ lsp_zero.on_attach(function(client, bufnr)
     return ":IncRename " .. vim.fn.expand("<cword>")
   end, { expr = true })
 end)
+
+lsp_zero.set_server_config({
+  capabilities = {
+    textDocument = {
+      foldingRange = {
+        dynamicRegistration = false,
+        lineFoldingOnly = true
+      }
+    }
+  }
+})
+
+vim.g.rustaceanvim = {
+  server = {
+    capabilities = lsp_zero.get_capabilities()
+  },
+}
 
 require('mason').setup()
 require('mason-null-ls').setup({
@@ -34,7 +54,9 @@ require('null-ls').setup({
 
 require('mason-lspconfig').setup({
   handlers = {
-    lsp_zero.default_setup,
+    function(server_name)
+      require('lspconfig')[server_name].setup({})
+    end,
     lua_ls = function()
       local lua_opts = lsp_zero.nvim_lua_ls()
       require('lspconfig').lua_ls.setup(lua_opts)

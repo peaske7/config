@@ -188,6 +188,16 @@ require('lazy').setup({
   },
 
   {
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    init = function()
+      vim.o.timeout = true
+      vim.o.timeoutlen = 300
+    end,
+    opts = {}
+  },
+
+  {
     'nvim-telescope/telescope.nvim',
     branch = '0.1.x',
     event = "InsertEnter",
@@ -198,6 +208,10 @@ require('lazy').setup({
         cond = function()
           return vim.fn.executable 'make' == 1
         end,
+      },
+      {
+        "nvim-telescope/telescope-live-grep-args.nvim",
+        version = "^1.0.0",
       },
     },
   },
@@ -344,6 +358,9 @@ require('lazy').setup({
   },
 
   {
+    -- idea: would love it if we can save arrows by git branch
+    -- maybe even have an option to switch between branch-specific 
+    -- to general codebase-specific arrows.
     "otavioschwanck/arrow.nvim",
     event = "BufReadPre",
     opts = {
@@ -361,6 +378,13 @@ require('lazy').setup({
     "smjonas/inc-rename.nvim",
     event = "InsertEnter",
     opts = {}
+  },
+
+  {
+    "iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    ft = { "markdown" },
+    build = function() vim.fn["mkdp#util#install"]() end,
   },
 
   {
