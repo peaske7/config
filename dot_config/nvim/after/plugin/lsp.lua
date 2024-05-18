@@ -61,6 +61,21 @@ require('mason-lspconfig').setup({
       local lua_opts = lsp_zero.nvim_lua_ls()
       require('lspconfig').lua_ls.setup(lua_opts)
     end,
+    gopls = function()
+      require('lspconfig').gopls.setup({
+        settings = {
+          gopls = {
+            completeUnimported = true,
+            useplaceholders = true,
+            analyses = {
+              unusedparams = true,
+            },
+            staticcheck = true,
+            gofumpt = true,
+          },
+        },
+      })
+    end,
     rust_analyzer = lsp_zero.noop,
   }
 })

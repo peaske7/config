@@ -28,6 +28,9 @@ vim.keymap.set('n', '<leader>svss', telescope_builtin.git_status, opts)
 vim.keymap.set('n', '<leader>st', '<cmd>TodoTelescope<cr>', opts)
 
 require('telescope').setup {
+  defaults = {
+    file_ignore_patterns = { "%.git/.*", "node%_modules/.*", "%.venv/.*", "target/.*" },
+  },
   pickers = {
     find_files = {
       find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/*" },

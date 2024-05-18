@@ -26,3 +26,4 @@ yabai -m rule --add app="^Slack$" manage=off
 yabai -m rule --add app="^Obsidian$" manage=off
 yabai -m rule --add app="^draw.io$" manage=off
 yabai -m rule --add app="^Rize$" manage=off
+yabai -m rule --add app="^ChatGPT$" manage=off
