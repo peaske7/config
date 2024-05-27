@@ -71,14 +71,18 @@ vim.keymap.set("n", "<leader>chea", "!chezmoi apply", { remap = false })
 -- inherit colorscheme from terminal
 -- vim.cmd('hi Normal ctermbg=none guibg=none')
 
+-- netrw
+vim.cmd("hi! link netrwMarkFile Search")
+vim.keymap.set("n", "<leader>dd", ":20Lexplore %:p:h<CR>")
+vim.keymap.set("n", "<leader>da", ":20Lexplore <CR>")
+
 
 -- Highlight on yank
-local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
 vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function()
     vim.highlight.on_yank()
   end,
-  group = highlight_group,
+  group = vim.api.nvim_create_augroup('YankHighlight', { clear = true }),
   pattern = '*',
 })
 
@@ -212,6 +216,21 @@ require('lazy').setup({
   },
 
   {
+    "nvim-neotest/neotest",
+    dependencies = {
+      "nvim-neotest/nvim-nio",
+      "antoinemadec/FixCursorHold.nvim",
+    },
+    config = function()
+      require('neotest').setup {
+        adapters = {
+          require('rustaceanvim.neotest')
+        },
+      }
+    end
+  },
+
+  {
     "zbirenbaum/copilot.lua",
     cmd = "Copilot",
     event = "InsertEnter",
@@ -335,6 +354,10 @@ require('lazy').setup({
   },
 
   {
+    "scalameta/nvim-metals",
+  },
+
+  {
     "folke/trouble.nvim",
     event = "BufReadPre",
     opts = {}
@@ -420,6 +443,17 @@ require('lazy').setup({
         border = "",
       }
     }
+  },
+
+  {
+    -- I removed this once, but I want to give it a second shot
+    -- After using IntelliJ a little to read new repositories, maybe tabs and
+    -- file trees aren't so bad after all
+    'romgrk/barbar.nvim',
+    event = "BufReadPre",
+    init = function()
+      vim.g.barbar_auto_setup = false
+    end,
   },
 
   {

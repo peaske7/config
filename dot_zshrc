@@ -74,10 +74,6 @@ zinit light starship/starship
 zinit ice lucid wait"0a" depth"1" from="gh-r" as="program" atload'eval "$(zoxide init zsh)"'
 zinit light ajeetdsouza/zoxide
 
-# ghq
-zinit ice lucid wait"0a"
-zinit light x-motemen/ghq
-
 # ----------------------------
 # functions and aliases
 # ----------------------------
@@ -176,6 +172,7 @@ export PATH=$PATH:$ANDROID_HOME/platform-tools
 export PATH="$BREW_PATH/opt/openjdk@11/bin:$PATH"
 export PATH="$BREW_PATH/opt/llvm/bin:$PATH"
 export PATH="$BREW_PATH/opt/cyrus-sasl/sbin:$PATH"
+export JAVA_HOME="$BREW_PATH/opt/openjdk@11"
 
 # lua
 export PATH=$PATH:$HOME/.config/lsp/lua-language-server/bin
@@ -199,9 +196,6 @@ function lazy_gcloud {
 }
 function gcloud { lazy_gcloud; gcloud "$@"; }
 
-# ghq
-export GHQ_ROOT=~/Developer
-
 # source nix 
 if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix.sh" ]; then 
     source "/nix/var/nix/profiles/default/etc/profile.d/nix.sh"
@@ -209,4 +203,18 @@ fi
 if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then 
     source "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
 fi
+
+if [ $(hostname) = "m1mbp.local" ]; then
+#
+elif [ $(hostname) = "PDYMBP-00401" ]; then
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+  export PATH="$HOME/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
+  export PATH="$BREW_PATH/opt/curl/bin:$PATH"
+
+#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+  export SDKMAN_DIR="$HOME/.sdkman"
+  [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+fi
+
 # zprof

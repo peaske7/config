@@ -1,7 +1,6 @@
 { config, pkgs, libs, ... }:
 {
   home.packages = with pkgs; [
-    docker
     fzf
     jq
     bat
@@ -10,7 +9,6 @@
     ripgrep
     yabai
     skhd
-		curl
 		gh
 		httpie
     chezmoi
