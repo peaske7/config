@@ -359,6 +359,7 @@ require('lazy').setup({
 
   {
     "folke/trouble.nvim",
+    version = 'v2.x',
     event = "BufReadPre",
     opts = {}
   },

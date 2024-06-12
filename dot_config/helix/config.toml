@@ -1,0 +1,13 @@
+theme = "github_dark"
+
+[editor]
+true-color = true
+
+[keys.insert]
+j = { k = "normal_mode" }
+
+[editor.lsp]
+display-inlay-hints = true
+
+[editor.indent-guides]
+render = true
