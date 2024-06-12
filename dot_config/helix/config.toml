@@ -2,12 +2,25 @@ theme = "github_dark"
 
 [editor]
 true-color = true
+rulers = [80]
 
-[keys.insert]
-j = { k = "normal_mode" }
+[editor.cursor-shape]
+normal = "block"
+insert = "bar"
+select = "underline"
 
 [editor.lsp]
+display-messages = false      
+auto-signature-help = true
+display-signature-help-docs = true
 display-inlay-hints = true
 
 [editor.indent-guides]
 render = true
+
+[keys.insert]
+j = { k = "normal_mode" }
+
+[keys.normal]
+"K" = "hover"
+"A-k" = "keep_selections"
