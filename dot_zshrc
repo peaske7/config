@@ -205,18 +205,17 @@ if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then
 fi
 
 
-if [ $(hostname) = "m1mbp.local" ]; then
-#
-elif [ $(hostname) = "PDYMBP-00401" ]; then
-### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+if [ $(hostname) = "PDYMBP-00401" ]; then
+  ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
   export PATH="$HOME/.rd/bin:$PATH"
-### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
+
+  ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
   export PATH="$BREW_PATH/opt/curl/bin:$PATH"
 
-# source helix
+  # source helix
   export HELIX_RUNTIME="$HOME/helix/runtime"
 
-#THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+  #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
   export SDKMAN_DIR="$HOME/.sdkman"
   [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
 fi
