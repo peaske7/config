@@ -149,6 +149,41 @@ vim.api.nvim_create_autocmd("QuitPre", {
   end
 })
 
+-- https://github.com/neovim/nvim-lspconfig/issues/662#issuecomment-1706589179
+-- Command to toggle inline diagnostics
+vim.api.nvim_create_user_command(
+  'DiagnosticsToggleVirtualText',
+  function()
+    local current_value = vim.diagnostic.config().virtual_text
+    if current_value then
+      vim.diagnostic.config({ virtual_text = false })
+    else
+      vim.diagnostic.config({ virtual_text = true })
+    end
+  end,
+  {}
+)
+
+-- Command to toggle diagnostics
+vim.api.nvim_create_user_command(
+  'DiagnosticsToggle',
+  function()
+    if vim.diagnostic.is_enabled() then
+      vim.diagnostic.enable(false)
+    else
+      vim.diagnostic.enable()
+    end
+  end,
+  {}
+)
+
+-- Keybinding to toggle inline diagnostics (ii)
+vim.api.nvim_set_keymap('n', '<leader>ii', ':lua vim.cmd("DiagnosticsToggleVirtualText")<CR>',
+  { noremap = true, silent = true })
+
+-- Keybinding to toggle diagnostics (id)
+vim.api.nvim_set_keymap('n', '<leader>id', ':lua vim.cmd("DiagnosticsToggle")<CR>',
+  { noremap = true, silent = true })
 
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
@@ -296,14 +331,11 @@ require('lazy').setup({
       'nvim-treesitter/nvim-treesitter-textobjects',
     },
     config = function()
-      require('nvim-treesitter.configs').setup {
+      require('nvim-treesitter.configs').setup({
         ensure_installed = { "rust", "lua", "javascript", "typescript" },
         auto_install = true,
         highlight = {
           enable = true,
-        },
-        autotag = {
-          enable = true
         },
 
         -- disable slow treesitter highlight for large files
@@ -314,7 +346,7 @@ require('lazy').setup({
             return true
           end
         end,
-      }
+      })
     end,
     build = ':TSUpdate',
   },
