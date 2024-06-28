@@ -23,3 +23,13 @@ augroup source-vimrc
   autocmd!
   autocmd BufWritePost *vimrc source $MYVIMRC | set foldmethod=marker
 augroup END
+
+call plug#begin()
+
+Plug 'tpope/vim-sensible'
+
+Plug 'vim-denops/denops.vim'
+
+call plug#end()
+
+set runtimepath+=~/Developer/github.com/DrPoppyseed/denops-maze

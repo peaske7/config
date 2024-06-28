@@ -39,7 +39,6 @@ vim.g.rustaceanvim = {
   },
 }
 
-
 -- scala metals configuration
 local metals_config = require('metals').bare_config()
 metals_config.capabilities = lsp_zero.get_capabilities()
@@ -92,6 +91,19 @@ require('mason-lspconfig').setup({
       })
     end,
     rust_analyzer = lsp_zero.noop,
+    svelte = function()
+      require('lspconfig').svelte.setup({
+        on_attach = function(client, bufnr)
+          vim.api.nvim_create_autocmd("BufWritePost", {
+            pattern = { "*.js", "*.ts" },
+            callback = function(ctx)
+              -- Here use ctx.match instead of ctx.file
+              client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.match })
+            end,
+          })
+        end,
+      })
+    end
   }
 })
 
