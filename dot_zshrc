@@ -50,13 +50,11 @@ zinit wait lucid blockf light-mode for \
   @'zdharma-continuum/fast-syntax-highlighting' \
   @'hlissner/zsh-autopair'
 
-# mcfly
-zinit ice lucid wait"0a" depth"1" from"gh-r" as"program" atload'eval "$(mcfly init zsh)"'
-zinit light cantino/mcfly
-export MCFLY_FUZZY=2 # Allow fuzzy matching 
-export MCFLY_KEY_SCHEME=vim # Change Mcfly keymap to vim
-export MCFLY_RESULTS=50
-export MCFLY_DISABLE_MENU=TRUE
+# atuin
+# curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
+zinit load atuinsh/atuin
+eval "$(atuin init zsh --disable-up-arrow)"
+bindkey '^r' atuin-search
 
 # we use zsh-vi-mode instead of OMZP::vi-mode because the '^R' keybindings 
 # overlaps with mcfly and breaks one or the other.
@@ -203,7 +201,6 @@ fi
 if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then 
     source "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
 fi
-
 
 if [ $(hostname) = "PDYMBP-00401" ]; then
   ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
