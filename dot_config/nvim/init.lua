@@ -502,6 +502,14 @@ require('lazy').setup({
   },
 
   {
+    "HiPhish/rainbow-delimiters.nvim",
+    event = "BufReadPre",
+    config = function()
+      require("rainbow-delimiters.setup").setup()
+    end,
+  },
+
+  {
     "iamcco/markdown-preview.nvim",
     cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
     ft = { "markdown" },
