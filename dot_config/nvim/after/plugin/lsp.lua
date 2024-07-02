@@ -124,11 +124,11 @@ cmp.event:on(
 )
 
 -- Tab Completion Configuration as recommended in the copilot-cmp README
-local has_words_before = function()
-  if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
-  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-  return col ~= 0 and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match("^%s*$") == nil
-end
+-- local has_words_before = function()
+--   if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
+--   local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+--   return col ~= 0 and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match("^%s*$") == nil
+-- end
 
 -- snippets
 local luasnip = require('luasnip')
@@ -149,13 +149,13 @@ cmp.setup({
   },
   mapping = {
     -- Tab completion for copilot
-    ["<Tab>"] = vim.schedule_wrap(function(fallback)
-      if cmp.visible() and has_words_before() then
-        cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
-      else
-        fallback()
-      end
-    end),
+    -- ["<Tab>"] = vim.schedule_wrap(function(fallback)
+    --   if cmp.visible() and has_words_before() then
+    --     cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
+    --   else
+    --     fallback()
+    --   end
+    -- end),
 
     ['<C-n>'] = cmp.mapping.select_next_item { behavior = cmp.SelectBehavior.Insert },
     ['<C-p>'] = cmp.mapping.select_prev_item { behavior = cmp.SelectBehavior.Insert },
