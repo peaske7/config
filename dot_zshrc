@@ -54,7 +54,7 @@ zinit wait lucid blockf light-mode for \
 # curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
 zinit ice as"command" from"gh-r" as"program"
 zinit light atuinsh/atuin
-eval "$(atuin init zsh)"
+eval "$(atuin init zsh --disable-up-arrow)"
 export ATUIN_NOBIND="true"
 bindkey '^r' atuin-search
 
@@ -173,6 +173,9 @@ export PATH="$BREW_PATH/opt/openjdk@11/bin:$PATH"
 export PATH="$BREW_PATH/opt/llvm/bin:$PATH"
 export PATH="$BREW_PATH/opt/cyrus-sasl/sbin:$PATH"
 export JAVA_HOME="$BREW_PATH/opt/openjdk@11"
+
+# pip
+export PATH="$PATH:$HOME/.local/bin"
 
 # lua
 export PATH=$PATH:$HOME/.config/lsp/lua-language-server/bin
