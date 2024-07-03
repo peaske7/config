@@ -226,7 +226,15 @@ require('lazy').setup({
 
       {
         "j-hui/fidget.nvim",
-        opts = {}
+        config = function()
+          require('fidget').setup({
+            notification = {
+              window = {
+                winblend = 0,
+              },
+            }
+          })
+        end
       },
     }
   },
@@ -397,22 +405,49 @@ require('lazy').setup({
   },
 
   {
-    -- A colorscheme thats easy on the eyes
-    'sainnhe/gruvbox-material',
-    lazy = false,
-    priority = 1000,
-    -- config = function()
-    --   vim.cmd('colorscheme gruvbox-material')
-    -- end,
+    'nvim-lualine/lualine.nvim',
+    opts = {}
   },
+
+  -- {
+  --   -- A colorscheme thats easy on the eyes
+  --   'sainnhe/gruvbox-material',
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function()
+  --     vim.cmd('colorscheme gruvbox-material')
+  --   end,
+  -- },
+
+  -- {
+  --   "craftzdog/solarized-osaka.nvim",
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function()
+  --     vim.cmd('colorscheme solarized-osaka')
+  --   end,
+  -- },
 
   {
     "catppuccin/nvim",
     name = "catppuccin",
+    lazy = false,
     priority = 1000,
     config = function()
       require("catppuccin").setup({
-        flavour = "mocha", -- latte, frappe, macchiato, mocha
+        flavour = "macchiato", -- latte, frappe, macchiato, mocha
+        background = {         -- :h background
+          light = "latte",
+          dark = "macchiato",
+        },
+        integrations = {
+          barbar = true,
+          which_key = true,
+          fidget = true,
+          lsp_trouble = true,
+          mason = true
+        },
+        transparent_background = true
       })
 
       vim.cmd.colorscheme "catppuccin"
