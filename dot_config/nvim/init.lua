@@ -76,6 +76,9 @@ vim.cmd("hi! link netrwMarkFile Search")
 vim.keymap.set("n", "<leader>dd", ":20Lexplore %:p:h<CR>")
 vim.keymap.set("n", "<leader>da", ":20Lexplore <CR>")
 
+-- terminal mode
+vim.keymap.set("t", "<esc>", "<c-\\><c-n>")
+vim.cmd("command! -nargs=* T split | wincmd j | resize 20 | terminal <args>")
 
 -- Highlight on yank
 vim.api.nvim_create_autocmd('TextYankPost', {
