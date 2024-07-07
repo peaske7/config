@@ -82,7 +82,6 @@ vim.keymap.set("n", "<leader>da", ":20Lexplore <CR>")
 
 -- terminal mode
 vim.keymap.set("t", "<esc>", "<c-\\><c-n>")
-vim.cmd("command! -nargs=* T split | wincmd j | resize 20 | terminal <args>")
 
 -- Always start in insert mode when opening a terminal
 vim.api.nvim_create_autocmd("TermOpen", {
@@ -214,7 +213,9 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
-  'tpope/vim-vinegar',
+
+  -- 'tpope/vim-vinegar',
+
   'machakann/vim-sandwich',
   'nvim-lua/plenary.nvim',
 
@@ -315,7 +316,9 @@ require('lazy').setup({
     config = function()
       require('nvim-tree').setup()
 
-      vim.keymap.set('n', '<leader>t', "<cmd>NvimTreeToggle<cr>", { noremap = true, silent = true })
+      vim.keymap.set('n', '<leader>t', "<cmd>NvimTreeToggle<cr>", {
+        noremap = true, silent = true
+      })
     end
   },
 
