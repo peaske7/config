@@ -313,11 +313,9 @@ require('lazy').setup({
       'nvim-tree/nvim-web-devicons'
     },
     config = function()
-      require("nvim-tree").setup()
+      require('nvim-tree').setup()
 
-      vim.keymap.set('n', '<leader>tt', '<cmd>NvimTreeFindFileToggle<cr>', {
-        expr = true, silent = true
-      })
+      vim.keymap.set('n', '<leader>t', "<cmd>NvimTreeToggle<cr>", { noremap = true, silent = true })
     end
   },
 
