@@ -42,8 +42,12 @@ vim.o.colorcolumn = '80'
 vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 
 -- Remap for dealing with word wrap
-vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
-vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
+vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", {
+  expr = true, silent = true
+})
+vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", {
+  expr = true, silent = true
+})
 
 -- The most important remap
 vim.keymap.set("i", "jk", "<Esc>", { noremap = true })
@@ -79,6 +83,12 @@ vim.keymap.set("n", "<leader>da", ":20Lexplore <CR>")
 -- terminal mode
 vim.keymap.set("t", "<esc>", "<c-\\><c-n>")
 vim.cmd("command! -nargs=* T split | wincmd j | resize 20 | terminal <args>")
+
+-- Always start in insert mode when opening a terminal
+vim.api.nvim_create_autocmd("TermOpen", {
+  pattern = "*",
+  command = "startinsert"
+})
 
 -- Highlight on yank
 vim.api.nvim_create_autocmd('TextYankPost', {
@@ -304,6 +314,10 @@ require('lazy').setup({
     },
     config = function()
       require("nvim-tree").setup()
+
+      vim.keymap.set('n', '<leader>tt', '<cmd>NvimTreeFindFileToggle<cr>', {
+        expr = true, silent = true
+      })
     end
   },
 
