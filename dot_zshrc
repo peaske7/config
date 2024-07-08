@@ -119,7 +119,7 @@ else
 fi
 
 # openssl
-if [ $(hostname) = "m1mbp" ]; then
+if [ $(hostname) = "m1mbp" ] || [ $(hostname) = "m1mbp.local" ]; then
   BREW_PATH="/opt/homebrew"
 elif [ $(hostname) = "PDYMBP-00401" ]; then
   BREW_PATH="$HOME/homebrew"
