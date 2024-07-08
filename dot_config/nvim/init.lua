@@ -454,7 +454,7 @@ require('lazy').setup({
     config = function()
       require("catppuccin").setup({
         flavour = "macchiato", -- latte, frappe, macchiato, mocha
-        background = {         -- :h background
+        background = {
           light = "latte",
           dark = "macchiato",
         },
@@ -558,7 +558,13 @@ require('lazy').setup({
   {
     'lewis6991/gitsigns.nvim',
     event = "BufReadPre",
-    opts = {}
+    config = function()
+      require('gitsigns').setup()
+
+      vim.keymap.set('n', '<leader>gl', '<cmd>Gitsigns toggle_current_line_blame<cr>', {
+        noremap = true, silent = true
+      })
+    end,
   },
 
   {
