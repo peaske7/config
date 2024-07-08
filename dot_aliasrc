@@ -81,6 +81,9 @@ alias dvp='docker volume prune' # [D]ocker [V]olume [P]rune
 alias drs='dcd && dvp && dcbu' # [D]ocker [R]e[S]tart
 
 # git
+# [G]it [F]zf [C]heck [O]ut
+alias gfco="git branch --list | cut -c 3- | fzf --preview \"git log --pretty=format:'%h %cd %s' --date=format:'%Y-%m-%d %H:%M' {}\" | xargs git checkout"
+
 alias gm="git merge"
 alias gss="git status --short"
 alias gaa="git add --all"
