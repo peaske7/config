@@ -314,7 +314,13 @@ require('lazy').setup({
       'nvim-tree/nvim-web-devicons'
     },
     config = function()
-      require('nvim-tree').setup()
+      require('nvim-tree').setup({
+        git = {
+          enable = true,
+          ignore = false,
+          timeout = 500,
+        },
+      })
 
       vim.keymap.set('n', '<leader>t', "<cmd>NvimTreeToggle<cr>", {
         noremap = true, silent = true
@@ -587,4 +593,13 @@ require('lazy').setup({
     ft = { "markdown" },
     build = function() vim.fn["mkdp#util#install"]() end,
   },
+
+  {
+    'MeanderingProgrammer/markdown.nvim',
+    name = 'render-markdown',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' },
+    config = function()
+      require('render-markdown').setup({})
+    end,
+  }
 })
