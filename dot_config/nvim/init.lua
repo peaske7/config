@@ -315,6 +315,21 @@ require('lazy').setup({
     },
     config = function()
       require('nvim-tree').setup({
+        renderer = {
+          indent_width = -2,
+          icons = {
+            web_devicons = {
+              file = {
+                enable = true,
+                color = true,
+              },
+              folder = {
+                enable = true,
+                color = true,
+              },
+            },
+          }
+        },
         git = {
           enable = true,
           ignore = false,
@@ -325,6 +340,14 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>t', "<cmd>NvimTreeToggle<cr>", {
         noremap = true, silent = true
       })
+    end
+  },
+
+  {
+    'echasnovski/mini.icons',
+    version = false,
+    config = function()
+      require('mini.icons').setup()
     end
   },
 
@@ -593,13 +616,4 @@ require('lazy').setup({
     ft = { "markdown" },
     build = function() vim.fn["mkdp#util#install"]() end,
   },
-
-  {
-    'MeanderingProgrammer/markdown.nvim',
-    name = 'render-markdown',
-    dependencies = { 'nvim-treesitter/nvim-treesitter', 'echasnovski/mini.nvim' },
-    config = function()
-      require('render-markdown').setup({})
-    end,
-  }
 })
