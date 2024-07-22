@@ -337,9 +337,9 @@ require('lazy').setup({
         },
       })
 
-      vim.keymap.set('n', '<leader>t', "<cmd>NvimTreeToggle<cr>", {
-        noremap = true, silent = true
-      })
+      local opts = { noremap = true, silent = true }
+      vim.keymap.set('n', '<leader>tt', "<cmd>NvimTreeToggle<cr>", opts)
+      vim.keymap.set('n', '<leader>tf', '<cmd>NvimTreeFindFile<cr>', opts)
     end
   },
 
