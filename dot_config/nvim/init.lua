@@ -1,3 +1,6 @@
+-- Set language settings
+vim.cmd("language en_US")
+
 -- The second most important remaps
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
