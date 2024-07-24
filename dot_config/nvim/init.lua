@@ -75,6 +75,9 @@ vim.o.foldenable = true
 -- source nvim config
 vim.keymap.set("n", "<leader>chea", "!chezmoi apply", { remap = false })
 
+-- open current buffer in vertical split
+vim.keymap.set('n', "<leader>vs", "<cmd>vert sb#<cr>", { remap = false })
+
 -- inherit colorscheme from terminal
 -- vim.cmd('hi Normal ctermbg=none guibg=none')
 
@@ -121,24 +124,24 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
   end
 })
 
-vim.api.nvim_create_autocmd({ "BufWritePre" }, {
-  pattern = "*.go",
-  callback = function()
-    local params = vim.lsp.util.make_range_params()
-    params.context = { only = { "source.organizeImports" } }
-    local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params)
-    for cid, res in pairs(result or {}) do
-      for _, r in pairs(res.result or {}) do
-        if r.edit then
-          local enc = (vim.lsp.get_client_by_id(cid) or {}).offset_encoding or "utf-16"
-          vim.lsp.util.apply_workspace_edit(r.edit, enc)
-        end
-      end
-    end
-    vim.lsp.buf.format({ async = false })
-  end
-})
-
+-- formats go files on save?
+-- vim.api.nvim_create_autocmd({ "BufWritePre" }, {
+--   pattern = "*.go",
+--   callback = function()
+--     local params = vim.lsp.util.make_range_params()
+--     params.context = { only = { "source.organizeImports" } }
+--     local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params)
+--     for cid, res in pairs(result or {}) do
+--       for _, r in pairs(res.result or {}) do
+--         if r.edit then
+--           local enc = (vim.lsp.get_client_by_id(cid) or {}).offset_encoding or "utf-16"
+--           vim.lsp.util.apply_workspace_edit(r.edit, enc)
+--         end
+--       end
+--     end
+--     vim.lsp.buf.format({ async = false })
+--   end
+-- })
 
 -- Close nvim-tree when last window is closed
 vim.api.nvim_create_autocmd("QuitPre", {
@@ -566,7 +569,7 @@ require('lazy').setup({
 
   {
     "otavioschwanck/arrow.nvim",
-    event = "BufReadPre",
+    lazy = false,
     opts = {
       always_show_path = true,
       separate_by_branch = true,

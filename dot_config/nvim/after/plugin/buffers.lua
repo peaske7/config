@@ -7,6 +7,8 @@ vim.keymap.set('n', '<leader>n', '<Cmd>BufferNext<CR>', opts)
 
 -- close buffer
 vim.keymap.set('n', '<leader>d', '<Cmd>BufferClose<CR>', opts)
+vim.keymap.set('n', '<leader>bd', '<cmd>BufferPickDelete<cr>', opts)
+vim.keymap.set('n', '<leader>bw', '<cmd>BufferWipeout<cr>', opts)
 
 for i = 1, 9, 1
 do
