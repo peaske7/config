@@ -279,6 +279,12 @@ require('lazy').setup({
   },
 
   {
+    "sontungexpt/stcursorword",
+    event = "VeryLazy",
+    config = true,
+  },
+
+  {
     "nvim-neotest/neotest",
     dependencies = {
       "nvim-neotest/nvim-nio",
