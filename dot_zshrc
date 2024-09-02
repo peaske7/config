@@ -46,22 +46,26 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # case insensitive tab
 zinit wait lucid blockf light-mode for \
   @'zsh-users/zsh-completions' \
   @'zsh-users/zsh-autosuggestions' \
-  @'zsh-users/zsh-history-substring-search' \
   @'zdharma-continuum/fast-syntax-highlighting' \
   @'hlissner/zsh-autopair'
 
 # atuin
-# curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh
-zinit ice as"command" from"gh-r" as"program"
-zinit light atuinsh/atuin
-eval "$(atuin init zsh --disable-up-arrow)"
-export ATUIN_NOBIND="true"
-bindkey '^r' atuin-search
+# export ATUIN_NOBIND="true"
+# eval "$(atuin init zsh --disable-up-arrow)"
+# bindkey '^r' atuin-search
+
+# mcfly
+zinit ice lucid wait"0a" from"gh-r" as"program" atload'eval "$(mcfly init zsh)"'
+zinit light cantino/mcfly
+MCFLY_KEY_SCHEME=vim
+MCFLY_DISABLE_MENU=TRUE
 
 # we use zsh-vi-mode instead of OMZP::vi-mode because the '^R' keybindings 
 # overlaps with mcfly and breaks one or the other.
 zinit ice depth"1" lucid
 zinit light jeffreytse/zsh-vi-mode
+zinit ice wait silent
+ZVM_LAZY_KEYBINDINGS=false
 ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
 
 # starship

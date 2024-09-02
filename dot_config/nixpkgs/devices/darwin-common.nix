@@ -4,17 +4,16 @@
     fzf
     jq
     bat
-		circleci-cli
+    circleci-cli
     fd
     ripgrep
     yabai
     skhd
-		gh
-		httpie
+    httpie
     chezmoi
     tmux
     kcat
-		llvm
+    llvm
     sccache
     bottom
   ];

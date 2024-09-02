@@ -80,7 +80,7 @@ require('mason-lspconfig').setup({
         settings = {
           gopls = {
             completeUnimported = true,
-            useplaceholders = true,
+            usePlaceholders = true,
             analyses = {
               unusedparams = true,
             },
