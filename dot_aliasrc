@@ -54,6 +54,19 @@ function gddnl() {
 	git diff "$(git_default_branch)" "$@" -- ":(exclude)package-lock.json" ":(exclude)pnpm-lock.yaml" ":(exclude)*.lock"
 }
 
+# rembg
+# https://github.com/danielgatis/rembg?tab=readme-ov-file
+function rembga() {
+  for file in "$@"; do
+    ft=$(file --mime-type -b "$file")
+    if [[ "$ft" == "image/jpeg" || "$ft" == "image/jpg" || "$ft" == "image/png" ]]; then
+      rembg -i "$file" -o "${file%.${ft}}-bgremoved.${ft}"
+    else
+      echo "Skipping $file, filetype $ft is not supported."
+    fi
+  done
+}
+
 # ----------------------------
 # aliases
 # ----------------------------
@@ -125,3 +138,4 @@ alias tns='tmux new -s' # [T]mux [N]ew [S]ession
 
 # ssh
 alias es='nvim ~/.ssh/config' # [E]dit [S]sh configs
+
