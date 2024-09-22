@@ -1,3 +1,5 @@
+require("peaske7.plugins.buffers")
+
 -- Set language settings
 vim.cmd("language en_US")
 
@@ -82,9 +84,9 @@ vim.keymap.set('n', "<leader>vs", "<cmd>vert sb#<cr>", { remap = false })
 -- vim.cmd('hi Normal ctermbg=none guibg=none')
 
 -- netrw
-vim.cmd("hi! link netrwMarkFile Search")
-vim.keymap.set("n", "<leader>dd", ":20Lexplore %:p:h<CR>")
-vim.keymap.set("n", "<leader>da", ":20Lexplore <CR>")
+-- vim.cmd("hi! link netrwMarkFile Search")
+-- vim.keymap.set("n", "<leader>dd", ":20Lexplore %:p:h<CR>")
+-- vim.keymap.set("n", "<leader>da", ":20Lexplore <CR>")
 
 -- terminal mode
 vim.keymap.set("t", "<esc>", "<c-\\><c-n>")
@@ -124,85 +126,6 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
   end
 })
 
--- formats go files on save?
--- vim.api.nvim_create_autocmd({ "BufWritePre" }, {
---   pattern = "*.go",
---   callback = function()
---     local params = vim.lsp.util.make_range_params()
---     params.context = { only = { "source.organizeImports" } }
---     local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params)
---     for cid, res in pairs(result or {}) do
---       for _, r in pairs(res.result or {}) do
---         if r.edit then
---           local enc = (vim.lsp.get_client_by_id(cid) or {}).offset_encoding or "utf-16"
---           vim.lsp.util.apply_workspace_edit(r.edit, enc)
---         end
---       end
---     end
---     vim.lsp.buf.format({ async = false })
---   end
--- })
-
--- Close nvim-tree when last window is closed
-vim.api.nvim_create_autocmd("QuitPre", {
-  callback = function()
-    local tree_wins = {}
-    local floating_wins = {}
-    local wins = vim.api.nvim_list_wins()
-    for _, w in ipairs(wins) do
-      local bufname = vim.api.nvim_buf_get_name(vim.api.nvim_win_get_buf(w))
-      if bufname:match("NvimTree_") ~= nil then
-        table.insert(tree_wins, w)
-      end
-      if vim.api.nvim_win_get_config(w).relative ~= '' then
-        table.insert(floating_wins, w)
-      end
-    end
-    if 1 == #wins - #floating_wins - #tree_wins then
-      -- Should quit, so we close all invalid windows.
-      for _, w in ipairs(tree_wins) do
-        vim.api.nvim_win_close(w, true)
-      end
-    end
-  end
-})
-
--- https://github.com/neovim/nvim-lspconfig/issues/662#issuecomment-1706589179
--- Command to toggle inline diagnostics
-vim.api.nvim_create_user_command(
-  'DiagnosticsToggleVirtualText',
-  function()
-    local current_value = vim.diagnostic.config().virtual_text
-    if current_value then
-      vim.diagnostic.config({ virtual_text = false })
-    else
-      vim.diagnostic.config({ virtual_text = true })
-    end
-  end,
-  {}
-)
-
--- Command to toggle diagnostics
-vim.api.nvim_create_user_command(
-  'DiagnosticsToggle',
-  function()
-    if vim.diagnostic.is_enabled() then
-      vim.diagnostic.enable(false)
-    else
-      vim.diagnostic.enable()
-    end
-  end,
-  {}
-)
-
--- Keybinding to toggle inline diagnostics (ii)
-vim.api.nvim_set_keymap('n', '<leader>ii', ':lua vim.cmd("DiagnosticsToggleVirtualText")<CR>',
-  { noremap = true, silent = true })
-
--- Keybinding to toggle diagnostics (id)
-vim.api.nvim_set_keymap('n', '<leader>id', ':lua vim.cmd("DiagnosticsToggle")<CR>',
-  { noremap = true, silent = true })
-
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system {
@@ -219,11 +142,27 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
-
-  -- 'tpope/vim-vinegar',
+  'tpope/vim-sleuth',
 
   'machakann/vim-sandwich',
   'nvim-lua/plenary.nvim',
+
+  {
+    "folke/lazydev.nvim",
+    ft = "lua",
+    opts = {
+      library = {
+        { path = "luvit-meta/library", words = { "vim%.uv" } },
+      },
+    },
+  },
+  { "Bilal2453/luvit-meta", lazy = true },
+
+  {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    config = true
+  },
 
   {
     'VonHeikemen/lsp-zero.nvim',
@@ -276,6 +215,13 @@ require('lazy').setup({
       },
 
     },
+    opts = function(_, opts)
+      opts.sources = opts.sources or {}
+      table.insert(opts.sources, {
+        name = "lazydev",
+        group_index = 0,
+      })
+    end,
   },
 
   {
@@ -334,49 +280,6 @@ require('lazy').setup({
   },
 
   {
-    "nvim-tree/nvim-tree.lua",
-    dependencies = {
-      'nvim-tree/nvim-web-devicons'
-    },
-    config = function()
-      require('nvim-tree').setup({
-        renderer = {
-          indent_width = -2,
-          icons = {
-            web_devicons = {
-              file = {
-                enable = true,
-                color = true,
-              },
-              folder = {
-                enable = true,
-                color = true,
-              },
-            },
-          }
-        },
-        git = {
-          enable = true,
-          ignore = false,
-          timeout = 500,
-        },
-      })
-
-      local opts = { noremap = true, silent = true }
-      vim.keymap.set('n', '<leader>tt', "<cmd>NvimTreeToggle<cr>", opts)
-      vim.keymap.set('n', '<leader>tf', '<cmd>NvimTreeFindFile<cr>', opts)
-    end
-  },
-
-  {
-    'echasnovski/mini.icons',
-    version = false,
-    config = function()
-      require('mini.icons').setup()
-    end
-  },
-
-  {
     "folke/which-key.nvim",
     event = "VeryLazy",
     init = function()
@@ -403,6 +306,48 @@ require('lazy').setup({
         version = "^1.0.0",
       },
     },
+    config = function()
+      -- Enable fzf native
+      pcall(require('telescope').load_extension, 'fzf')
+
+      -- Enable args plugin
+      pcall(require('telescope').load_extension, 'live_grep_args')
+
+      local telescope_builtin = require('telescope.builtin')
+
+      local opts = { noremap = true }
+      vim.keymap.set('n', '<leader>sf', telescope_builtin.find_files, opts)
+      vim.keymap.set('n', '<leader>sg', telescope_builtin.live_grep, opts)
+
+      -- grep with telescope from visual mode
+      vim.keymap.set('v', '<leader>sg', 'zy:Telescope grep_string default_text=<C-r>z<CR>', opts)
+
+      vim.keymap.set('n', '<leader>sd', telescope_builtin.diagnostics, opts)
+      vim.keymap.set('n', '<leader>sb', telescope_builtin.buffers, opts)
+      vim.keymap.set('n', '<leader>sr', telescope_builtin.resume, opts)
+      vim.keymap.set('n', '<leader>sq', telescope_builtin.quickfix, opts)
+      vim.keymap.set('n', '<leader>se', telescope_builtin.registers, opts)
+      vim.keymap.set('n', '<leader>sh', telescope_builtin.highlights, opts)
+
+      -- [v] as in version control
+      vim.keymap.set('n', '<leader>svc', telescope_builtin.git_commits, opts)
+      vim.keymap.set('n', '<leader>svb', telescope_builtin.git_branches, opts)
+      vim.keymap.set('n', '<leader>svss', telescope_builtin.git_status, opts)
+
+      vim.keymap.set('n', '<leader>st', '<cmd>TodoTelescope<cr>', opts)
+
+      require('telescope').setup {
+        defaults = {
+          file_ignore_patterns = { "%.git/.*", "node%_modules/.*", "%.venv/.*", "target/.*" },
+        },
+        pickers = {
+          find_files = {
+            find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/*" },
+          },
+        },
+        extensions = {},
+      }
+    end
   },
 
   {
@@ -427,6 +372,17 @@ require('lazy').setup({
           end
         end,
       })
+
+      local npairs = require("nvim-autopairs")
+      local rule = require("nvim-autopairs.rule")
+      local conds = require("nvim-autopairs.conds")
+
+      -- Angle brackets are handled as pairs too
+      npairs.add_rules {
+        rule("<", ">"):with_pair(conds.before_regex("%a+")):with_move(function(opts)
+          return opts.char == ">"
+        end),
+      }
     end,
     build = ':TSUpdate',
   },
@@ -465,21 +421,38 @@ require('lazy').setup({
     end
   },
 
-  {
-    "scalameta/nvim-metals",
-  },
+  "scalameta/nvim-metals",
 
   {
     "folke/trouble.nvim",
     version = 'v2.x',
     event = "BufReadPre",
-    opts = {}
+    config = function()
+      local t = require("trouble")
+      local opts = { noremap = true, silent = true }
+
+      t.setup({
+        icons = false,
+        fold_open = "v",
+        fold_closed = ">",
+        indent_lines = false,
+        signs = {
+          error = "error",
+          warning = "warn",
+          hint = "hint",
+          information = "info"
+        },
+        use_diagnostic_signs = true
+      })
+
+      vim.keymap.set("n", "<leader>xx", function() t.open() end, opts)
+      vim.keymap.set("n", "<leader>xw", function() t.open("workspace_diagnostics") end, opts)
+      vim.keymap.set("n", "<leader>xd", function() t.open("document_diagnostics") end, opts)
+      vim.keymap.set("n", "<leader>xq", function() t.open("quickfix") end, opts)
+    end
   },
 
-  {
-    'nvim-lualine/lualine.nvim',
-    opts = {}
-  },
+  'nvim-lualine/lualine.nvim',
 
   -- {
   --   -- A colorscheme thats easy on the eyes
@@ -540,12 +513,6 @@ require('lazy').setup({
   },
 
   {
-    "windwp/nvim-autopairs",
-    event = "InsertEnter",
-    opts = {}
-  },
-
-  {
     "windwp/nvim-ts-autotag",
     event = "InsertEnter",
     opts = {}
@@ -599,17 +566,6 @@ require('lazy').setup({
   },
 
   {
-    -- I removed this once, but I want to give it a second shot
-    -- After using IntelliJ a little to read new repositories, maybe tabs and
-    -- file trees aren't so bad after all
-    'romgrk/barbar.nvim',
-    event = "BufReadPre",
-    init = function()
-      vim.g.barbar_auto_setup = false
-    end,
-  },
-
-  {
     'lewis6991/gitsigns.nvim',
     event = "BufReadPre",
     config = function()
@@ -641,4 +597,15 @@ require('lazy').setup({
     ft = { "markdown" },
     build = function() vim.fn["mkdp#util#install"]() end,
   },
+  {
+    'AckslD/nvim-FeMaco.lua',
+    config = function()
+      require("femaco").setup()
+    end,
+  },
+  'Nedra1998/nvim-mdlink',
+
+  require 'peaske7.plugins.buffers',
+  require 'peaske7.plugins.indent_line',
+  require 'peaske7.plugins.nvim_tree'
 })

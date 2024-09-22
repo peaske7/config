@@ -1,6 +1,6 @@
-local lsp_zero = require("lsp-zero")
+local lsp_zero = require("lsp-zero") -- TODO: remove lsp_zero
 
-lsp_zero.on_attach(function(client, bufnr)
+lsp_zero.on_attach(function(_, bufnr)
   local opts = { buffer = bufnr, remap = false }
   lsp_zero.default_keymaps({
     buffer = bufnr,
@@ -31,7 +31,6 @@ lsp_zero.set_server_config({
     }
   }
 })
-
 
 vim.g.rustaceanvim = {
   server = {
