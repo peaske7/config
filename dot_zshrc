@@ -123,12 +123,7 @@ else
 fi
 
 # openssl
-if [ $(hostname) = "m1mbp" ] || [ $(hostname) = "m1mbp.local" ]; then
-  BREW_PATH="/opt/homebrew"
-elif [ $(hostname) = "PDYMBP-00401" ]; then
-  BREW_PATH="$HOME/homebrew"
-  # BREW_PATH="/opt/homebrew"
-fi
+BREW_PATH="/opt/homebrew"
 export PATH="$BREW_PATH/opt/cyrus-sasl@2.1.27/sbin:$PATH"
 export PATH="$BREW_PATH/opt/openssl@1.1/bin:$PATH"
 export LDFLAGS="-L/$BREW_PATH/opt/openssl@1.1/lib/ -L/$BREW_PATH/opt/cyrus-sasl/lib"
@@ -192,8 +187,6 @@ eval "$($BREW_PATH/bin/brew shellenv)"
 # moonrepo
 export PATH="$HOME/.moon/bin:$PATH"
 
-
-
 # gpg key tool
 export GPG_TTY=$(tty)
 
@@ -210,28 +203,8 @@ function lazy_gcloud {
 }
 function gcloud { lazy_gcloud; gcloud "$@"; }
 
-# source nix 
-if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix.sh" ]; then 
-    source "/nix/var/nix/profiles/default/etc/profile.d/nix.sh"
-fi
-if [ -f "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh" ]; then 
-    source "/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh"
-fi
-
-if [ $(hostname) = "PDYMBP-00401" ]; then
-  ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-  export PATH="$HOME/.rd/bin:$PATH"
-
-  ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
-  export PATH="$BREW_PATH/opt/curl/bin:$PATH"
-
-  # source helix
-  export HELIX_RUNTIME="$HOME/helix/runtime"
-
-  #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-  export SDKMAN_DIR="$HOME/.sdkman"
-  [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
-fi
+# llvm
+export PATH="$BREW_PATH/opt/llvm/bin:$PATH"
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!

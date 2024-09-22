@@ -239,6 +239,8 @@ require('lazy').setup({
       { "fredrikaverpil/neotest-golang", version = "*" },
     },
     config = function()
+      local neotest = require("neotest")
+
       -- get neotest namespace (api call creates or returns namespace)
       local neotest_ns = vim.api.nvim_create_namespace("neotest")
       vim.diagnostic.config({
@@ -251,12 +253,20 @@ require('lazy').setup({
         },
       }, neotest_ns)
 
-      require("neotest").setup({
+      neotest.setup({
         adapters = {
           require('rustaceanvim.neotest'),
           require("neotest-golang"),
         },
       })
+
+      local opts = { noremap = true }
+      vim.keymap.set("n", "<leader>nt", function()
+        neotest.run.run()
+      end, opts)
+      vim.keymap.set('n', '<leader>ndt', function()
+        neotest.run.run({vim.fn.expand("%"), strategy = "dap"})
+      end, opts)
     end
   },
 
