@@ -5,7 +5,8 @@ return {
       'nvim-tree/nvim-web-devicons'
     },
     config = function()
-      local nvimtree = require("nvim-tree")
+      local nvim_tree = require("nvim-tree")
+      local nvim_tree_api = require("nvim-tree.api")
 
       -- Close nvim-tree when last window is closed
       vim.api.nvim_create_autocmd("QuitPre", {
@@ -31,7 +32,7 @@ return {
         end
       })
 
-      nvimtree.setup({
+      nvim_tree.setup({
         renderer = {
           indent_width = -2,
           icons = {
@@ -52,11 +53,18 @@ return {
           ignore = false,
           timeout = 500,
         },
+        update_focused_file = {
+          enable = true,
+        },
       })
 
       local opts = { noremap = true, silent = true }
-      vim.keymap.set('n', '<leader>tt', "<cmd>NvimTreeToggle<cr>", opts)
-      vim.keymap.set('n', '<leader>tf', '<cmd>NvimTreeFindFile<cr>', opts)
+      vim.keymap.set('n', '<leader>tt', '<cmd>NvimTreeToggle<cr>', opts)
+      vim.keymap.set('n', '<leader>tf', function()
+        nvim_tree_api.tree.find_file({ focus = false })
+      end, opts)
+      vim.keymap.set('n', '<leader>tr', "<cmd>NvimTreeRefresh<cr>", opts)
+      vim.keymap.set('n', '<leader>te', '<cmd>NvimTreeFindFileToggle<cr>', opts)
     end
   }
 }

@@ -236,6 +236,7 @@ require('lazy').setup({
       "nvim-neotest/nvim-nio",
       "nvim-neotest/neotest-go",
       "antoinemadec/FixCursorHold.nvim",
+      { "fredrikaverpil/neotest-golang", version = "*" },
     },
     config = function()
       -- get neotest namespace (api call creates or returns namespace)
@@ -249,12 +250,13 @@ require('lazy').setup({
           end,
         },
       }, neotest_ns)
-      require('neotest').setup {
+
+      require("neotest").setup({
         adapters = {
           require('rustaceanvim.neotest'),
-          require("neotest-go"),
+          require("neotest-golang"),
         },
-      }
+      })
     end
   },
 
@@ -607,5 +609,6 @@ require('lazy').setup({
 
   require 'peaske7.plugins.buffers',
   require 'peaske7.plugins.indent_line',
-  require 'peaske7.plugins.nvim_tree'
+  require 'peaske7.plugins.nvim_tree',
+  require 'peaske7.plugins.dap'
 })
