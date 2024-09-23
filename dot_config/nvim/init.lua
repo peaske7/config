@@ -308,27 +308,6 @@ require('lazy').setup({
   },
 
   {
-    "ray-x/go.nvim",
-    dependencies = {
-      "ray-x/guihua.lua",
-    },
-    event = { "CmdlineEnter" },
-    ft = { "go", 'gomod' },
-    opts = {},
-    config = function()
-      -- Run gofmt + goimports on save
-      local format_sync_grp = vim.api.nvim_create_augroup("goimports", {})
-      vim.api.nvim_create_autocmd("BufWritePre", {
-        pattern = "*.go",
-        callback = function()
-          require('go.format').goimports()
-        end,
-        group = format_sync_grp,
-      })
-    end
-  },
-
-  {
     "folke/which-key.nvim",
     event = "VeryLazy",
     init = function()
@@ -436,39 +415,6 @@ require('lazy').setup({
     build = ':TSUpdate',
   },
 
-  {
-    'saecki/crates.nvim',
-    event = { "BufRead Cargo.toml" },
-    opts = {}
-  },
-
-  {
-    "mrcjkb/rustaceanvim",
-    version = "^4",
-    ft = { "rust" },
-    opts = {
-      settings = {
-        ["rust-analyzer"] = {
-          cargo = {
-            allFeatures = true,
-            loadOutDirsFromCheck = true,
-            runBuildScripts = true,
-          },
-          checkOnSave = {
-            allFeatures = true,
-            command = "clippy",
-          },
-        },
-      },
-    },
-    config = function(_, opts)
-      vim.g.rustaceanvim = vim.tbl_deep_extend("force",
-        {},
-        opts or {})
-    end
-  },
-
-  "scalameta/nvim-metals",
 
   {
     "folke/trouble.nvim",
@@ -575,6 +521,8 @@ require('lazy').setup({
     end,
   },
 
+  "sindrets/diffview.nvim",
+
   {
     "smjonas/inc-rename.nvim",
     event = "InsertEnter",
@@ -590,23 +538,17 @@ require('lazy').setup({
   },
 
   {
-    "iamcco/markdown-preview.nvim",
-    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-    ft = { "markdown" },
-    build = function() vim.fn["mkdp#util#install"]() end,
+    'Wansmer/treesj',
+    keys = { '<space>m', '<space>j', '<space>s' },
+    opts = {}
   },
-  {
-    'AckslD/nvim-FeMaco.lua',
-    config = function()
-      require("femaco").setup()
-    end,
-  },
-  'Nedra1998/nvim-mdlink',
 
   -- functional
   require 'peaske7.plugins.buffers',
   require 'peaske7.plugins.nvim_tree',
   require 'peaske7.plugins.dap',
+  require 'peaske7.plugins.langs',
+  require 'peaske7.plugins.markdown',
 
   -- cosmetic
   require 'peaske7.plugins.indent_line',
