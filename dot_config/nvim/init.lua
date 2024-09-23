@@ -147,6 +147,22 @@ require('lazy').setup({
   'machakann/vim-sandwich',
   'nvim-lua/plenary.nvim',
 
+  { 'wakatime/vim-wakatime', lazy = false },
+
+  {
+    'stevearc/qf_helper.nvim',
+    config = function()
+      require("qf_helper").setup()
+
+      -- use <C-N> and <C-P> for next/prev.
+      vim.keymap.set("n", "<C-N>", "<cmd>QNext<cr>")
+      vim.keymap.set("n", "<C-P>", "<cmd>QPrev<cr>")
+      -- toggle the quickfix open/closed without jumping to it
+      vim.keymap.set("n", "<leader>q", "<cmd>QFToggle!<cr>")
+      vim.keymap.set("n", "<leader>l", "<cmd>LLToggle!<cr>")
+    end
+  },
+
   {
     "folke/lazydev.nvim",
     ft = "lua",
@@ -156,7 +172,7 @@ require('lazy').setup({
       },
     },
   },
-  { "Bilal2453/luvit-meta", lazy = true },
+  { "Bilal2453/luvit-meta",  lazy = true },
 
   {
     "windwp/nvim-autopairs",
@@ -265,7 +281,7 @@ require('lazy').setup({
         neotest.run.run()
       end, opts)
       vim.keymap.set('n', '<leader>ndt', function()
-        neotest.run.run({vim.fn.expand("%"), strategy = "dap"})
+        neotest.run.run({ vim.fn.expand("%"), strategy = "dap" })
       end, opts)
     end
   },
@@ -288,6 +304,27 @@ require('lazy').setup({
         panel = { enabled = false },
       })
       require('copilot_cmp').setup()
+    end
+  },
+
+  {
+    "ray-x/go.nvim",
+    dependencies = {
+      "ray-x/guihua.lua",
+    },
+    event = { "CmdlineEnter" },
+    ft = { "go", 'gomod' },
+    opts = {},
+    config = function()
+      -- Run gofmt + goimports on save
+      local format_sync_grp = vim.api.nvim_create_augroup("goimports", {})
+      vim.api.nvim_create_autocmd("BufWritePre", {
+        pattern = "*.go",
+        callback = function()
+          require('go.format').goimports()
+        end,
+        group = format_sync_grp,
+      })
     end
   },
 
@@ -402,9 +439,7 @@ require('lazy').setup({
   {
     'saecki/crates.nvim',
     event = { "BufRead Cargo.toml" },
-    config = function()
-      require('crates').setup()
-    end,
+    opts = {}
   },
 
   {
@@ -444,7 +479,6 @@ require('lazy').setup({
       local opts = { noremap = true, silent = true }
 
       t.setup({
-        icons = false,
         fold_open = "v",
         fold_closed = ">",
         indent_lines = false,
@@ -465,51 +499,6 @@ require('lazy').setup({
   },
 
   'nvim-lualine/lualine.nvim',
-
-  -- {
-  --   -- A colorscheme thats easy on the eyes
-  --   'sainnhe/gruvbox-material',
-  --   lazy = false,
-  --   priority = 1000,
-  --   config = function()
-  --     vim.cmd('colorscheme gruvbox-material')
-  --   end,
-  -- },
-
-  -- {
-  --   "craftzdog/solarized-osaka.nvim",
-  --   lazy = false,
-  --   priority = 1000,
-  --   config = function()
-  --     vim.cmd('colorscheme solarized-osaka')
-  --   end,
-  -- },
-
-  {
-    "catppuccin/nvim",
-    name = "catppuccin",
-    lazy = false,
-    priority = 1000,
-    config = function()
-      require("catppuccin").setup({
-        flavour = "macchiato", -- latte, frappe, macchiato, mocha
-        background = {
-          light = "latte",
-          dark = "macchiato",
-        },
-        integrations = {
-          barbar = true,
-          which_key = true,
-          fidget = true,
-          lsp_trouble = true,
-          mason = true
-        },
-        transparent_background = true
-      })
-
-      vim.cmd.colorscheme "catppuccin"
-    end
-  },
 
   {
     'brenoprata10/nvim-highlight-colors',
@@ -571,9 +560,6 @@ require('lazy').setup({
     opts = {
       always_show_path = true,
       separate_by_branch = true,
-      window = {
-        border = "",
-      }
     }
   },
 
@@ -599,7 +585,7 @@ require('lazy').setup({
     "HiPhish/rainbow-delimiters.nvim",
     event = "BufReadPre",
     config = function()
-      require("rainbow-delimiters.setup").setup()
+      require("rainbow-delimiters.setup").setup {}
     end,
   },
 
@@ -617,8 +603,13 @@ require('lazy').setup({
   },
   'Nedra1998/nvim-mdlink',
 
+  -- functional
   require 'peaske7.plugins.buffers',
-  require 'peaske7.plugins.indent_line',
   require 'peaske7.plugins.nvim_tree',
-  require 'peaske7.plugins.dap'
+  require 'peaske7.plugins.dap',
+
+  -- cosmetic
+  require 'peaske7.plugins.indent_line',
+  require 'peaske7.plugins.colortheme',
+  require 'peaske7.plugins.devicons',
 })
