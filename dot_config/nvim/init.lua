@@ -1,5 +1,3 @@
-require("peaske7.plugins.buffers")
-
 -- Set language settings
 vim.cmd("language en_US")
 
