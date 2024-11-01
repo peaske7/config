@@ -133,8 +133,9 @@ alias gf='git fetch --all'
 alias gmtl='git mergetool --no-prompt --tool=nvimdiff2'
 
 # tmux 
-alias ta='tmux attach -t' # [T]mux [A]ttach
+alias ta='tmux a' # [T]mux [A]ttach
 alias tns='tmux new -s' # [T]mux [N]ew [S]ession
+alias t%='tmux source-file ~/.tmux.conf'
 
 # ssh
 alias es='nvim ~/.ssh/config' # [E]dit [S]sh configs

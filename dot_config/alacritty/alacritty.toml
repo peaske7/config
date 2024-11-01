@@ -25,7 +25,7 @@ family = "M+1Code Nerd Font"
 style = "Regular"
 
 [window]
-decorations = "buttonless"
+# decorations = "buttonless"
 dynamic_padding = false
 
 [window.padding]

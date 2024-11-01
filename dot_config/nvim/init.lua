@@ -537,7 +537,7 @@ require('lazy').setup({
 
   {
     'Wansmer/treesj',
-    keys = { '<space>m', '<space>j', '<space>s' },
+    keys = { '<space>m', '<space>j' },
     opts = {}
   },
 
