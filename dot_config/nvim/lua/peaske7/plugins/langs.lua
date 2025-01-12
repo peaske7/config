@@ -21,39 +21,13 @@ return {
     end
   },
 
-  -- Rust
-  {
-    'saecki/crates.nvim',
-    event = { "BufRead Cargo.toml" },
-    opts = {}
-  },
-
-  {
-    "mrcjkb/rustaceanvim",
-    version = "^4",
-    ft = { "rust" },
-    opts = {
-      settings = {
-        ["rust-analyzer"] = {
-          cargo = {
-            allFeatures = true,
-            loadOutDirsFromCheck = true,
-            runBuildScripts = true,
-          },
-          checkOnSave = {
-            allFeatures = true,
-            command = "clippy",
-          },
-        },
-      },
-    },
-    config = function(_, opts)
-      vim.g.rustaceanvim = vim.tbl_deep_extend("force",
-        {},
-        opts or {})
-    end
-  },
-
   -- Scala
   "scalameta/nvim-metals",
+
+  -- Haskell
+  {
+    'mrcjkb/haskell-tools.nvim',
+    version = '^4',
+    lazy = false,
+  }
 }
