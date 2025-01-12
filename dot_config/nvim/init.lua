@@ -173,12 +173,6 @@ require('lazy').setup({
   { "Bilal2453/luvit-meta",  lazy = true },
 
   {
-    "windwp/nvim-autopairs",
-    event = "InsertEnter",
-    config = true
-  },
-
-  {
     'VonHeikemen/lsp-zero.nvim',
     branch = 'v3.x',
     lazy = false,
@@ -228,6 +222,27 @@ require('lazy').setup({
         },
       },
 
+      {
+        "zbirenbaum/copilot.lua",
+        cmd = "Copilot",
+        event = "InsertEnter",
+        config = function()
+          require("copilot").setup({})
+        end,
+      },
+
+      {
+        "zbirenbaum/copilot-cmp",
+        event = "BufReadPre",
+        config = function()
+          require("copilot").setup({
+            suggestion = { enabled = false },
+            panel = { enabled = false },
+          })
+          require('copilot_cmp').setup()
+        end
+      },
+
     },
     opts = function(_, opts)
       opts.sources = opts.sources or {}
@@ -245,67 +260,6 @@ require('lazy').setup({
   },
 
   {
-    "nvim-neotest/neotest",
-    dependencies = {
-      "nvim-neotest/nvim-nio",
-      "nvim-neotest/neotest-go",
-      "antoinemadec/FixCursorHold.nvim",
-      { "fredrikaverpil/neotest-golang", version = "*" },
-    },
-    config = function()
-      local neotest = require("neotest")
-
-      -- get neotest namespace (api call creates or returns namespace)
-      local neotest_ns = vim.api.nvim_create_namespace("neotest")
-      vim.diagnostic.config({
-        virtual_text = {
-          format = function(diagnostic)
-            local message =
-                diagnostic.message:gsub("\n", " "):gsub("\t", " "):gsub("%s+", " "):gsub("^%s+", "")
-            return message
-          end,
-        },
-      }, neotest_ns)
-
-      neotest.setup({
-        adapters = {
-          require('rustaceanvim.neotest'),
-          require("neotest-golang"),
-        },
-      })
-
-      local opts = { noremap = true }
-      vim.keymap.set("n", "<leader>nt", function()
-        neotest.run.run()
-      end, opts)
-      vim.keymap.set('n', '<leader>ndt', function()
-        neotest.run.run({ vim.fn.expand("%"), strategy = "dap" })
-      end, opts)
-    end
-  },
-
-  {
-    "zbirenbaum/copilot.lua",
-    cmd = "Copilot",
-    event = "InsertEnter",
-    config = function()
-      require("copilot").setup({})
-    end,
-  },
-
-  {
-    "zbirenbaum/copilot-cmp",
-    event = "BufReadPre",
-    config = function()
-      require("copilot").setup({
-        suggestion = { enabled = false },
-        panel = { enabled = false },
-      })
-      require('copilot_cmp').setup()
-    end
-  },
-
-  {
     "folke/which-key.nvim",
     event = "VeryLazy",
     init = function()
@@ -313,67 +267,6 @@ require('lazy').setup({
       vim.o.timeoutlen = 300
     end,
     opts = {}
-  },
-
-  {
-    'nvim-telescope/telescope.nvim',
-    branch = '0.1.x',
-    event = "InsertEnter",
-    dependencies = {
-      {
-        'nvim-telescope/telescope-fzf-native.nvim',
-        build = 'make',
-        cond = function()
-          return vim.fn.executable 'make' == 1
-        end,
-      },
-      {
-        "nvim-telescope/telescope-live-grep-args.nvim",
-        version = "^1.0.0",
-      },
-    },
-    config = function()
-      -- Enable fzf native
-      pcall(require('telescope').load_extension, 'fzf')
-
-      -- Enable args plugin
-      pcall(require('telescope').load_extension, 'live_grep_args')
-
-      local telescope_builtin = require('telescope.builtin')
-
-      local opts = { noremap = true }
-      vim.keymap.set('n', '<leader>sf', telescope_builtin.find_files, opts)
-      vim.keymap.set('n', '<leader>sg', telescope_builtin.live_grep, opts)
-
-      -- grep with telescope from visual mode
-      vim.keymap.set('v', '<leader>sg', 'zy:Telescope grep_string default_text=<C-r>z<CR>', opts)
-
-      vim.keymap.set('n', '<leader>sd', telescope_builtin.diagnostics, opts)
-      vim.keymap.set('n', '<leader>sb', telescope_builtin.buffers, opts)
-      vim.keymap.set('n', '<leader>sr', telescope_builtin.resume, opts)
-      vim.keymap.set('n', '<leader>sq', telescope_builtin.quickfix, opts)
-      vim.keymap.set('n', '<leader>se', telescope_builtin.registers, opts)
-      vim.keymap.set('n', '<leader>sh', telescope_builtin.highlights, opts)
-
-      -- [v] as in version control
-      vim.keymap.set('n', '<leader>svc', telescope_builtin.git_commits, opts)
-      vim.keymap.set('n', '<leader>svb', telescope_builtin.git_branches, opts)
-      vim.keymap.set('n', '<leader>svss', telescope_builtin.git_status, opts)
-
-      vim.keymap.set('n', '<leader>st', '<cmd>TodoTelescope<cr>', opts)
-
-      require('telescope').setup {
-        defaults = {
-          file_ignore_patterns = { "%.git/.*", "node%_modules/.*", "%.venv/.*", "target/.*" },
-        },
-        pickers = {
-          find_files = {
-            find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/*" },
-          },
-        },
-        extensions = {},
-      }
-    end
   },
 
   {
@@ -388,15 +281,6 @@ require('lazy').setup({
         highlight = {
           enable = true,
         },
-
-        -- disable slow treesitter highlight for large files
-        disable = function(_, buf)
-          local max_filesize = 3000 * 1024 -- 3000 KB
-          local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-          if ok and stats and stats.size > max_filesize then
-            return true
-          end
-        end,
       })
 
       local npairs = require("nvim-autopairs")
@@ -411,35 +295,6 @@ require('lazy').setup({
       }
     end,
     build = ':TSUpdate',
-  },
-
-
-  {
-    "folke/trouble.nvim",
-    version = 'v2.x',
-    event = "BufReadPre",
-    config = function()
-      local t = require("trouble")
-      local opts = { noremap = true, silent = true }
-
-      t.setup({
-        fold_open = "v",
-        fold_closed = ">",
-        indent_lines = false,
-        signs = {
-          error = "error",
-          warning = "warn",
-          hint = "hint",
-          information = "info"
-        },
-        use_diagnostic_signs = true
-      })
-
-      vim.keymap.set("n", "<leader>xx", function() t.open() end, opts)
-      vim.keymap.set("n", "<leader>xw", function() t.open("workspace_diagnostics") end, opts)
-      vim.keymap.set("n", "<leader>xd", function() t.open("document_diagnostics") end, opts)
-      vim.keymap.set("n", "<leader>xq", function() t.open("quickfix") end, opts)
-    end
   },
 
   'nvim-lualine/lualine.nvim',
@@ -464,6 +319,12 @@ require('lazy').setup({
   },
 
   {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    config = true
+  },
+
+  {
     'numToStr/Comment.nvim',
     dependencies = "JoosepAlviste/nvim-ts-context-commentstring",
     event = "BufReadPre",
@@ -472,12 +333,6 @@ require('lazy').setup({
         pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
       }
     end,
-  },
-
-  {
-    "folke/todo-comments.nvim",
-    event = "BufReadPre",
-    opts = {}
   },
 
   {
@@ -528,11 +383,15 @@ require('lazy').setup({
   },
 
   {
-    "HiPhish/rainbow-delimiters.nvim",
-    event = "BufReadPre",
+    "shellRaining/hlchunk.nvim",
+    event = { "BufReadPre", "BufNewFile" },
     config = function()
-      require("rainbow-delimiters.setup").setup {}
-    end,
+      require("hlchunk").setup({
+        indent = {
+          enable = true
+        },
+      })
+    end
   },
 
   {
@@ -545,11 +404,11 @@ require('lazy').setup({
   require 'peaske7.plugins.buffers',
   require 'peaske7.plugins.nvim_tree',
   require 'peaske7.plugins.dap',
-  require 'peaske7.plugins.langs',
   require 'peaske7.plugins.markdown',
+  require 'peaske7.plugins.telescope',
+  require 'peaske7.plugins.trouble',
 
   -- cosmetic
-  require 'peaske7.plugins.indent_line',
   require 'peaske7.plugins.colortheme',
   require 'peaske7.plugins.devicons',
 })

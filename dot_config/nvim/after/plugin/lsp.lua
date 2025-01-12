@@ -32,25 +32,6 @@ lsp_zero.set_server_config({
   }
 })
 
-vim.g.rustaceanvim = {
-  server = {
-    capabilities = lsp_zero.get_capabilities()
-  },
-}
-
--- scala metals configuration
-local metals_config = require('metals').bare_config()
-metals_config.capabilities = lsp_zero.get_capabilities()
-
-local metals_augroup = vim.api.nvim_create_augroup('nvim-metals', { clear = true })
-vim.api.nvim_create_autocmd('FileType', {
-  group = metals_augroup,
-  pattern = { 'scala', 'sbt', 'java' },
-  callback = function()
-    require('metals').initialize_or_attach(metals_config)
-  end
-})
-
 require('mason').setup()
 require('mason-null-ls').setup({
   ensure_installed = nil,
@@ -74,15 +55,6 @@ require('mason-lspconfig').setup({
       local lua_opts = lsp_zero.nvim_lua_ls()
       require('lspconfig').lua_ls.setup(lua_opts)
     end,
-    gopls = function()
-      -- go ray-x/go.nvim
-      require('go').setup {
-        lsp_cfg = false
-      }
-      local cfg = require('go.lsp').config()
-      require('lspconfig').gopls.setup(cfg)
-    end,
-    rust_analyzer = lsp_zero.noop,
     svelte = function()
       require('lspconfig').svelte.setup({
         on_attach = function(client, bufnr)

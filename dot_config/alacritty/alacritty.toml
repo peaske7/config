@@ -1,10 +1,5 @@
-general.import = [
-  # "~/.config/alacritty/gruvbox-material-alacritty.toml",
-  # "~/.config/alacritty/catppuccin-latte.toml",
-  # "~/.config/alacritty/catppuccin-frappe.toml",
-  "~/.config/alacritty/catppuccin-macchiato.toml",
-  # "~/.config/alacritty/catppuccin-mocha.toml"
-]
+[general]
+import = ["~/.config/alacritty/themes/themes/gruvbox_dark.toml"]
 
 [env]
 TERM = "xterm-256color"
@@ -25,7 +20,7 @@ family = "M+1Code Nerd Font"
 style = "Regular"
 
 [window]
-# decorations = "buttonless"
+decorations = "buttonless"
 dynamic_padding = false
 
 [window.padding]
