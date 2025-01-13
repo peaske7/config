@@ -86,6 +86,7 @@ vim.keymap.set('n', "<leader>vs", "<cmd>vert sb#<cr>", { remap = false })
 -- vim.keymap.set("n", "<leader>dd", ":20Lexplore %:p:h<CR>")
 -- vim.keymap.set("n", "<leader>da", ":20Lexplore <CR>")
 
+
 -- terminal mode
 vim.keymap.set("t", "<esc>", "<c-\\><c-n>")
 
@@ -297,7 +298,23 @@ require('lazy').setup({
     build = ':TSUpdate',
   },
 
-  'nvim-lualine/lualine.nvim',
+  {
+    'nvim-lualine/lualine.nvim',
+    config = function()
+      require('lualine').setup({
+        options = {
+          theme = 'gruvbox-material'
+        },
+        extensions = {
+          'nvim-tree',
+          'fugitive',
+          'mason',
+          'quickfix',
+          'trouble'
+        }
+      })
+    end
+  },
 
   {
     'brenoprata10/nvim-highlight-colors',
