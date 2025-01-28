@@ -17,8 +17,29 @@ return {
           hint = "hint",
           information = "info"
         },
+        modes = {
+          test = {
+            mode = "diagnostics",
+            preview = {
+              type = "split",
+              relative = "win",
+              position = "right",
+              size = 0.3,
+            },
+          },
+        },
         use_diagnostic_signs = true
       })
+
+
+      local function quickfix()
+        vim.lsp.buf.code_action({
+          filter = function(a) return a.isPreferred end,
+          apply = true
+        })
+      end
+
+      vim.keymap.set('n', '<leader>qf', quickfix, opts)
 
       vim.keymap.set("n", "<leader>xx", function() t.open() end, opts)
       vim.keymap.set("n", "<leader>xw", function() t.open("workspace_diagnostics") end, opts)

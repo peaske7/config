@@ -86,6 +86,8 @@ vim.keymap.set('n', "<leader>vs", "<cmd>vert sb#<cr>", { remap = false })
 -- vim.keymap.set("n", "<leader>dd", ":20Lexplore %:p:h<CR>")
 -- vim.keymap.set("n", "<leader>da", ":20Lexplore <CR>")
 
+-- relative line numbers
+vim.o.relativenumber = true
 
 -- terminal mode
 vim.keymap.set("t", "<esc>", "<c-\\><c-n>")
@@ -139,6 +141,19 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
+  -- functional
+  require 'peaske7.plugins.buffers',
+  require 'peaske7.plugins.nvim_tree',
+  require 'peaske7.plugins.dap',
+  require 'peaske7.plugins.markdown',
+  require 'peaske7.plugins.telescope',
+  require 'peaske7.plugins.trouble',
+
+  -- cosmetic
+  require 'peaske7.plugins.colortheme',
+  require 'peaske7.plugins.devicons',
+
+  -- plugins
   'tpope/vim-fugitive',
   'tpope/vim-rhubarb',
   'tpope/vim-sleuth',
@@ -149,29 +164,44 @@ require('lazy').setup({
   { 'wakatime/vim-wakatime', lazy = false },
 
   {
-    'stevearc/qf_helper.nvim',
+    'stevearc/quicker.nvim',
+    event = "FileType qf",
     config = function()
-      require("qf_helper").setup()
-
-      -- use <C-N> and <C-P> for next/prev.
-      vim.keymap.set("n", "<C-N>", "<cmd>QNext<cr>")
-      vim.keymap.set("n", "<C-P>", "<cmd>QPrev<cr>")
-      -- toggle the quickfix open/closed without jumping to it
-      vim.keymap.set("n", "<leader>q", "<cmd>QFToggle!<cr>")
-      vim.keymap.set("n", "<leader>l", "<cmd>LLToggle!<cr>")
+      local quicker = require("quicker")
+      vim.keymap.set("n", "<leader>q", function()
+        quicker.toggle()
+      end, {
+        desc = "Toggle quickfix",
+        noremap = true,
+        silent = true
+      })
+      vim.keymap.set("n", "<leader>l", function()
+        quicker.toggle({ loclist = true })
+      end, {
+        desc = "Toggle loclist",
+        noremap = true,
+        silent = true
+      })
+      quicker.setup({
+        keys = {
+          {
+            ">",
+            function()
+              quicker.expand({ before = 2, after = 2, add_to_existing = true })
+            end,
+            desc = "Expand quickfix context",
+          },
+          {
+            "<",
+            function()
+              quicker.collapse()
+            end,
+            desc = "Collapse quickfix context",
+          },
+        },
+      })
     end
   },
-
-  {
-    "folke/lazydev.nvim",
-    ft = "lua",
-    opts = {
-      library = {
-        { path = "luvit-meta/library", words = { "vim%.uv" } },
-      },
-    },
-  },
-  { "Bilal2453/luvit-meta",  lazy = true },
 
   {
     'VonHeikemen/lsp-zero.nvim',
@@ -255,12 +285,6 @@ require('lazy').setup({
   },
 
   {
-    "sontungexpt/stcursorword",
-    event = "VeryLazy",
-    config = true,
-  },
-
-  {
     "folke/which-key.nvim",
     event = "VeryLazy",
     init = function()
@@ -299,21 +323,15 @@ require('lazy').setup({
   },
 
   {
-    'nvim-lualine/lualine.nvim',
-    config = function()
-      require('lualine').setup({
-        options = {
-          theme = 'gruvbox-material'
-        },
-        extensions = {
-          'nvim-tree',
-          'fugitive',
-          'mason',
-          'quickfix',
-          'trouble'
-        }
-      })
-    end
+    "windwp/nvim-ts-autotag",
+    event = "InsertEnter",
+    opts = {}
+  },
+
+  {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    config = true
   },
 
   {
@@ -327,18 +345,6 @@ require('lazy').setup({
         enable_tailwind = false,
       })
     end
-  },
-
-  {
-    "windwp/nvim-ts-autotag",
-    event = "InsertEnter",
-    opts = {}
-  },
-
-  {
-    "windwp/nvim-autopairs",
-    event = "InsertEnter",
-    config = true
   },
 
   {
@@ -371,27 +377,26 @@ require('lazy').setup({
   },
 
   {
-    "otavioschwanck/arrow.nvim",
-    lazy = false,
-    opts = {
-      always_show_path = true,
-      separate_by_branch = true,
-    }
-  },
-
-  {
     'lewis6991/gitsigns.nvim',
     event = "BufReadPre",
     config = function()
       require('gitsigns').setup()
 
-      vim.keymap.set('n', '<leader>gl', '<cmd>Gitsigns toggle_current_line_blame<cr>', {
-        noremap = true, silent = true
-      })
+      vim.keymap.set(
+        'n',
+        '<leader>gl',
+        '<cmd>Gitsigns toggle_current_line_blame<cr>',
+        { noremap = true, silent = true }
+      )
     end,
   },
 
   "sindrets/diffview.nvim",
+
+  {
+    "wurli/visimatch.nvim",
+    opts = {}
+  },
 
   {
     "smjonas/inc-rename.nvim",
@@ -412,20 +417,11 @@ require('lazy').setup({
   },
 
   {
-    'Wansmer/treesj',
-    keys = { '<space>m', '<space>j' },
-    opts = {}
+    "mbbill/undotree",
+    config = function()
+      vim.keymap.set('n', '<leader>tu', vim.cmd.UndotreeToggle, {
+        desc = "UndotreeToggle"
+      })
+    end
   },
-
-  -- functional
-  require 'peaske7.plugins.buffers',
-  require 'peaske7.plugins.nvim_tree',
-  require 'peaske7.plugins.dap',
-  require 'peaske7.plugins.markdown',
-  require 'peaske7.plugins.telescope',
-  require 'peaske7.plugins.trouble',
-
-  -- cosmetic
-  require 'peaske7.plugins.colortheme',
-  require 'peaske7.plugins.devicons',
 })

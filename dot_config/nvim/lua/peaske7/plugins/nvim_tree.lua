@@ -8,6 +8,8 @@ return {
       local nvim_tree = require("nvim-tree")
       local nvim_tree_api = require("nvim-tree.api")
 
+      vim.opt.splitright = true
+
       -- Close nvim-tree when last window is closed
       vim.api.nvim_create_autocmd("QuitPre", {
         callback = function()

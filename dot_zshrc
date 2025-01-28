@@ -204,7 +204,6 @@ export PATH="$BREW_PATH/opt/llvm/bin:$PATH"
 # asdf
 . "$BREW_PATH/opt/asdf/libexec/asdf.sh"
 
-
 # conda
 __conda_setup="$('/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
