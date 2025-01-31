@@ -72,9 +72,6 @@ vim.o.foldlevel = 99
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true
 
--- source nvim config
-vim.keymap.set("n", "<leader>chea", "!chezmoi apply", { remap = false })
-
 -- open current buffer in vertical split
 vim.keymap.set('n', "<leader>vs", "<cmd>vert sb#<cr>", { remap = false, desc = "open [v]ertical [s]plit" })
 
@@ -153,7 +150,6 @@ require('lazy').setup({
 
   -- cosmetic
   require 'peaske7.plugins.colortheme',
-  require 'peaske7.plugins.devicons',
 
   -- plugins
   'machakann/vim-sandwich',
@@ -264,7 +260,32 @@ require('lazy').setup({
       vim.o.timeout = true
       vim.o.timeoutlen = 300
     end,
-    opts = {}
+    config = function()
+      local wk = require("which-key")
+
+      for i = 1, 9, 1
+      do
+        wk.add {
+          { "<leader>" .. i, hidden = true }
+        }
+      end
+
+      wk.add {
+        { "<leader>b", group = 'buffers' },
+        { "<leader>c", group = 'code' },
+        { "<leader>g", group = 'git' },
+        { "<leader>t", group = 'trees' },
+        { "<leader>s", group = 'search' },
+        { "<leader>q", group = 'quickfix' },
+        { "<leader>x", group = 'trouble' },
+      }
+
+      wk.setup {
+        plugins = {
+          marks = true,
+        },
+      }
+    end,
   },
 
   {

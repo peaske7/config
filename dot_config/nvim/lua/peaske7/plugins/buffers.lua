@@ -41,9 +41,7 @@ return {
 
       for i = 1, 9, 1
       do
-        vim.keymap.set('n', '<leader>' .. i, '<Cmd>BufferGoto ' .. i .. '<CR>', {
-          hidden = true
-        })
+        vim.keymap.set('n', '<leader>' .. i, '<Cmd>BufferGoto ' .. i .. '<CR>')
       end
 
       bar.setup({
