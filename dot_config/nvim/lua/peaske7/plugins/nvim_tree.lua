@@ -60,13 +60,28 @@ return {
         },
       })
 
-      local opts = { noremap = true, silent = true }
-      vim.keymap.set('n', '<leader>tt', '<cmd>NvimTreeToggle<cr>', opts)
+      vim.keymap.set('n', '<leader>tt', '<cmd>NvimTreeToggle<cr>', {
+        noremap = true,
+        silent = true,
+        desc = '[t]ree [t]oggle'
+      })
       vim.keymap.set('n', '<leader>tf', function()
         nvim_tree_api.tree.find_file({ focus = false })
-      end, opts)
-      vim.keymap.set('n', '<leader>tr', "<cmd>NvimTreeRefresh<cr>", opts)
-      vim.keymap.set('n', '<leader>te', '<cmd>NvimTreeFindFileToggle<cr>', opts)
+      end, {
+        noremap = true,
+        silent = true,
+        desc = '[t]ree [f]ind'
+      })
+      vim.keymap.set('n', '<leader>tr', "<cmd>NvimTreeRefresh<cr>", {
+        noremap = true,
+        silent = true,
+        desc = '[t]ree [r]efresh'
+      })
+      vim.keymap.set('n', '<leader>te', '<cmd>NvimTreeFindFileToggle<cr>', {
+        noremap = true,
+        silent = true,
+        desc = '[t]ree [e]xplore'
+      })
     end
   }
 }

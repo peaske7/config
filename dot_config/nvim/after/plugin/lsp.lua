@@ -1,7 +1,6 @@
 local lsp_zero = require("lsp-zero") -- TODO: remove lsp_zero
 
 lsp_zero.on_attach(function(_, bufnr)
-  local opts = { buffer = bufnr, remap = false }
   lsp_zero.default_keymaps({
     buffer = bufnr,
     preserve_mappings = false,
@@ -9,16 +8,28 @@ lsp_zero.on_attach(function(_, bufnr)
 
   vim.keymap.set("n", "<leader>ca", function()
     vim.lsp.buf.code_action()
-  end, opts)
+  end, {
+    buffer = bufnr,
+    remap = false,
+    desc = "[c]ode [a]ction",
+  })
   vim.keymap.set("n", "<leader>fr", function()
     require('telescope.builtin').lsp_references()
-  end, opts)
+  end, {
+    buffer = bufnr,
+    remap = false,
+    desc = "[f]ind [r]eferences",
+  })
   vim.keymap.set("n", "<leader>ff", function()
     vim.lsp.buf.format()
-  end, opts)
+  end, {
+    buffer = bufnr,
+    remap = false,
+    desc = "[f]ormat [f]ile",
+  })
   vim.keymap.set("n", "<leader>rn", function()
     return ":IncRename " .. vim.fn.expand("<cword>")
-  end, { expr = true })
+  end, { expr = true, remap = false, desc = "[r]ename [n]ode" })
 end)
 
 lsp_zero.set_server_config({
@@ -77,7 +88,6 @@ vim.diagnostic.config({
 
 local cmp = require('cmp')
 local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-local cmp_action = lsp_zero.cmp_action()
 
 -- insert `(` after select function or method item
 cmp.event:on(

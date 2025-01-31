@@ -76,7 +76,7 @@ vim.o.foldenable = true
 vim.keymap.set("n", "<leader>chea", "!chezmoi apply", { remap = false })
 
 -- open current buffer in vertical split
-vim.keymap.set('n', "<leader>vs", "<cmd>vert sb#<cr>", { remap = false })
+vim.keymap.set('n', "<leader>vs", "<cmd>vert sb#<cr>", { remap = false, desc = "open [v]ertical [s]plit" })
 
 -- inherit colorscheme from terminal
 -- vim.cmd('hi Normal ctermbg=none guibg=none')
@@ -97,6 +97,9 @@ vim.api.nvim_create_autocmd("TermOpen", {
   pattern = "*",
   command = "startinsert"
 })
+
+-- toggle highlight
+vim.keymap.set("n", "<leader>h", "<cmd>set hlsearch!<cr>", { noremap = true, silent = true, desc = "toggle [h]ighlight" })
 
 -- Highlight on yank
 vim.api.nvim_create_autocmd('TextYankPost', {
@@ -144,7 +147,6 @@ require('lazy').setup({
   -- functional
   require 'peaske7.plugins.buffers',
   require 'peaske7.plugins.nvim_tree',
-  require 'peaske7.plugins.dap',
   require 'peaske7.plugins.markdown',
   require 'peaske7.plugins.telescope',
   require 'peaske7.plugins.trouble',
@@ -154,53 +156,24 @@ require('lazy').setup({
   require 'peaske7.plugins.devicons',
 
   -- plugins
-  'tpope/vim-fugitive',
-  'tpope/vim-rhubarb',
-  'tpope/vim-sleuth',
-
   'machakann/vim-sandwich',
   'nvim-lua/plenary.nvim',
-
-  { 'wakatime/vim-wakatime', lazy = false },
+  'wakatime/vim-wakatime',
 
   {
-    'stevearc/quicker.nvim',
-    event = "FileType qf",
+    "nvim-tree/nvim-web-devicons",
     config = function()
-      local quicker = require("quicker")
-      vim.keymap.set("n", "<leader>q", function()
-        quicker.toggle()
-      end, {
-        desc = "Toggle quickfix",
-        noremap = true,
-        silent = true
-      })
-      vim.keymap.set("n", "<leader>l", function()
-        quicker.toggle({ loclist = true })
-      end, {
-        desc = "Toggle loclist",
-        noremap = true,
-        silent = true
-      })
-      quicker.setup({
-        keys = {
-          {
-            ">",
-            function()
-              quicker.expand({ before = 2, after = 2, add_to_existing = true })
-            end,
-            desc = "Expand quickfix context",
-          },
-          {
-            "<",
-            function()
-              quicker.collapse()
-            end,
-            desc = "Collapse quickfix context",
-          },
+      local devicons = require("nvim-web-devicons")
+
+      devicons.set_icon {
+        ['prettier.config.js'] = {
+          icon = "",
+          color = "#4285F4",
+          cterm_color = "33",
+          name = "PrettierConfig",
         },
-      })
-    end
+      }
+    end,
   },
 
   {
@@ -298,6 +271,11 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     dependencies = {
       'nvim-treesitter/nvim-treesitter-textobjects',
+
+      {
+        "windwp/nvim-autopairs",
+        config = true
+      }
     },
     config = function()
       require('nvim-treesitter.configs').setup({
@@ -326,12 +304,6 @@ require('lazy').setup({
     "windwp/nvim-ts-autotag",
     event = "InsertEnter",
     opts = {}
-  },
-
-  {
-    "windwp/nvim-autopairs",
-    event = "InsertEnter",
-    config = true
   },
 
   {
@@ -386,16 +358,9 @@ require('lazy').setup({
         'n',
         '<leader>gl',
         '<cmd>Gitsigns toggle_current_line_blame<cr>',
-        { noremap = true, silent = true }
+        { noremap = true, silent = true, desc = 'toggle [g]it [l]ine [b]lame' }
       )
     end,
-  },
-
-  "sindrets/diffview.nvim",
-
-  {
-    "wurli/visimatch.nvim",
-    opts = {}
   },
 
   {
@@ -420,7 +385,7 @@ require('lazy').setup({
     "mbbill/undotree",
     config = function()
       vim.keymap.set('n', '<leader>tu', vim.cmd.UndotreeToggle, {
-        desc = "UndotreeToggle"
+        desc = "open [t]ree [u]ndo"
       })
     end
   },
