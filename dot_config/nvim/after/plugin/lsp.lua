@@ -13,13 +13,13 @@ lsp_zero.on_attach(function(_, bufnr)
     remap = false,
     desc = "[c]ode [a]ction",
   })
-  vim.keymap.set("n", "<leader>sr", function()
-    require('telescope.builtin').lsp_references()
-  end, {
-    buffer = bufnr,
-    remap = false,
-    desc = "[s]search [r]eferences",
-  })
+  -- vim.keymap.set("n", "<leader>sr", function()
+  --   require('telescope.builtin').lsp_references()
+  -- end, {
+  --   buffer = bufnr,
+  --   remap = false,
+  --   desc = "[s]search [r]eferences",
+  -- })
   vim.keymap.set("n", "<leader>ff", function()
     vim.lsp.buf.format()
   end, {

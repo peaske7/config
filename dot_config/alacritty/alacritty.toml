@@ -20,9 +20,9 @@ family = "M+1Code Nerd Font"
 style = "Regular"
 
 [window]
-decorations = "buttonless"
+# decorations = "buttonless"
 dynamic_padding = false
-opacity = 0.96
+opacity = 0.98
 
 [window.padding]
 x = 25
