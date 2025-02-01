@@ -22,7 +22,7 @@ vim.o.termguicolors = true
 
 vim.o.ignorecase = true
 vim.o.smartcase = true
-vim.o.hlsearch = false
+vim.o.hlsearch = true
 
 -- Decrease update time
 vim.o.updatetime = 150
@@ -127,16 +127,24 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
   end
 })
 
-vim.api.nvim_create_autocmd('User', {
-  pattern = 'GitConflictDetected',
-  callback = function()
-    vim.notify('Conflict detected in ' .. vim.fn.expand('<afile>'))
-    vim.keymap.set('n', 'cww', function()
-      engage.conflict_buster()
-      create_buffer_local_mappings()
-    end)
-  end
-})
+-- vim.api.nvim_create_autocmd('User', {
+--   pattern = 'GitConflictDetected',
+--   callback = function()
+--     vim.notify('Conflict detected in ' .. vim.fn.expand('<afile>'))
+--     vim.keymap.set('n', 'cww', function()
+--       engage.conflict_buster()
+--       create_buffer_local_mappings()
+--     end)
+--   end
+-- })
+
+-- searches for visually selected text
+vim.keymap.set(
+  'v',
+  '//',
+  [[ y/<C-R>=escape(trim(@"), '/\')<CR><CR> ]],
+  { noremap = true, silent = true }
+)
 
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
@@ -373,11 +381,16 @@ require('lazy').setup({
         config = true
       },
     },
-    opts = {
-      provider_selector = function()
-        return { "treesitter", "indent" }
-      end,
-    },
+    config = function()
+      require('ufo').setup({
+        provider_selector = function(bufnr, filetype, buftype)
+          return { 'treesitter', 'indent' }
+        end
+      })
+
+      vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
+      vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
+    end
   },
 
   {
