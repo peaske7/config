@@ -127,24 +127,40 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
   end
 })
 
--- vim.api.nvim_create_autocmd('User', {
---   pattern = 'GitConflictDetected',
---   callback = function()
---     vim.notify('Conflict detected in ' .. vim.fn.expand('<afile>'))
---     vim.keymap.set('n', 'cww', function()
---       engage.conflict_buster()
---       create_buffer_local_mappings()
---     end)
---   end
--- })
+vim.api.nvim_create_autocmd('User', {
+  pattern = 'GitConflictDetected',
+  callback = function()
+    vim.notify('Conflict detected in ' .. vim.fn.expand('<afile>'))
+    vim.keymap.set('n', 'cww', function()
+      engage.conflict_buster()
+      create_buffer_local_mappings()
+    end)
+  end
+})
 
 -- searches for visually selected text
 vim.keymap.set(
-  'v',
+  'x',
   '//',
-  [[ y/<C-R>=escape(trim(@"), '/\')<CR><CR> ]],
-  { noremap = true, silent = true }
+  [[ y/<C-R>=escape(@", '/\')<CR><CR> ]],
+  { noremap = true }
 )
+
+-- -- replaces all occurrences of the word under the cursor
+-- vim.keymap.set(
+--   'n',
+--   'S',
+--   [[:%s/\V\<<C-r><C-w>\>//g<Left><Left>]],
+--   { noremap = true }
+-- )
+--
+-- -- same thing but for visual mode
+-- vim.keymap.set(
+--   'x',
+--   'S',
+--   [["zy:%s/\V<C-r><C-r>=escape(@z,'/\')<CR>//gce<Left><Left><Left><Left>]],
+--   { noremap = true }
+-- )
 
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
@@ -444,5 +460,56 @@ require('lazy').setup({
       leader_key = '<leader>a',
       buffer_leader_key = 'm',
     }
+  },
+
+  {
+    'kevinhwang91/nvim-bqf',
+    ft = 'qf'
+  },
+
+  -- trying out movement plugins
+  -- started: 2025/02/04
+  {
+    "folke/flash.nvim",
+    event = "VeryLazy",
+    opts = {},
+    keys = {
+      {
+        "s",
+        mode = { "n", "x", "o" },
+        function() require("flash").jump() end,
+        desc = "Flash"
+      },
+      {
+        "S",
+        mode = { "n", "x", "o" },
+        function() require("flash").treesitter() end,
+        desc = "Flash Treesitter"
+      },
+      {
+        "R",
+        mode = { "o", "x" },
+        function() require("flash").treesitter_search() end,
+        desc = "Treesitter Search"
+      },
+      {
+        "<c-s>",
+        mode = { "c" },
+        function() require("flash").toggle() end,
+        desc = "Toggle Flash Search"
+      },
+    },
+  },
+
+  {
+    'nvim-orgmode/orgmode',
+    event = 'VeryLazy',
+    ft = { 'org' },
+    config = function()
+      require('orgmode').setup({
+        org_agenda_files = '~/orgfiles/**/*',
+        org_default_notes_file = '~/orgfiles/refile.org',
+      })
+    end,
   }
 })

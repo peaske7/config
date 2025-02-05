@@ -14,17 +14,21 @@ return {
         "nvim-telescope/telescope-live-grep-args.nvim",
         version = "^1.0.0",
       },
+      {
+        "nvim-telescope/telescope-frecency.nvim",
+        version = "*",
+        config = function()
+          require("telescope").load_extension "frecency"
+        end,
+      }
     },
     config = function()
-      -- Enable fzf native
       pcall(require('telescope').load_extension, 'fzf')
-
-      -- Enable args plugin
       pcall(require('telescope').load_extension, 'live_grep_args')
+      pcall(require('telescope').load_extension, 'frecency')
 
       local telescope_builtin = require('telescope.builtin')
 
-      local opts = { noremap = true }
       vim.keymap.set('n', '<leader>sf', telescope_builtin.find_files, {
         noremap = true,
         desc = '[s]earch through [f]iles'
@@ -32,6 +36,11 @@ return {
       vim.keymap.set('n', '<leader>sg', telescope_builtin.live_grep, {
         noremap = true,
         desc = '[s]earch with live [g]rep'
+      })
+
+      vim.keymap.set('n', '<leader>sc', ':Telescope frecency workspace=CWD<CR>', {
+        noremap = true,
+        desc = '[s]earch re[c]ency'
       })
 
       -- grep with telescope from visual mode
