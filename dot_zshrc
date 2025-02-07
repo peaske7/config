@@ -202,7 +202,8 @@ function gcloud { lazy_gcloud; gcloud "$@"; }
 export PATH="$BREW_PATH/opt/llvm/bin:$PATH"
 
 # asdf
-. "$BREW_PATH/opt/asdf/libexec/asdf.sh"
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
+fpath=(${ASDF_DATA_DIR:-$HOME/.asdf}/completions $fpath)
 
 # conda
 __conda_setup="$('/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"

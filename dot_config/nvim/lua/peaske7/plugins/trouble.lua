@@ -53,6 +53,10 @@ return {
         noremap = true,
         desc = "open quickfix"
       })
+      vim.keymap.set("n", "<leader>xt", function() t.open("todo") end, {
+        noremap = true,
+        desc = "open todo"
+      })
     end
   },
 }

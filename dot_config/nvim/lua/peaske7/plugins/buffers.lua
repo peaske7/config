@@ -33,10 +33,10 @@ return {
         silent = true,
         desc = '[b]uffer pick [d]elete'
       })
-      vim.keymap.set('n', '<leader>bw', '<cmd>BufferWipeout<cr>', {
+      vim.keymap.set('n', '<leader>bc', '<cmd>BufferCloseAllButCurrentOrPinned<cr>', {
         noremap = true,
         silent = true,
-        desc = '[b]uffer [w]ipeout'
+        desc = '[b]uffer [c]lose all but current or pinned'
       })
 
       for i = 1, 9, 1

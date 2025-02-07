@@ -105,7 +105,7 @@ luasnip.config.setup {}
 cmp.setup({
   preselect = 'item',
   completion = {
-    completeopt = 'menu,menuone,noinsert'
+    completeopt = 'menu,menuone,noselect'
   },
   sources = {
     { name = 'nvim_lsp' },
