@@ -28,9 +28,21 @@ return {
   --   lazy = false,
   --   priority = 1000,
   --   config = function()
+  --     require("solarized-osaka").setup({
+  --       transparent = true,
+  --       terminal_colors = true,
+  --     })
+  --
   --     vim.cmd('colorscheme solarized-osaka')
   --   end,
   -- },
+
+  -- {
+  --   'paulo-granthon/hyper.nvim',
+  --   config = function()
+  --     require('hyper').load()
+  --   end
+  -- }
 
   -- {
   --   "catppuccin/nvim",
@@ -39,7 +51,7 @@ return {
   --   priority = 1000,
   --   config = function()
   --     require("catppuccin").setup({
-  --       flavour = "macchiato", -- latte, frappe, macchiato, mocha
+  --       flavour = "mocha", -- latte, frappe, macchiato, mocha
   --       background = {
   --         light = "latte",
   --         dark = "macchiato",
@@ -57,5 +69,4 @@ return {
   --     vim.cmd.colorscheme "catppuccin"
   --   end
   -- },
-
 }

@@ -1,5 +1,6 @@
 [general]
-import = ["~/.config/alacritty/themes/themes/gruvbox_dark.toml"]
+# import = ["~/.config/alacritty/themes/themes/gruvbox_dark.toml"]
+import = ["~/.config/alacritty/themes/themes/hyper.toml"]
 
 [env]
 TERM = "xterm-256color"
