@@ -1,5 +1,4 @@
 [general]
-# import = ["~/.config/alacritty/themes/themes/gruvbox_dark.toml"]
 import = ["~/.config/alacritty/themes/themes/hyper.toml"]
 
 [env]
@@ -23,7 +22,9 @@ style = "Regular"
 [window]
 # decorations = "buttonless"
 dynamic_padding = false
-opacity = 0.98
+# opacity = 0.98
+opacity = 0.9
+# opacity = 0.6
 
 [window.padding]
 x = 25

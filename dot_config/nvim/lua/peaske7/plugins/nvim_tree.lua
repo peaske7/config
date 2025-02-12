@@ -1,9 +1,6 @@
 return {
   {
     "nvim-tree/nvim-tree.lua",
-    dependencies = {
-      'nvim-tree/nvim-web-devicons'
-    },
     config = function()
       local nvim_tree = require("nvim-tree")
       local nvim_tree_api = require("nvim-tree.api")
@@ -82,6 +79,13 @@ return {
         silent = true,
         desc = '[t]ree [e]xplore'
       })
+    end
+  },
+
+  {
+    "antosha417/nvim-lsp-file-operations",
+    config = function()
+      require("lsp-file-operations").setup()
     end
   }
 }
