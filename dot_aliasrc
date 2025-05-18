@@ -47,7 +47,7 @@ function grename() {
 }
 
 function gdnl() {
-	git diff -- ":(exclude)package-lock.json" ":(exclude)pnpm-lock.yaml" ":(exclude)*.lock"
+	git diff -- ":(exclude)**/package-lock.json" ":(exclude)**/pnpm-lock.yaml" ":(exclude)*.lock"
 }
 
 function gddnl() {
@@ -140,3 +140,4 @@ alias t%='tmux source-file ~/.tmux.conf'
 # ssh
 alias es='nvim ~/.ssh/config' # [E]dit [S]sh configs
 
+alias timestamp='date +"%Y%m%d%H%M%S"' # [T]ime [S]tamp
