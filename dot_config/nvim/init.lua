@@ -92,6 +92,28 @@ vim.api.nvim_create_autocmd("TermOpen", {
   command = "startinsert"
 })
 
+-- write current date
+vim.keymap.set("n", "<leader>wt", "a<C-r>=strftime('%m/%d (%a)')<cr>", {
+  noremap = true,
+  silent = true,
+  desc = "write [w]rite [t]oday"
+})
+vim.keymap.set("n", "<leader>wd", "<cmd>pu=strftime('%m/%d')<cr>", {
+  noremap = true,
+  silent = true,
+  desc = "write [w]rite [d]ate"
+})
+vim.keymap.set("n", "<leader>ww", "<cmd>pu=strftime('%a')<cr>", {
+  noremap = true,
+  silent = true,
+  desc = "write [w]rite [w]eekday"
+})
+vim.keymap.set("n", "<leader>wfd", "<cmd>pu=strftime('%Y/%m/%d')<cr>", {
+  noremap = true,
+  silent = true,
+  desc = "write [w]rite [f]ull [d]ate"
+})
+
 -- toggle highlight
 vim.keymap.set("n", "<leader>h", "<cmd>set hlsearch!<cr>", { noremap = true, silent = true, desc = "toggle [h]ighlight" })
 

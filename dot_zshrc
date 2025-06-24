@@ -125,26 +125,6 @@ export LDFLAGS="-L/$BREW_PATH/opt/openssl@1.1/lib/ -L/$BREW_PATH/opt/cyrus-sasl/
 export CPPFLAGS="-I/$BREW_PATH/opt/openssl@1.1/include -I/$BREW_PATH/opt/cyrus-sasl/include"
 export PKG_CONFIG_PATH="/$BREW_PATH/opt/cyrus-sasl/lib/pkgconfig"
 
-# nvm 
-# https://gist.github.com/grrowl/cec975ecfe690d13918f40ff5827fecb
-function lazy_nvm {
-  unset -f nvm
-  unset -f npm
-  unset -f node
-  unset -f npx
-
-  if [ -d "${HOME}/.nvm" ]; then
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "$BREW_PATH/opt/nvm/nvm.sh" ] && \. "$BREW_PATH/opt/nvm/nvm.sh"
-    [ -s "$BREW_PATH/opt/nvm/etc/bash_completion.d/nvm" ] && \. "$BREW_PATH/opt/nvm/etc/bash_completion.d/nvm"
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-  fi
-}
-function nvm { lazy_nvm; nvm "$@"; }
-function npm { lazy_nvm; npm "$@"; }
-function node { lazy_nvm; node "$@"; }
-function npx { lazy_nvm; npx "$@"; }
-
 # pnpm
 export PNPM_HOME="/$HOME/Library/pnpm"
 case ":$PATH:" in
@@ -233,5 +213,10 @@ case ":$PATH:" in
 esac
 # pnpm end
 
+# windsurf
+export PATH="$HOME/.codeium/windsurf/bin:$PATH"
+
+# claude code
+alias claude="/Users/jay/.claude/local/claude"
 
 # zprof
