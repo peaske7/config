@@ -1,5 +1,6 @@
 [general]
-import = ["~/.config/alacritty/themes/themes/hyper.toml"]
+# import = ["~/.config/alacritty/themes/themes/hyper.toml"]
+import = ["~/.config/alacritty/themes/catppuccin_macchiato.toml"]
 
 [env]
 TERM = "xterm-256color"
@@ -21,8 +22,8 @@ style = "Regular"
 
 [window]
 # decorations = "buttonless"
-dynamic_padding = false
-# opacity = 0.98
+dynamic_padding = true
+opacity = 0.98
 # opacity = 0.9
 # opacity = 0.6
 

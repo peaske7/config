@@ -508,6 +508,39 @@ require('lazy').setup({
     opts = {}
   },
 
+  {
+    "coder/claudecode.nvim",
+    dependencies = { "folke/snacks.nvim" },
+    config = true,
+    keys = {
+      { "<leader>e",  nil,                              desc = "AI/Claude Code" },
+      { "<leader>ec", "<cmd>ClaudeCode<cr>",            desc = "Toggle Claude" },
+      { "<leader>ef", "<cmd>ClaudeCodeFocus<cr>",       desc = "Focus Claude" },
+      { "<leader>er", "<cmd>ClaudeCode --resume<cr>",   desc = "Resume Claude" },
+      { "<leader>eC", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
+      { "<leader>eb", "<cmd>ClaudeCodeAdd %<cr>",       desc = "Add current buffer" },
+      { "<leader>es", "<cmd>ClaudeCodeSend<cr>",        mode = "v",                 desc = "Send to Claude" },
+      {
+        "<leader>es",
+        "<cmd>ClaudeCodeTreeAdd<cr>",
+        desc = "Add file",
+        ft = { "NvimTree", "neo-tree", "oil" },
+      },
+      -- Diff management
+      { "<leader>ea", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
+      { "<leader>ed", "<cmd>ClaudeCodeDiffDeny<cr>",   desc = "Deny diff" },
+    },
+  },
+
+  {
+    "davidosomething/format-ts-errors.nvim",
+    config = function()
+      require("format-ts-errors").setup({
+        start_indent_level = 0, -- initial indent
+      })
+    end,
+  },
+
   -- trying out movement plugins
   -- started: 2025/02/04
   {
