@@ -217,6 +217,23 @@ esac
 export PATH="$HOME/.codeium/windsurf/bin:$PATH"
 
 # claude code
-alias claude="/Users/jay/.claude/local/claude"
+# alias claude="/Users/jay/.claude/local/claude"
+
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/jay/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
+
+# bun completions
+[ -s "/Users/jay/.bun/_bun" ] && source "/Users/jay/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# uv
+eval "$(uv generate-shell-completion zsh)"
+eval "$(uvx --generate-shell-completion zsh)"
 
 # zprof
