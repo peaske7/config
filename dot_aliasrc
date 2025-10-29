@@ -67,6 +67,39 @@ function rembga() {
   done
 }
 
+function gco() {
+	if [[ -n "$1" ]]; then
+		git checkout "$@"
+	else
+		git branch -a --sort=-committerdate | \
+			grep -v HEAD | \
+			sed 's/remotes\/origin\///' | \
+			sed 's/^[*+] //' | \
+			awk '{print $1}' | \
+			sort -u | \
+			fzf --height=40% \
+				--reverse \
+				--preview='git log --color --oneline --decorate {} | head -10' \
+				--preview-window='right:50%:wrap' | \
+			xargs -r git checkout
+	fi
+}
+
+# Inline only
+function gc() {
+	if [[ -n "$1" ]]; then
+		git checkout "$@"
+	else
+		git branch -a --sort=-committerdate | \
+			grep -v HEAD | \
+			sed 's|remotes/origin/||' | \
+			sed 's/^[* +]*//' | \
+			awk 'NF && !seen[$0]++' | \
+			fzf --height=40% --reverse --prompt='‚Ä∫ ' | \
+			xargs -r git checkout
+	fi
+}
+
 # ----------------------------
 # aliases
 # ----------------------------
@@ -96,7 +129,7 @@ alias drs='dcd && dvp && dcbu' # [D]ocker [R]e[S]tart
 
 # git
 # [G]it [F]zf [C]heck [O]ut
-alias gfco="git branch --list | cut -c 3- | fzf --preview \"git log --pretty=format:'%h %cd %s' --date=format:'%Y-%m-%d %H:%M' {}\" | xargs git checkout"
+# alias gfco="git branch --list | cut -c 3- | fzf --preview \"git log --pretty=format:'%h %cd %s' --date=format:'%Y-%m-%d %H:%M' {}\" | xargs git checkout"
 
 alias gm="git merge"
 alias gss="git status --short"
@@ -105,7 +138,7 @@ alias gcam="git commit -a -m"
 alias gbd="git branch -D"
 alias gsd='"$(git_set_default_branch)"'
 
-alias gco="git checkout"
+# alias gco="git checkout"
 alias gcb="git checkout -b" # creates branch
 alias gci='git checkout "$(git branch -a | fzf | xargs)"' # [G]it [C]heckoout [I]nteractive
 alias gcd='git checkout "$(git_default_branch)"' # [G]it [C]heckout [D]efault
