@@ -239,4 +239,10 @@ eval "$(uvx --generate-shell-completion zsh)"
 # use orbstack
 export DOCKER_HOST="unix://$HOME/.orbstack/run/docker.sock"
 
+export PATH="/Users/jay/.antigravity/antigravity/bin:$PATH"
+
+# but (git butler)
+eval "$(but completions zsh)"
+
+
 # zprof
