@@ -22,8 +22,8 @@ export HISTFILE=~/.zsh_history
 export HISTSIZE=1000
 export SAVEHIST=1000
 export SHELL_SESSIONS_DISABLE=1
-setopt SHARE_HISTORY
-
+setopt share_history
+setopt correct
 setopt auto_cd # prefixes directory changes with `cd` 
 setopt auto_list # automatically list choices
 setopt auto_menu # show completion menu
@@ -226,7 +226,7 @@ compinit
 # End of Docker CLI completions
 
 # bun completions
-[ -s "/Users/jay/.bun/_bun" ] && source "/Users/jay/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
@@ -244,5 +244,10 @@ export PATH="/Users/jay/.antigravity/antigravity/bin:$PATH"
 # but (git butler)
 eval "$(but completions zsh)"
 
+# mise
+eval "$($HOME/.local/bin/mise activate zsh)"
+
+# Entire CLI shell completion
+autoload -Uz compinit && compinit && source <(entire completion zsh)
 
 # zprof
