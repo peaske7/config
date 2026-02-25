@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep:*)",
+      "Bash(fc-list:*)",
+      "Bash(kitty +list-fonts:*)",
+      "Bash(mise ls:*)"
+    ]
+  }
+}
