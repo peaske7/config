@@ -19,18 +19,68 @@ autoload -Uz _zinit
 # ----------------------------
 export ZSHRC=~/.zshrc
 export HISTFILE=~/.zsh_history
-export HISTSIZE=1000
-export SAVEHIST=1000
+export HISTSIZE=10000000
+export SAVEHIST=10000000
 export SHELL_SESSIONS_DISABLE=1
+
 setopt share_history
 setopt correct
-setopt auto_cd # prefixes directory changes with `cd` 
+setopt auto_cd # type directory name to cd into it
 setopt auto_list # automatically list choices
 setopt auto_menu # show completion menu
 setopt auto_param_slash	# if completed param is dir, add slash at end
-setopt menu_complete # don't autoselect first completion entry
+setopt menu_complete # cycle through completion entries
 setopt extended_history # record timestamp of command in HISTFILE
 setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
+
+# history hygiene
+setopt hist_ignore_all_dups # remove ALL older dupes, not just consecutive
+setopt hist_ignore_space # prefix with space to exclude from history
+setopt hist_reduce_blanks # strip extra whitespace from saved commands
+setopt hist_verify # show expansion before executing (!! !$)
+setopt hist_find_no_dups # skip dupes when searching history
+setopt hist_save_no_dups # don't write dupes to history file
+setopt inc_append_history # write after each command, not on exit (crash-proof)
+
+# navigation - every cd pushes to dir stack (cd -2 to go back 2)
+setopt auto_pushd
+setopt pushd_ignore_dups
+setopt pushd_silent
+
+# globbing
+setopt extended_glob # unlock ^, ~, # in patterns (e.g. ls ^*.log)
+setopt glob_dots # include dotfiles in glob matches
+setopt numeric_glob_sort # file1 file2 file10 instead of file1 file10 file2
+
+# completion (advanced)
+setopt complete_in_word # tab-complete from cursor position, not just end
+setopt always_to_end # after mid-word completion, jump cursor to end
+setopt list_packed # compact completion lists
+
+# globbing (advanced)
+setopt glob_star_short # **.ts shorthand for **/*.ts
+setopt mark_dirs # append / to directories in glob output
+
+# quoting and redirection
+setopt rc_quotes # use '' inside single quotes instead of '\''
+setopt multios # implicit tee: echo foo > a > b writes to both
+
+# jobs
+setopt long_list_jobs # show PID in job listings
+setopt notify # report background job status immediately
+setopt check_jobs # warn before exiting with background jobs
+
+# navigation (advanced)
+setopt cdable_vars # cd into variable values (export p=~/projects; cd p)
+setopt magic_equal_subst # expand ~ after = in args (--prefix=~/local)
+
+# safety and ux
+setopt interactive_comments # allow # comments in interactive shell
+setopt no_beep # kill the terminal bell
+setopt no_flow_control # disable ctrl-s/ctrl-q terminal freeze
+setopt rm_star_wait # 10-second pause before rm *
+setopt pipe_fail # pipeline returns rightmost non-zero exit
+setopt combining_chars # proper rendering of combining characters
 
 # allow zsh to take flight (enable completions)
 autoload -Uz compinit
@@ -47,7 +97,9 @@ zinit wait lucid blockf light-mode for \
   @'zsh-users/zsh-completions' \
   @'zsh-users/zsh-autosuggestions' \
   @'zdharma-continuum/fast-syntax-highlighting' \
-  @'hlissner/zsh-autopair'
+  @'hlissner/zsh-autopair' \
+  @'fdellwing/zsh-bat' \
+  @'MichaelAquilina/zsh-you-should-use'
 
 # mcfly
 zinit ice lucid wait"0a" from"gh-r" as"program" atload'eval "$(mcfly init zsh)"'
@@ -61,6 +113,7 @@ zinit ice depth"1" lucid
 zinit light jeffreytse/zsh-vi-mode
 zinit ice wait silent
 ZVM_LAZY_KEYBINDINGS=false
+ZVM_CURSOR_STYLE_ENABLED=false
 ZVM_VI_INSERT_ESCAPE_BINDKEY=jk
 
 # starship
