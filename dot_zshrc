@@ -191,8 +191,6 @@ export PKG_CONFIG_PATH="/$BREW_PATH/opt/cyrus-sasl/lib/pkgconfig"
 
 # rust
 export PATH="$HOME/.cargo/bin:$PATH"
-export PATH="$HOME/.cargo/env:$PATH"
-source $HOME/.cargo/env 
 
 # java
 export ANDROID_HOME=$HOME/Library/Android/sdk
@@ -212,8 +210,7 @@ export PATH="$PATH:$HOME/.local/bin"
 # lua
 export PATH=$PATH:$HOME/.config/lsp/lua-language-server/bin
 
-# brew
-eval "$($BREW_PATH/bin/brew shellenv)"
+# brew — eval is in .zprofile; only set BREW_PATH for references below
 
 # moonrepo
 export PATH="$HOME/.moon/bin:$PATH"
@@ -234,18 +231,22 @@ function lazy_gcloud {
 }
 function gcloud { lazy_gcloud; gcloud "$@"; }
 
-# conda
-__conda_setup="$('/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
+# conda — lazy-loaded (saves ~1150ms)
+function conda {
+  unset -f conda
+  __conda_setup="$('/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2>/dev/null)"
+  if [ $? -eq 0 ]; then
     eval "$__conda_setup"
-else
+  else
     if [ -f "/opt/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/opt/anaconda3/etc/profile.d/conda.sh"
+      . "/opt/anaconda3/etc/profile.d/conda.sh"
     else
-        export PATH="/opt/anaconda3/bin:$PATH"
+      export PATH="/opt/anaconda3/bin:$PATH"
     fi
-fi
-unset __conda_setup
+  fi
+  unset __conda_setup
+  conda "$@"
+}
 
 # proto
 export PROTO_HOME="$HOME/.proto"
@@ -275,9 +276,15 @@ fpath=(/Users/jay/.docker/completions $fpath)
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-# uv
-eval "$(uv generate-shell-completion zsh)"
-eval "$(uvx --generate-shell-completion zsh)"
+# uv — cached completions (saves ~150ms)
+_uv_comp_cache="$HOME/.cache/zsh/uv_completion.zsh"
+_uvx_comp_cache="$HOME/.cache/zsh/uvx_completion.zsh"
+if [[ ! -d "$HOME/.cache/zsh" ]]; then command mkdir -p "$HOME/.cache/zsh"; fi
+if [[ ! -f "$_uv_comp_cache" ]]; then uv generate-shell-completion zsh > "$_uv_comp_cache"; fi
+if [[ ! -f "$_uvx_comp_cache" ]]; then uvx --generate-shell-completion zsh > "$_uvx_comp_cache"; fi
+source "$_uv_comp_cache"
+source "$_uvx_comp_cache"
+unset _uv_comp_cache _uvx_comp_cache
 
 # use orbstack
 export DOCKER_HOST="unix://$HOME/.orbstack/run/docker.sock"
@@ -285,12 +292,9 @@ export DOCKER_HOST="unix://$HOME/.orbstack/run/docker.sock"
 export PATH="/Users/jay/.antigravity/antigravity/bin:$PATH"
 
 # but (git butler)
-eval "$(but completions zsh)"
+# eval "$(but completions zsh)"
 
-# mise
-eval "$($HOME/.local/bin/mise activate zsh)"
-
-# Entire CLI shell completion
-source <(entire completion zsh)
+# mise — shims mode (saves ~120ms vs eval activate)
+export PATH="$HOME/.local/share/mise/shims:$PATH"
 
 # zprof

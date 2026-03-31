@@ -40,4 +40,3 @@ style = "yellow"
 [terraform]
 format = "[$workspace]($style)"
 style = "105"
-

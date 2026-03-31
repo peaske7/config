@@ -196,6 +196,10 @@ else
   rgignore_file:close()
 end
 
+-- Disable legacy ts_context_commentstring CursorHold autocmd;
+-- Comment.nvim's pre_hook handles this on-demand instead.
+vim.g.skip_ts_context_commentstring_module = true
+
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system {
@@ -210,11 +214,83 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
+  {
+    "folke/snacks.nvim",
+    priority = 1000,
+    lazy = false,
+    opts = {
+      -- Picker (replaces telescope)
+      picker = {
+        sources = {
+          files = {
+            hidden = true,
+            ignored = false,
+            exclude = { ".git", "node_modules", ".venv", "target" },
+          },
+        },
+      },
+      -- Notifier (replaces fidget.nvim)
+      notifier = { enabled = true },
+      -- Indent guides (replaces hlchunk)
+      indent = {
+        enabled = true,
+        animate = { enabled = false },
+      },
+      -- Git browse — open file/line on GitHub
+      gitbrowse = { enabled = true },
+      -- Toggleable terminal
+      terminal = { enabled = true },
+      -- Buffer delete without layout shift
+      bufdelete = { enabled = true },
+    },
+    keys = {
+      -- File search (was <leader>sf)
+      { "<leader>sf", function() Snacks.picker.files() end, desc = "[s]earch [f]iles" },
+      -- Live grep (was <leader>sg)
+      { "<leader>sg", function() Snacks.picker.grep() end, desc = "[s]earch [g]rep" },
+      -- Grep visual selection
+      { "<leader>sg", function() Snacks.picker.grep_word() end, mode = "v", desc = "[s]earch [g]rep selection" },
+      -- Recent files (was <leader>sc frecency)
+      { "<leader>sc", function() Snacks.picker.recent() end, desc = "[s]earch re[c]ent" },
+      -- Buffers (was <leader>sb)
+      { "<leader>sb", function() Snacks.picker.buffers() end, desc = "[s]earch [b]uffers" },
+      -- Resume last picker (was <leader>sr)
+      { "<leader>sr", function() Snacks.picker.resume() end, desc = "[s]earch [r]esume" },
+      -- Diagnostics (was <leader>sd)
+      { "<leader>sd", function() Snacks.picker.diagnostics() end, desc = "[s]earch [d]iagnostics" },
+      -- Quickfix (was <leader>sq)
+      { "<leader>sq", function() Snacks.picker.qflist() end, desc = "[s]earch [q]uickfix" },
+      -- Registers (was <leader>se)
+      { "<leader>se", function() Snacks.picker.registers() end, desc = "[s]earch r[e]gisters" },
+      -- Highlights (was <leader>sh)
+      { "<leader>sh", function() Snacks.picker.highlights() end, desc = "[s]earch [h]ighlights" },
+      -- Jumplist (was <leader>sj)
+      { "<leader>sj", function() Snacks.picker.jumps() end, desc = "[s]earch [j]umplist" },
+      -- Git commits (was <leader>svc)
+      { "<leader>svc", function() Snacks.picker.git_log() end, desc = "[s]earch [v]ersion [c]ommits" },
+      -- Git branches (was <leader>svb)
+      { "<leader>svb", function() Snacks.picker.git_branches() end, desc = "[s]earch [v]ersion [b]ranches" },
+      -- Git status (was <leader>svss)
+      { "<leader>svss", function() Snacks.picker.git_status() end, desc = "[s]earch [v]ersion [s]tatus" },
+      -- Todo comments (was <leader>st via TodoTelescope)
+      { "<leader>st", function() Snacks.picker.todo_comments() end, desc = "[s]earch [t]odo" },
+      -- LSP
+      { "gd", function() Snacks.picker.lsp_definitions() end, desc = "goto definition" },
+      { "grr", function() Snacks.picker.lsp_references() end, desc = "goto references" },
+      { "gri", function() Snacks.picker.lsp_implementations() end, desc = "goto implementations" },
+      { "gO", function() Snacks.picker.lsp_symbols() end, desc = "document symbols" },
+      -- Git browse
+      { "<leader>go", function() Snacks.gitbrowse() end, desc = "[g]it [o]pen in browser", mode = { "n", "v" } },
+      -- Terminal (C-/ may arrive as C-_ through tmux)
+      { "<C-/>", function() Snacks.terminal() end, desc = "toggle terminal", mode = { "n", "t" } },
+      { "<C-_>", function() Snacks.terminal() end, desc = "toggle terminal", mode = { "n", "t" } },
+    },
+  },
+
   -- functional
   require 'peaske7.plugins.buffers',
   require 'peaske7.plugins.nvim_tree',
   require 'peaske7.plugins.markdown',
-  require 'peaske7.plugins.telescope',
   require 'peaske7.plugins.trouble',
 
   -- cosmetic
@@ -242,84 +318,115 @@ require('lazy').setup({
   },
 
   {
-    'VonHeikemen/lsp-zero.nvim',
-    branch = 'v3.x',
-    lazy = false,
-    config = false,
-  },
-
-  {
     'neovim/nvim-lspconfig',
     dependencies = {
       'williamboman/mason.nvim',
       'williamboman/mason-lspconfig.nvim',
-      'nvimtools/none-ls.nvim',
-
-      {
-        'jay-babu/mason-null-ls.nvim',
-        opts = {}
-      },
-
-      {
-        "j-hui/fidget.nvim",
-        config = function()
-          require('fidget').setup({
-            notification = {
-              window = {
-                winblend = 0,
-              },
-            }
-          })
-        end
-      },
     }
   },
 
   {
-    'hrsh7th/nvim-cmp',
-    dependencies = {
-      'saadparwaiz1/cmp_luasnip',
-      'hrsh7th/cmp-nvim-lsp',
-      'hrsh7th/cmp-nvim-lsp-signature-help',
-      'hrsh7th/cmp-path',
-      'hrsh7th/cmp-buffer',
-
-      {
-        "L3MON4D3/LuaSnip",
-        dependencies = {
-          "rafamadriz/friendly-snippets",
-        },
+    'stevearc/conform.nvim',
+    event = "BufWritePre",
+    cmd = "ConformInfo",
+    opts = {
+      formatters_by_ft = {
+        javascript = { "biome", "prettier", stop_after_first = true },
+        typescript = { "biome", "prettier", stop_after_first = true },
+        javascriptreact = { "biome", "prettier", stop_after_first = true },
+        typescriptreact = { "biome", "prettier", stop_after_first = true },
+        json = { "biome", "prettier", stop_after_first = true },
+        css = { "prettier" },
+        html = { "prettier" },
+        yaml = { "prettier" },
+        markdown = { "prettier" },
+        lua = { "stylua" },
+        sh = { "shfmt" },
+        bash = { "shfmt" },
+        zsh = { "shfmt" },
+        go = { "gofumpt", "goimports" },
+        rust = { "rustfmt" },
+        sql = { "sqlfmt" },
+        haskell = { "fourmolu" },
+        nix = { "nixpkgs-fmt" },
       },
-
-      {
-        "zbirenbaum/copilot.lua",
-        cmd = "Copilot",
-        event = "InsertEnter",
-        config = function()
-          require("copilot").setup({})
-        end,
-      },
-
-      {
-        "zbirenbaum/copilot-cmp",
-        event = "BufReadPre",
-        config = function()
-          require("copilot").setup({
-            suggestion = { enabled = false },
-            panel = { enabled = false },
-          })
-          require('copilot_cmp').setup()
-        end
-      },
-
+      format_on_save = function(bufnr)
+        -- Disable for files over 500KB
+        if vim.api.nvim_buf_line_count(bufnr) > 10000 then return end
+        return { timeout_ms = 2000, lsp_format = "fallback" }
+      end,
     },
-    opts = function(_, opts)
-      opts.sources = opts.sources or {}
-      table.insert(opts.sources, {
-        name = "lazydev",
-        group_index = 0,
+    keys = {
+      { "<leader>ff", function() require("conform").format({ async = true, lsp_format = "fallback" }) end, desc = "[f]ormat [f]ile" },
+    },
+  },
+
+  {
+    'mfussenegger/nvim-lint',
+    event = { "BufReadPre", "BufNewFile" },
+    config = function()
+      local lint = require("lint")
+
+      lint.linters_by_ft = {
+        sh = { "shellcheck" },
+        bash = { "shellcheck" },
+        css = { "stylelint" },
+        scss = { "stylelint" },
+      }
+
+      vim.api.nvim_create_autocmd({ "BufWritePost", "BufReadPost", "InsertLeave" }, {
+        callback = function()
+          lint.try_lint()
+        end,
       })
     end,
+  },
+
+  {
+    "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
+    event = "InsertEnter",
+    config = function()
+      require("copilot").setup({
+        suggestion = { enabled = false },
+        panel = { enabled = false },
+      })
+    end,
+  },
+
+  {
+    'saghen/blink.cmp',
+    version = '1.*',
+    dependencies = {
+      'rafamadriz/friendly-snippets',
+      {
+        'giuxtaposition/blink-cmp-copilot',
+        dependencies = { "zbirenbaum/copilot.lua" },
+      },
+    },
+    opts = {
+      keymap = {
+        ['<C-n>'] = { 'select_next', 'fallback' },
+        ['<C-p>'] = { 'select_prev', 'fallback' },
+        ['<C-y>'] = { 'accept', 'fallback' },
+        ['<C-u>'] = { 'scroll_documentation_up', 'fallback' },
+        ['<C-d>'] = { 'scroll_documentation_down', 'fallback' },
+      },
+      completion = {
+        documentation = { auto_show = true },
+      },
+      sources = {
+        default = { 'lsp', 'path', 'snippets', 'buffer', 'copilot' },
+        providers = {
+          copilot = {
+            name = "copilot",
+            module = "blink-cmp-copilot",
+            async = true,
+          },
+        },
+      },
+      signature = { enabled = true },
+    },
   },
 
   {
@@ -413,7 +520,12 @@ require('lazy').setup({
 
   {
     'numToStr/Comment.nvim',
-    dependencies = "JoosepAlviste/nvim-ts-context-commentstring",
+    dependencies = {
+      {
+        "JoosepAlviste/nvim-ts-context-commentstring",
+        opts = { enable_autocmd = false },
+      },
+    },
     event = "BufReadPre",
     config = function()
       require("Comment").setup {
@@ -466,17 +578,6 @@ require('lazy').setup({
     opts = {}
   },
 
-  {
-    "shellRaining/hlchunk.nvim",
-    event = { "BufReadPre", "BufNewFile" },
-    config = function()
-      require("hlchunk").setup({
-        indent = {
-          enable = true
-        },
-      })
-    end
-  },
 
   {
     "mbbill/undotree",
@@ -510,7 +611,6 @@ require('lazy').setup({
 
   {
     "coder/claudecode.nvim",
-    dependencies = { "folke/snacks.nvim" },
     config = true,
     keys = {
       { "<leader>e",  nil,                              desc = "AI/Claude Code" },
