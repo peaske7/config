@@ -4,7 +4,15 @@
       "Bash(grep:*)",
       "Bash(fc-list:*)",
       "Bash(kitty +list-fonts:*)",
-      "Bash(mise ls:*)"
+      "Bash(mise ls:*)",
+      "Bash(vm_stat)",
+      "Bash(sysctl:*)",
+      "Bash(tmux show-option:*)",
+      "Bash(tmux display-message:*)",
+      "Bash(~/.tmux/plugins/tmux-mem-cpu-load/tmux-mem-cpu-load:*)",
+      "Bash(chezmoi apply:*)",
+      "Bash(tmux source-file:*)",
+      "Bash(tmux set-option:*)"
     ]
   }
 }

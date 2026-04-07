@@ -245,45 +245,45 @@ require('lazy').setup({
     },
     keys = {
       -- File search (was <leader>sf)
-      { "<leader>sf", function() Snacks.picker.files() end, desc = "[s]earch [f]iles" },
+      { "<leader>sf",   function() Snacks.picker.files() end,               desc = "[s]earch [f]iles" },
       -- Live grep (was <leader>sg)
-      { "<leader>sg", function() Snacks.picker.grep() end, desc = "[s]earch [g]rep" },
+      { "<leader>sg",   function() Snacks.picker.grep() end,                desc = "[s]earch [g]rep" },
       -- Grep visual selection
-      { "<leader>sg", function() Snacks.picker.grep_word() end, mode = "v", desc = "[s]earch [g]rep selection" },
+      { "<leader>sg",   function() Snacks.picker.grep_word() end,           mode = "v",                            desc = "[s]earch [g]rep selection" },
       -- Recent files (was <leader>sc frecency)
-      { "<leader>sc", function() Snacks.picker.recent() end, desc = "[s]earch re[c]ent" },
+      { "<leader>sc",   function() Snacks.picker.recent() end,              desc = "[s]earch re[c]ent" },
       -- Buffers (was <leader>sb)
-      { "<leader>sb", function() Snacks.picker.buffers() end, desc = "[s]earch [b]uffers" },
+      { "<leader>sb",   function() Snacks.picker.buffers() end,             desc = "[s]earch [b]uffers" },
       -- Resume last picker (was <leader>sr)
-      { "<leader>sr", function() Snacks.picker.resume() end, desc = "[s]earch [r]esume" },
+      { "<leader>sr",   function() Snacks.picker.resume() end,              desc = "[s]earch [r]esume" },
       -- Diagnostics (was <leader>sd)
-      { "<leader>sd", function() Snacks.picker.diagnostics() end, desc = "[s]earch [d]iagnostics" },
+      { "<leader>sd",   function() Snacks.picker.diagnostics() end,         desc = "[s]earch [d]iagnostics" },
       -- Quickfix (was <leader>sq)
-      { "<leader>sq", function() Snacks.picker.qflist() end, desc = "[s]earch [q]uickfix" },
+      { "<leader>sq",   function() Snacks.picker.qflist() end,              desc = "[s]earch [q]uickfix" },
       -- Registers (was <leader>se)
-      { "<leader>se", function() Snacks.picker.registers() end, desc = "[s]earch r[e]gisters" },
+      { "<leader>se",   function() Snacks.picker.registers() end,           desc = "[s]earch r[e]gisters" },
       -- Highlights (was <leader>sh)
-      { "<leader>sh", function() Snacks.picker.highlights() end, desc = "[s]earch [h]ighlights" },
+      { "<leader>sh",   function() Snacks.picker.highlights() end,          desc = "[s]earch [h]ighlights" },
       -- Jumplist (was <leader>sj)
-      { "<leader>sj", function() Snacks.picker.jumps() end, desc = "[s]earch [j]umplist" },
+      { "<leader>sj",   function() Snacks.picker.jumps() end,               desc = "[s]earch [j]umplist" },
       -- Git commits (was <leader>svc)
-      { "<leader>svc", function() Snacks.picker.git_log() end, desc = "[s]earch [v]ersion [c]ommits" },
+      { "<leader>svc",  function() Snacks.picker.git_log() end,             desc = "[s]earch [v]ersion [c]ommits" },
       -- Git branches (was <leader>svb)
-      { "<leader>svb", function() Snacks.picker.git_branches() end, desc = "[s]earch [v]ersion [b]ranches" },
+      { "<leader>svb",  function() Snacks.picker.git_branches() end,        desc = "[s]earch [v]ersion [b]ranches" },
       -- Git status (was <leader>svss)
-      { "<leader>svss", function() Snacks.picker.git_status() end, desc = "[s]earch [v]ersion [s]tatus" },
+      { "<leader>svss", function() Snacks.picker.git_status() end,          desc = "[s]earch [v]ersion [s]tatus" },
       -- Todo comments (was <leader>st via TodoTelescope)
-      { "<leader>st", function() Snacks.picker.todo_comments() end, desc = "[s]earch [t]odo" },
+      { "<leader>st",   function() Snacks.picker.todo_comments() end,       desc = "[s]earch [t]odo" },
       -- LSP
-      { "gd", function() Snacks.picker.lsp_definitions() end, desc = "goto definition" },
-      { "grr", function() Snacks.picker.lsp_references() end, desc = "goto references" },
-      { "gri", function() Snacks.picker.lsp_implementations() end, desc = "goto implementations" },
-      { "gO", function() Snacks.picker.lsp_symbols() end, desc = "document symbols" },
+      { "gd",           function() Snacks.picker.lsp_definitions() end,     desc = "goto definition" },
+      { "grr",          function() Snacks.picker.lsp_references() end,      desc = "goto references" },
+      { "gri",          function() Snacks.picker.lsp_implementations() end, desc = "goto implementations" },
+      { "gO",           function() Snacks.picker.lsp_symbols() end,         desc = "document symbols" },
       -- Git browse
-      { "<leader>go", function() Snacks.gitbrowse() end, desc = "[g]it [o]pen in browser", mode = { "n", "v" } },
+      { "<leader>go",   function() Snacks.gitbrowse() end,                  desc = "[g]it [o]pen in browser",      mode = { "n", "v" } },
       -- Terminal (C-/ may arrive as C-_ through tmux)
-      { "<C-/>", function() Snacks.terminal() end, desc = "toggle terminal", mode = { "n", "t" } },
-      { "<C-_>", function() Snacks.terminal() end, desc = "toggle terminal", mode = { "n", "t" } },
+      { "<C-/>",        function() Snacks.terminal() end,                   desc = "toggle terminal",              mode = { "n", "t" } },
+      { "<C-_>",        function() Snacks.terminal() end,                   desc = "toggle terminal",              mode = { "n", "t" } },
     },
   },
 
@@ -610,25 +610,35 @@ require('lazy').setup({
   },
 
   {
-    "coder/claudecode.nvim",
-    config = true,
-    keys = {
-      { "<leader>e",  nil,                              desc = "AI/Claude Code" },
-      { "<leader>ec", "<cmd>ClaudeCode<cr>",            desc = "Toggle Claude" },
-      { "<leader>ef", "<cmd>ClaudeCodeFocus<cr>",       desc = "Focus Claude" },
-      { "<leader>er", "<cmd>ClaudeCode --resume<cr>",   desc = "Resume Claude" },
-      { "<leader>eC", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
-      { "<leader>eb", "<cmd>ClaudeCodeAdd %<cr>",       desc = "Add current buffer" },
-      { "<leader>es", "<cmd>ClaudeCodeSend<cr>",        mode = "v",                 desc = "Send to Claude" },
-      {
-        "<leader>es",
-        "<cmd>ClaudeCodeTreeAdd<cr>",
-        desc = "Add file",
-        ft = { "NvimTree", "neo-tree", "oil" },
+    "folke/sidekick.nvim",
+    opts = {
+      cli = {
+        mux = {
+          backend = "tmux",
+          enabled = true,
+        },
       },
-      -- Diff management
-      { "<leader>ea", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff" },
-      { "<leader>ed", "<cmd>ClaudeCodeDiffDeny<cr>",   desc = "Deny diff" },
+    },
+    keys = {
+      {
+        "<tab>",
+        function()
+          if not require("sidekick").nes_jump_or_apply() then
+            return "<Tab>" -- fallback to normal tab
+          end
+        end,
+        expr = true,
+        desc = "Goto/Apply Next Edit Suggestion",
+      },
+      { "<c-.>",       function() require("sidekick.cli").focus() end,                             desc = "Sidekick Focus",          mode = { "n", "t", "i", "x" } },
+      { "<leader>ea",  function() require("sidekick.cli").toggle() end,                            desc = "Sidekick Toggle CLI" },
+      { "<leader>es",  function() require("sidekick.cli").select() end,                            desc = "Select CLI" },
+      { "<leader>ed",  function() require("sidekick.cli").close() end,                             desc = "Detach a CLI Session" },
+      { "<leader>et",  function() require("sidekick.cli").send({ msg = "{this}" }) end,            mode = { "x", "n" },              desc = "Send This" },
+      { "<leader>ef",  function() require("sidekick.cli").send({ msg = "{file}" }) end,            desc = "Send File" },
+      { "<leader>ev",  function() require("sidekick.cli").send({ msg = "{selection}" }) end,       mode = { "x" },                   desc = "Send Visual Selection" },
+      { "<leader>ep",  function() require("sidekick.cli").prompt() end,                            mode = { "n", "x" },              desc = "Sidekick Select Prompt" },
+      { "<leader>ec",  function() require("sidekick.cli").toggle({ name = "claude", focus = true }) end, desc = "Sidekick Toggle Claude" },
     },
   },
 
