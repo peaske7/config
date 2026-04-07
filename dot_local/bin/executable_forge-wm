@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+# forge-wm: Forge wrapper with workmux status tracking
+# Monitors Forge's tmux pane output to set workmux status icons.
+#
+# How it works:
+#   1. Starts a background polling loop that captures the current tmux pane
+#   2. Runs forge in the foreground (you interact with it normally)
+#   3. Detects state from the last lines of terminal output:
+#      - "working" when forge is streaming/executing tools
+#      - "waiting" when forge shows its input prompt
+#      - "done"    when the forge process exits
+#   4. Calls `workmux set-window-status <state>` to update the icon
+
+set -euo pipefail
+
+# Only do status tracking inside tmux + when workmux is available
+if [[ -z "${TMUX:-}" ]] || ! command -v workmux &>/dev/null; then
+  exec forge "$@"
+fi
+
+POLL_INTERVAL=2
+_monitor_pid=""
+
+cleanup() {
+  [[ -n "$_monitor_pid" ]] && kill "$_monitor_pid" 2>/dev/null || true
+  workmux set-window-status done 2>/dev/null || true
+}
+trap cleanup EXIT
+
+# --- background status monitor ---
+monitor_forge_pane() {
+  local prev_status=""
+  local pane_id
+  pane_id="$(tmux display-message -p '#{pane_id}')"
+
+  while true; do
+    sleep "$POLL_INTERVAL"
+
+    # Capture the last 5 lines of the pane (cheap operation)
+    local tail
+    tail="$(tmux capture-pane -p -t "$pane_id" -S -5 2>/dev/null)" || continue
+
+    local status="working"
+
+    # Detect Forge's idle/input prompt.
+    # Forge shows a ">" or "Human:" prompt when waiting for user input.
+    # Adjust the pattern below if your Forge prompt looks different —
+    # run `tmux capture-pane -p | tail -5` while Forge is idle to see
+    # what your prompt looks like, then update the grep pattern.
+    if echo "$tail" | grep -qE '^\s*>\s*$|Human:|^forge>|^\$ $'; then
+      status="waiting"
+    fi
+
+    if [[ "$status" != "$prev_status" ]]; then
+      workmux set-window-status "$status" 2>/dev/null || true
+      prev_status="$status"
+    fi
+  done
+}
+
+# Start the monitor in the background
+monitor_forge_pane &
+_monitor_pid=$!
+
+# Signal "working" on launch if a prompt was provided
+if [[ "$*" == *"-p "* ]] || [[ "$*" == *"--prompt"* ]]; then
+  workmux set-window-status working 2>/dev/null || true
+else
+  workmux set-window-status waiting 2>/dev/null || true
+fi
+
+# Run forge in the foreground — you interact with it as normal
+forge "$@"
