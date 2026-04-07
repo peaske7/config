@@ -100,25 +100,60 @@ function gc() {
 	fi
 }
 
-# tmux sessionizer — fzf pick a project, jump to its tmux session
+# tmux sessionizer — fzf pick a running session or project, jump to it
+# running sessions show a live pane preview; projects show a file listing
 function ts() {
-	local selected
-	selected=$(find ~/Developer -mindepth 2 -maxdepth 3 -type d -name .git 2>/dev/null \
-		| sed 's|/\.git$||' \
-		| sort \
-		| fzf --height=40% --reverse --preview='ls -1 {}' --preview-window='right:30%:wrap')
+	local sessions projects selected line kind target
+
+	# gather running tmux sessions (skip the current one)
+	sessions=$(tmux list-sessions -F '#S' 2>/dev/null \
+		| grep -vxF "$(tmux display-message -p '#S' 2>/dev/null)" \
+		| sed 's/^/sess:/')
+
+	# gather project dirs
+	projects=$(find ~/Developer -mindepth 2 -maxdepth 3 -type d -name .git 2>/dev/null \
+		| sed 's|/\.git$||' | sort | sed 's/^/proj:/')
+
+	# show sessions first, then projects
+	selected=$( { echo "$sessions"; echo "$projects"; } | sed '/^$/d' \
+		| fzf --height=40% --reverse \
+			--delimiter=':' --with-nth=2.. \
+			--preview='
+				item={}
+				kind=${item%%:*}
+				val=${item#*:}
+				if [[ $kind == sess ]]; then
+					tmux capture-pane -pe -t "$val" 2>/dev/null | bat -p --color=always
+				else
+					ls -1 "$val"
+				fi' \
+			--preview-window='right:40%:wrap')
+
 	[[ -z "$selected" ]] && return
 
-	local name=$(echo "$selected" | sed "s|$HOME/Developer/||" | tr '/.' '_')
+	kind=${selected%%:*}
+	target=${selected#*:}
 
-	if ! tmux has-session -t="$name" 2>/dev/null; then
-		tmux new-session -ds "$name" -c "$selected"
-	fi
-
-	if [[ -n "$TMUX" ]]; then
-		tmux switch-client -t "$name"
+	if [[ $kind == sess ]]; then
+		# switch to existing session
+		if [[ -n "$TMUX" ]]; then
+			tmux switch-client -t "$target"
+		else
+			tmux attach -t "$target"
+		fi
 	else
-		tmux attach -t "$name"
+		# create or switch to session for the project dir
+		local name=$(echo "$target" | sed "s|$HOME/Developer/||" | tr '/.' '_')
+
+		if ! tmux has-session -t="$name" 2>/dev/null; then
+			tmux new-session -ds "$name" -c "$target"
+		fi
+
+		if [[ -n "$TMUX" ]]; then
+			tmux switch-client -t "$name"
+		else
+			tmux attach -t "$name"
+		fi
 	fi
 }
 
