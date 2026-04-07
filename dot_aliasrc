@@ -100,38 +100,10 @@ function gc() {
 	fi
 }
 
-# git worktree + tmux session in one shot
-function gwt() {
-	local branch="$1"
-	[[ -z "$branch" ]] && { echo "usage: gwt <branch-name>"; return 1 }
-
-	local repo=$(basename "$(git rev-parse --show-toplevel)")
-	local base=$(git rev-parse --show-toplevel)
-	local wt_path="${base}/../${repo}-worktrees/${branch}"
-
-	git worktree add "$wt_path" -b "$branch" 2>/dev/null || git worktree add "$wt_path" "$branch"
-
-	local session_name="${repo}/${branch}"
-	tmux new-session -ds "$session_name" -c "$wt_path" 2>/dev/null
-
-	if [[ -n "$TMUX" ]]; then
-		tmux switch-client -t "$session_name"
-	else
-		tmux attach -t "$session_name"
-	fi
-}
-
 # nvim + claude side by side
 function dev() {
 	tmux split-window -h -l 40% "claude"
 	nvim .
-}
-
-# claude code worktrees
-function ccw() {
-	local name="$1"
-	[[ -z "$name" ]] && { echo "usage: ccw <worktree-name>"; return 1 }
-	claude --worktree "$name"
 }
 
 # ----------------------------
@@ -191,6 +163,9 @@ alias gmtl='git mergetool --no-prompt --tool=nvimdiff2'
 alias ta='tmux a' # [T]mux [A]ttach
 alias tns='tmux new -s' # [T]mux [N]ew [S]ession
 alias t%='tmux source-file ~/.tmux.conf'
+
+# workmux
+alias wm='workmux'
 
 # ssh
 alias es='nvim ~/.ssh/config' # [E]dit [S]sh configs

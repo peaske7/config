@@ -272,6 +272,9 @@ fpath=(/Users/jay/.docker/completions $fpath)
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
+# workmux completions
+eval "$(workmux completions zsh)"
+
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
@@ -293,6 +296,11 @@ export PATH="/Users/jay/.antigravity/antigravity/bin:$PATH"
 
 # mise — shims mode (saves ~120ms vs eval activate)
 export PATH="$HOME/.local/share/mise/shims:$PATH"
+
+tmux-git-autofetch() {
+  (/Users/jay/.tmux/plugins/tmux-git-autofetch/git-autofetch.tmux --current &)
+}
+add-zsh-hook chpwd tmux-git-autofetch
 
 # >>> forge initialize >>>
 # !! Contents within this block are managed by 'forge zsh setup' !!
