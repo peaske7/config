@@ -13,9 +13,31 @@
 
 set -euo pipefail
 
+# --- translate workmux's `-- "prompt"` into forge's `-p "prompt"` ---
+# workmux (type: claude) invokes: forge-wm -- "$(cat .workmux/PROMPT-*.md)"
+# forge expects:                  forge -p "prompt"
+args=()
+found_dashdash=false
+for arg in "$@"; do
+  if [[ "$arg" == "--" ]] && ! $found_dashdash; then
+    found_dashdash=true
+    continue
+  fi
+  if $found_dashdash && [[ ${#args[@]} -eq 0 || "${args[-1]}" != "-p" ]]; then
+    # first arg after `--` is the prompt — prepend -p
+    args+=("-p" "$arg")
+  else
+    args+=("$arg")
+  fi
+done
+# if no `--` was found, pass original args through unchanged
+if ! $found_dashdash; then
+  args=("$@")
+fi
+
 # Only do status tracking inside tmux + when workmux is available
 if [[ -z "${TMUX:-}" ]] || ! command -v workmux &>/dev/null; then
-  exec forge "$@"
+  exec forge "${args[@]}"
 fi
 
 POLL_INTERVAL=2
@@ -63,11 +85,15 @@ monitor_forge_pane &
 _monitor_pid=$!
 
 # Signal "working" on launch if a prompt was provided
-if [[ "$*" == *"-p "* ]] || [[ "$*" == *"--prompt"* ]]; then
+has_prompt=false
+for arg in "${args[@]}"; do
+  [[ "$arg" == "-p" || "$arg" == "--prompt" ]] && has_prompt=true && break
+done
+if $has_prompt; then
   workmux set-window-status working 2>/dev/null || true
 else
   workmux set-window-status waiting 2>/dev/null || true
 fi
 
 # Run forge in the foreground — you interact with it as normal
-forge "$@"
+forge "${args[@]}"
