@@ -236,6 +236,12 @@ require('lazy').setup({
         enabled = true,
         animate = { enabled = false },
       },
+      -- Scope detection (used by indent)
+      scope = {
+        treesitter = {
+          injections = false, -- workaround: async injection parsing crashes on nvim 0.12
+        },
+      },
       -- Git browse — open file/line on GitHub
       gitbrowse = { enabled = true },
       -- Toggleable terminal
