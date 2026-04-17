@@ -1,0 +1,729 @@
+#!/usr/bin/env python3
+"""amie — Query local Amie.app recording & transcription data.
+
+Subcommands:
+    list        Recent recordings (default: 20)
+    latest      Single most recent recording with summary
+    show        Full detail for one recording (id or index from `list`)
+    transcript  Segment-by-segment transcript for a recording
+    summary     Short + long summary for a recording
+    speakers    Speaker roster for a recording
+    search      Full-text search across titles, summaries, transcripts
+    span        Recordings within a date range (inclusive, YYYY-MM-DD)
+
+Flags:
+    --json        Machine-readable JSON output (for agents / piping)
+    --limit N     Override row limit (default 20)
+    --db PATH     Override database path
+    --agent-help  Print machine-readable documentation and exit (for AI agents)
+
+Data lives in Amie's local SQLite DB, populated by the Electron desktop app.
+No network calls are made — everything is read from disk.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sqlite3
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Optional
+
+# ---------------------------------------------------------------------------
+# Constants
+# ---------------------------------------------------------------------------
+
+DEFAULT_LIMIT = 20
+
+DB_PATH = (
+    Path.home()
+    / "Library/Application Support/amie-desktop"
+    / "Partitions/main/File System/000/t/00/00000023"
+)
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+
+def _db(args: argparse.Namespace) -> sqlite3.Connection:
+    """Open the Amie SQLite DB in read-only mode."""
+    path = args.db or DB_PATH
+    if not path.exists():
+        print(f"error: Amie DB not found at {path}", file=sys.stderr)
+        print("hint: is Amie desktop installed and has it recorded meetings?", file=sys.stderr)
+        sys.exit(1)
+    conn = sqlite3.connect(f"file:{path}?mode=ro", uri=True)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def _ts(epoch_ms: int | None) -> str:
+    """Convert epoch-millis to a human-readable local datetime string."""
+    if epoch_ms is None:
+        return ""
+    return datetime.fromtimestamp(epoch_ms / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
+
+
+def _duration(seconds: int | None) -> str:
+    """Format duration in mm:ss or h:mm:ss."""
+    if not seconds:
+        return ""
+    h, remainder = divmod(int(seconds), 3600)
+    m, s = divmod(remainder, 60)
+    return f"{h}:{m:02d}:{s:02d}" if h else f"{m}:{s:02d}"
+
+
+def _parse_date(s: str) -> int:
+    """Parse an ISO date string (YYYY-MM-DD) to epoch-ms (start of that day in UTC)."""
+    dt = datetime.strptime(s.strip(), "%Y-%m-%d").replace(
+        hour=0, minute=0, second=0, microsecond=0, tzinfo=timezone.utc
+    )
+    return int(dt.timestamp() * 1000)
+
+
+def _out(data: object, args: argparse.Namespace) -> None:
+    """Print as JSON or pretty text depending on --json flag."""
+    if args.json:
+        json.dump(data, sys.stdout, ensure_ascii=False, indent=2, default=str)
+        print()
+    else:
+        _pretty(data, args)
+
+
+def _recording_row(r: sqlite3.Row) -> dict:
+    """Normalize a recording row into a plain dict."""
+    def _get(key: str, default=None):
+        try:
+            return r[key]
+        except (IndexError, KeyError):
+            return default
+
+    return {
+        "id": _get("id"),
+        "title": _get("title") or "(untitled)",
+        "status": _get("status"),
+        "duration": _get("duration"),
+        "duration_fmt": _duration(_get("duration")),
+        "created_at": _get("createdAt"),
+        "created_at_fmt": _ts(_get("createdAt")),
+        "updated_at": _get("updatedAt"),
+        "updated_at_fmt": _ts(_get("updatedAt")),
+        "short_summary": _get("shortSummary"),
+        "summary": _get("summary"),
+        "md_summary": _get("mdSummary"),
+        "action_items": _get("actionItems"),
+        "tags": _get("tags"),
+        "audio": _get("audio"),
+        "video": _get("video"),
+        "metadata": _get("metadata"),
+    }
+
+
+def _resolve_id(cur: sqlite3.Cursor, ref: str) -> str | None:
+    """Resolve a recording reference.
+
+    Accepts:
+      - full UUID
+      - short UUID prefix (first 8+ chars)
+      - numeric index from `list` output (1-based, most recent first)
+    """
+    # Try exact match
+    row = cur.execute("SELECT id FROM recordings WHERE id = ?", (ref,)).fetchone()
+    if row:
+        return row["id"]
+
+    # Try prefix match
+    row = cur.execute(
+        "SELECT id FROM recordings WHERE id LIKE ? LIMIT 1", (ref + "%",)
+    ).fetchone()
+    if row:
+        return row["id"]
+
+    # Try numeric index (1-based)
+    if ref.isdigit():
+        idx = int(ref)
+        if idx < 1:
+            return None
+        row = cur.execute(
+            "SELECT id FROM recordings ORDER BY updatedAt DESC LIMIT 1 OFFSET ?",
+            (idx - 1,),
+        ).fetchone()
+        if row:
+            return row["id"]
+
+    return None
+
+
+# ---------------------------------------------------------------------------
+# Pretty printers
+# ---------------------------------------------------------------------------
+
+
+def _pretty(data: object, args: argparse.Namespace) -> None:
+    """Dispatch to the right pretty-printer based on command."""
+    cmd = args.command
+    if cmd == "list":
+        _pretty_list(data)
+    elif cmd == "latest":
+        _pretty_show(data, brief=True)
+    elif cmd == "show":
+        _pretty_show(data)
+    elif cmd == "transcript":
+        _pretty_transcript(data)
+    elif cmd == "summary":
+        _pretty_summary(data)
+    elif cmd == "speakers":
+        _pretty_speakers(data)
+    elif cmd == "search":
+        _pretty_list(data)
+    else:
+        # Fallback: dump JSON
+        json.dump(data, sys.stdout, ensure_ascii=False, indent=2, default=str)
+        print()
+
+
+def _pretty_list(recordings: list[dict]) -> None:
+    if not recordings:
+        print("No recordings found.")
+        return
+    for i, r in enumerate(recordings, 1):
+        print(f"  {i:>3}. [{r['status']:<10}] {r['created_at_fmt']}  {_duration(r['duration']):>8}  {r['title']}")
+        if r["short_summary"]:
+            print(f"       {r['short_summary'][:120]}")
+    print(f"\n  {len(recordings)} recording(s)")
+
+
+def _pretty_show(r: dict, brief: bool = False) -> None:
+    print(f"  Title:    {r['title']}")
+    print(f"  ID:       {r['id']}")
+    print(f"  Status:   {r['status']}")
+    print(f"  Duration: {_duration(r['duration'])}")
+    print(f"  Created:  {_ts(r['created_at'])}")
+    print(f"  Updated:  {_ts(r['updated_at'])}")
+    if r.get("tags"):
+        print(f"  Tags:     {r['tags']}")
+    if r.get("short_summary"):
+        print(f"\n  Short summary: {r['short_summary']}")
+    if not brief and r.get("summary"):
+        print(f"\n  Summary:\n  {'-' * 40}")
+        for line in (r["summary"] or "").split("\n"):
+            print(f"  {line}")
+    if not brief and r.get("action_items"):
+        print(f"\n  Action items:")
+        items = r["action_items"]
+        if isinstance(items, str):
+            try:
+                items = json.loads(items)
+            except json.JSONDecodeError:
+                pass
+        if isinstance(items, list):
+            for item in items:
+                text = item if isinstance(item, str) else json.dumps(item, ensure_ascii=False)
+                print(f"    - {text}")
+        else:
+            print(f"    {items}")
+
+
+def _pretty_transcript(data: dict) -> None:
+    r = data["recording"]
+    print(f"  Transcript for: {r['title']}")
+    print(f"  Duration: {_duration(r['duration'])}  |  Segments: {len(data['segments'])}")
+    print(f"  {'-' * 60}")
+    for seg in data["segments"]:
+        start = _fmt_ms(seg["start"])
+        end = _fmt_ms(seg["end"])
+        speaker = seg.get("speaker_name") or "Unknown"
+        print(f"  [{start} -> {end}] {speaker}:")
+        print(f"    {seg['text']}")
+    print()
+
+
+def _fmt_ms(ms: int) -> str:
+    """Format milliseconds as mm:ss."""
+    s = ms / 1000
+    m, sec = divmod(int(s), 60)
+    return f"{m:02d}:{sec:02d}"
+
+
+def _pretty_summary(data: dict) -> None:
+    r = data["recording"]
+    print(f"  Title: {r['title']}")
+    if r.get("short_summary"):
+        print(f"\n  Short summary: {r['short_summary']}")
+    if r.get("md_summary"):
+        print(f"\n  Markdown summary:\n  {'-' * 40}")
+        for line in r["md_summary"].split("\n"):
+            print(f"  {line}")
+    elif r.get("summary"):
+        print(f"\n  Summary:\n  {'-' * 40}")
+        for line in r["summary"].split("\n"):
+            print(f"  {line}")
+
+
+def _pretty_speakers(data: dict) -> None:
+    r = data["recording"]
+    print(f"  Speakers in: {r['title']}")
+    print(f"  {'-' * 40}")
+    for sp in data["speakers"]:
+        email = f" <{sp['email']}>" if sp.get("email") else ""
+        print(f"    {sp['name']}{email}")
+    print()
+
+
+# ---------------------------------------------------------------------------
+# Subcommands
+# ---------------------------------------------------------------------------
+
+
+def cmd_list(args: argparse.Namespace) -> None:
+    conn = _db(args)
+    cur = conn.cursor()
+    limit = args.limit or DEFAULT_LIMIT
+    rows = cur.execute(
+        """
+        SELECT id, title, status, duration, createdAt, updatedAt, shortSummary
+        FROM recordings
+        WHERE deletedAt IS NULL
+        ORDER BY updatedAt DESC
+        LIMIT ?
+        """,
+        (limit,),
+    ).fetchall()
+    recordings = [_recording_row(r) for r in rows]
+    _out(recordings, args)
+    conn.close()
+
+
+def cmd_latest(args: argparse.Namespace) -> None:
+    conn = _db(args)
+    cur = conn.cursor()
+    row = cur.execute(
+        """
+        SELECT *
+        FROM recordings
+        WHERE deletedAt IS NULL
+        ORDER BY updatedAt DESC
+        LIMIT 1
+        """
+    ).fetchone()
+    if not row:
+        print("No recordings found.", file=sys.stderr)
+        sys.exit(1)
+    _out(_recording_row(row), args)
+    conn.close()
+
+
+def cmd_show(args: argparse.Namespace) -> None:
+    conn = _db(args)
+    cur = conn.cursor()
+    rid = _resolve_id(cur, args.recording)
+    if not rid:
+        print(f"error: recording not found: {args.recording}", file=sys.stderr)
+        sys.exit(1)
+    row = cur.execute("SELECT * FROM recordings WHERE id = ?", (rid,)).fetchone()
+    _out(_recording_row(row), args)
+    conn.close()
+
+
+def cmd_transcript(args: argparse.Namespace) -> None:
+    conn = _db(args)
+    cur = conn.cursor()
+    rid = _resolve_id(cur, args.recording)
+    if not rid:
+        print(f"error: recording not found: {args.recording}", file=sys.stderr)
+        sys.exit(1)
+
+    rec = cur.execute("SELECT * FROM recordings WHERE id = ?", (rid,)).fetchone()
+    segments = cur.execute(
+        """
+        SELECT s.id, s.recordingId, s.speakerId, s.text, s.start, s.end,
+               sp.name AS speaker_name
+        FROM segments s
+        LEFT JOIN speakers sp ON sp.id = s.speakerId
+        WHERE s.recordingId = ?
+        ORDER BY s.start ASC
+        """,
+        (rid,),
+    ).fetchall()
+
+    data = {
+        "recording": _recording_row(rec),
+        "segments": [
+            {
+                "id": s["id"],
+                "speaker_id": s["speakerId"],
+                "speaker_name": s["speaker_name"],
+                "text": s["text"],
+                "start": s["start"],
+                "end": s["end"],
+            }
+            for s in segments
+        ],
+    }
+    _out(data, args)
+    conn.close()
+
+
+def cmd_summary(args: argparse.Namespace) -> None:
+    conn = _db(args)
+    cur = conn.cursor()
+    rid = _resolve_id(cur, args.recording)
+    if not rid:
+        print(f"error: recording not found: {args.recording}", file=sys.stderr)
+        sys.exit(1)
+    row = cur.execute("SELECT * FROM recordings WHERE id = ?", (rid,)).fetchone()
+    _out({"recording": _recording_row(row)}, args)
+    conn.close()
+
+
+def cmd_speakers(args: argparse.Namespace) -> None:
+    conn = _db(args)
+    cur = conn.cursor()
+    rid = _resolve_id(cur, args.recording)
+    if not rid:
+        print(f"error: recording not found: {args.recording}", file=sys.stderr)
+        sys.exit(1)
+
+    rec = cur.execute("SELECT * FROM recordings WHERE id = ?", (rid,)).fetchone()
+    speakers = cur.execute(
+        """
+        SELECT DISTINCT sp.id, sp.name, sp.email
+        FROM speakers sp
+        WHERE sp.recordingId = ?
+        ORDER BY sp.name
+        """,
+        (rid,),
+    ).fetchall()
+
+    data = {
+        "recording": _recording_row(rec),
+        "speakers": [
+            {"id": s["id"], "name": s["name"], "email": s["email"]}
+            for s in speakers
+        ],
+    }
+    _out(data, args)
+    conn.close()
+
+
+def cmd_search(args: argparse.Namespace) -> None:
+    conn = _db(args)
+    cur = conn.cursor()
+    query = args.query
+    limit = args.limit or DEFAULT_LIMIT
+
+    # Use FTS5 for full-text search
+    rows = cur.execute(
+        """
+        SELECT r.id, r.title, r.status, r.duration, r.createdAt, r.updatedAt,
+               r.shortSummary, r.summary
+        FROM recordings r
+        JOIN recordings_fts fts ON fts.id = r.id
+        WHERE recordings_fts MATCH ?
+          AND r.deletedAt IS NULL
+        ORDER BY r.updatedAt DESC
+        LIMIT ?
+        """,
+        (query, limit),
+    ).fetchall()
+
+    if not rows:
+        # Fallback to LIKE if FTS yields nothing
+        like = f"%{query}%"
+        rows = cur.execute(
+            """
+            SELECT id, title, status, duration, createdAt, updatedAt,
+                   shortSummary, summary
+            FROM recordings
+            WHERE (title LIKE ? OR shortSummary LIKE ? OR summary LIKE ?)
+              AND deletedAt IS NULL
+            ORDER BY updatedAt DESC
+            LIMIT ?
+            """,
+            (like, like, like, limit),
+        ).fetchall()
+
+    recordings = [_recording_row(r) for r in rows]
+    _out(recordings, args)
+    conn.close()
+
+
+def cmd_span(args: argparse.Namespace) -> None:
+    """List recordings whose createdAt falls within [start_date, end_date] (inclusive)."""
+    conn = _db(args)
+    cur = conn.cursor()
+
+    try:
+        start_ms = _parse_date(args.start_date)
+        end_ms = _parse_date(args.end_date)
+    except ValueError:
+        print(
+            "error: dates must be YYYY-MM-DD (e.g. 2026-04-01)",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    if end_ms < start_ms:
+        print("error: end_date must not be before start_date", file=sys.stderr)
+        sys.exit(1)
+
+    limit = args.limit or DEFAULT_LIMIT
+    rows = cur.execute(
+        """
+        SELECT id, title, status, duration, createdAt, updatedAt, shortSummary
+        FROM recordings
+        WHERE createdAt >= ? AND createdAt <= ? AND deletedAt IS NULL
+        ORDER BY createdAt DESC
+        LIMIT ?
+        """,
+        (start_ms, end_ms, limit),
+    ).fetchall()
+    recordings = [_recording_row(r) for r in rows]
+    _out(recordings, args)
+    conn.close()
+
+
+# ---------------------------------------------------------------------------
+# Agent-facing help
+# ---------------------------------------------------------------------------
+
+
+def _agent_help() -> None:
+    """Print machine-readable documentation for AI agents."""
+    doc = {
+        "name": "amie",
+        "description": (
+            "Query local Amie.app recording & transcription data. "
+            "Reads from a local SQLite DB in ~/Library/Application Support/amie-desktop/. "
+            "No network calls. Fully offline."
+        ),
+        "db_path": str(DB_PATH),
+        "subcommands": [
+            {
+                "name": "list",
+                "description": "List recent recordings (most recent first). Default 20, use --limit N.",
+                "args": [],
+                "example": "amie list --limit 10",
+            },
+            {
+                "name": "latest",
+                "description": "Show the single most recent recording with full detail.",
+                "args": [],
+                "example": "amie latest --json",
+            },
+            {
+                "name": "show",
+                "description": "Show full detail for a specific recording.",
+                "args": [
+                    {
+                        "name": "recording",
+                        "type": "string",
+                        "description": (
+                            "Full UUID, short UUID prefix (8+ chars), "
+                            "or numeric index (1-based) from list output."
+                        ),
+                    }
+                ],
+                "example": "amie show 1\namie show 621185bf",
+            },
+            {
+                "name": "transcript",
+                "description": "Segment-by-segment transcript with speaker names and timestamps.",
+                "args": [
+                    {
+                        "name": "recording",
+                        "type": "string",
+                        "description": "Full UUID, short UUID prefix, or numeric index.",
+                    }
+                ],
+                "example": "amie transcript 1 --json | jq '.segments[].text'",
+            },
+            {
+                "name": "summary",
+                "description": "Short + markdown summary for a recording.",
+                "args": [
+                    {
+                        "name": "recording",
+                        "type": "string",
+                        "description": "Full UUID, short UUID prefix, or numeric index.",
+                    }
+                ],
+                "example": "amie summary 1",
+            },
+            {
+                "name": "speakers",
+                "description": "List the speaker roster for a recording.",
+                "args": [
+                    {
+                        "name": "recording",
+                        "type": "string",
+                        "description": "Full UUID, short UUID prefix, or numeric index.",
+                    }
+                ],
+                "example": "amie speakers 1",
+            },
+            {
+                "name": "search",
+                "description": "Full-text search across titles, summaries, and transcript text.",
+                "args": [
+                    {
+                        "name": "query",
+                        "type": "string",
+                        "description": "Search keyword or phrase.",
+                    }
+                ],
+                "example": 'amie search "権限チェック"',
+            },
+            {
+                "name": "span",
+                "description": (
+                    "List recordings whose createdAt falls within a date range (inclusive). "
+                    "Dates are UTC midnight boundaries."
+                ),
+                "args": [
+                    {
+                        "name": "start_date",
+                        "type": "string",
+                        "description": "Start date in YYYY-MM-DD format (inclusive).",
+                    },
+                    {
+                        "name": "end_date",
+                        "type": "string",
+                        "description": "End date in YYYY-MM-DD format (inclusive).",
+                    },
+                ],
+                "example": "amie span 2026-04-01 2026-04-15\namie span 2026-04-01 2026-04-15 --json",
+            },
+        ],
+        "global_flags": [
+            {
+                "name": "--json",
+                "description": "Output as machine-readable JSON instead of pretty text.",
+                "available_on": "all subcommands",
+            },
+            {
+                "name": "--limit N",
+                "description": "Maximum number of recordings to return.",
+                "available_on": "list, span, search",
+            },
+            {
+                "name": "--db PATH",
+                "description": "Override the default database path.",
+                "available_on": "all subcommands",
+            },
+            {
+                "name": "--agent-help",
+                "description": "Print this documentation and exit.",
+                "available_on": "root (no subcommand required)",
+            },
+        ],
+        "recording_ref": (
+            "Any subcommand accepting a recording argument accepts: "
+            "(1) full UUID, (2) short UUID prefix (8+ chars), or "
+            "(3) numeric index from the list output (1 = most recent)."
+        ),
+        "schema": {
+            "recordings": (
+                "id, title, status, duration (seconds), createdAt (epoch-ms), "
+                "updatedAt, shortSummary, summary, mdSummary, actionItems, tags, audio, video, metadata"
+            ),
+            "transcripts": (
+                "id, recordingId, language, status, createdAt (epoch-ms), updatedAt"
+            ),
+            "segments": (
+                "id, recordingId, transcriptId, speakerId, text, "
+                "start (ms), end (ms), createdAt, updatedAt"
+            ),
+            "speakers": "id, transcriptId, recordingId, name, email, createdAt, updatedAt",
+            "steps": "id, recordingId, type, status, output, createdAt, updatedAt",
+        },
+    }
+    print(json.dumps(doc, ensure_ascii=False, indent=2))
+
+
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
+
+
+def main() -> None:
+    # Shared flags available on all subcommands
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument("--json", action="store_true", help="Output as JSON (for agents / piping)")
+    common.add_argument("--db", type=Path, default=None, help="Override database path")
+    common.add_argument("--limit", type=int, default=None, help=f"Row limit (default {DEFAULT_LIMIT})")
+
+    parser = argparse.ArgumentParser(
+        prog="amie",
+        description="Query local Amie.app recording & transcription data.",
+        parents=[common],
+    )
+    parser.add_argument(
+        "--agent-help",
+        action="store_true",
+        help="Print machine-readable documentation for AI agents and exit.",
+    )
+
+    sub = parser.add_subparsers(dest="command")
+
+    # list
+    sub.add_parser("list", help="Recent recordings", parents=[common])
+
+    # latest
+    sub.add_parser("latest", help="Most recent recording with summary", parents=[common])
+
+    # show
+    p_show = sub.add_parser("show", help="Full detail for one recording", parents=[common])
+    p_show.add_argument("recording", help="Recording ID, short ID prefix, or numeric index from `list`")
+
+    # transcript
+    p_trans = sub.add_parser("transcript", help="Segment-by-segment transcript", parents=[common])
+    p_trans.add_argument("recording", help="Recording ID, short ID prefix, or numeric index")
+
+    # summary
+    p_sum = sub.add_parser("summary", help="Short + long summary", parents=[common])
+    p_sum.add_argument("recording", help="Recording ID, short ID prefix, or numeric index")
+
+    # speakers
+    p_spk = sub.add_parser("speakers", help="Speaker roster", parents=[common])
+    p_spk.add_argument("recording", help="Recording ID, short ID prefix, or numeric index")
+
+    # search
+    p_search = sub.add_parser("search", help="Full-text search across titles, summaries, transcripts", parents=[common])
+    p_search.add_argument("query", help="Search query")
+
+    # span
+    p_span = sub.add_parser("span", help="Recordings within a date range", parents=[common])
+    p_span.add_argument("start_date", help="Start date (YYYY-MM-DD, inclusive)")
+    p_span.add_argument("end_date", help="End date (YYYY-MM-DD, inclusive)")
+
+    args = parser.parse_args()
+
+    # Agent-facing help (checked before command dispatch)
+    if args.agent_help:
+        _agent_help()
+        return
+
+    # Default to `list` if no subcommand given
+    if not args.command:
+        args.command = "list"
+
+    commands = {
+        "list": cmd_list,
+        "latest": cmd_latest,
+        "show": cmd_show,
+        "transcript": cmd_transcript,
+        "summary": cmd_summary,
+        "speakers": cmd_speakers,
+        "search": cmd_search,
+        "span": cmd_span,
+    }
+
+    commands[args.command](args)
+
+
+if __name__ == "__main__":
+    main()

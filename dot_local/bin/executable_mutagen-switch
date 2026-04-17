@@ -1,0 +1,151 @@
+#!/usr/bin/env bash
+#
+# Temporarily re-point Mutagen sync at any directory (worktree, branch checkout,
+# etc.) so the VPS Docker containers run that code instead of the main checkout.
+#
+# Usage:
+#   mutagen-switch switch [-f] <path>   Swap sync source to <path>
+#   mutagen-switch restore              Swap back to the main checkout
+#   mutagen-switch status               Show sync state
+#
+# -f, --force   Skip the pre-flight safety check (mid-sync state, conflicts)
+#
+# The script always targets the SAME beta path on the VPS, so Docker sees the
+# switched-in files without restart.
+
+set -euo pipefail
+
+MAIN_SESSION="lamb"
+SWITCH_SESSION="lamb-switch"
+BETA="jay@indigo:/home/jay/ghq/github.com/lymo-inc/lymo"
+MUTAGEN_YML="${HOME}/Developer/github.com/lymo-inc/lymo/mutagen.yml"
+
+usage() {
+  sed -n '3,15p' "$0" | sed 's/^# \{0,1\}//'
+  exit 1
+}
+
+# Extract ignore paths from mutagen.yml so the switched session respects the
+# same rules as the main session. Parses the YAML list at sync.defaults.ignore.paths.
+build_ignore_flags() {
+  awk '
+    /^[[:space:]]+paths:/ { in_paths = 1; next }
+    in_paths && /^[[:space:]]+-[[:space:]]/ {
+      line = $0
+      sub(/^[[:space:]]+-[[:space:]]*/, "", line)
+      gsub(/^"|"$/, "", line)
+      if (line != "") printf "--ignore=%s\n", line
+      next
+    }
+    in_paths && /^[^[:space:]#-]/ { in_paths = 0 }
+  ' "$MUTAGEN_YML"
+}
+
+session_exists() {
+  mutagen sync list "$1" >/dev/null 2>&1
+}
+
+# Pre-flight: hard-abort if mid-sync (pending edits would vanish during
+# the switch), warn + prompt on conflicts (restore-time ghosts are possible
+# but often tolerable for quick iteration).
+check_safe_to_switch() {
+  local status sync_status conflicts
+  status="$(mutagen sync list "$MAIN_SESSION" 2>/dev/null || true)"
+
+  sync_status="$(printf '%s\n' "$status" | awk -F': ' '/^Status:/ { print $2; exit }')"
+  if [[ "$sync_status" != "Watching for changes" ]]; then
+    echo "error: $MAIN_SESSION is '$sync_status' — wait until 'Watching for changes'" >&2
+    exit 1
+  fi
+
+  conflicts="$(printf '%s\n' "$status" | awk -F': ' '/^Conflicts:/ { print $2; exit }')"
+  if [[ "${conflicts:-0}" -gt 0 ]]; then
+    echo "warning: $MAIN_SESSION has ${conflicts} conflict(s) — restore may leave VPS-side ghosts." >&2
+    read -r -p "proceed anyway? [y/N] " reply
+    [[ "$reply" =~ ^[Yy]$ ]] || { echo "aborted"; exit 1; }
+  fi
+}
+# ---------------------------------------------------------------------------
+
+cmd_switch() {
+  local force=0
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -f|--force) force=1; shift ;;
+      -*) echo "error: unknown flag: $1" >&2; exit 1 ;;
+      *) break ;;
+    esac
+  done
+
+  local src="${1:-}"
+  [[ -z "$src" ]] && { echo "error: path required" >&2; usage; }
+  [[ -d "$src" ]] || { echo "error: $src is not a directory" >&2; exit 1; }
+  src="$(cd "$src" && pwd)"
+
+  if [[ "$src" == "$(dirname "$MUTAGEN_YML")" ]]; then
+    echo "error: source is the main checkout — nothing to switch" >&2
+    exit 1
+  fi
+
+  if (( force )); then
+    echo "⚠ --force: skipping pre-flight safety check"
+  else
+    check_safe_to_switch
+  fi
+
+  if session_exists "$SWITCH_SESSION"; then
+    echo "Terminating existing $SWITCH_SESSION..."
+    mutagen sync terminate "$SWITCH_SESSION"
+  fi
+
+  echo "Pausing $MAIN_SESSION..."
+  mutagen sync pause "$MAIN_SESSION"
+
+  # If creation fails, resume main so we don't leave the VPS orphaned.
+  trap 'echo "create failed — resuming $MAIN_SESSION"; mutagen sync resume "$MAIN_SESSION" || true' ERR
+
+  echo "Creating $SWITCH_SESSION: $src → $BETA"
+  local ignore_flags=()
+  while IFS= read -r flag; do
+    ignore_flags+=("$flag")
+  done < <(build_ignore_flags)
+
+  mutagen sync create \
+    --name="$SWITCH_SESSION" \
+    --mode=one-way-replica \
+    --ignore-vcs \
+    --default-file-mode=0644 \
+    --default-directory-mode=0755 \
+    "${ignore_flags[@]}" \
+    "$src" "$BETA"
+
+  trap - ERR
+
+  echo
+  echo "Switched. VPS now mirrors: $src"
+  echo "Run 'mutagen-switch restore' when finished."
+}
+
+cmd_restore() {
+  if session_exists "$SWITCH_SESSION"; then
+    echo "Terminating $SWITCH_SESSION..."
+    mutagen sync terminate "$SWITCH_SESSION"
+  else
+    echo "(no $SWITCH_SESSION session — nothing to terminate)"
+  fi
+  echo "Resuming $MAIN_SESSION..."
+  mutagen sync resume "$MAIN_SESSION"
+  echo "Restored. VPS mirrors the main checkout again."
+}
+
+cmd_status() {
+  mutagen sync list
+}
+
+case "${1:-}" in
+  switch)  shift; cmd_switch "$@" ;;
+  restore) cmd_restore ;;
+  status)  cmd_status ;;
+  -h|--help|"") usage ;;
+  *) echo "unknown command: $1" >&2; usage ;;
+esac

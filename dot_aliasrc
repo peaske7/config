@@ -106,6 +106,16 @@ function dev() {
 	nvim .
 }
 
+# [OBS]idian — open nvim in the vault. `obs` for root, `obs <subpath>` for a note.
+function obs() {
+	cd "${HOME}/Obsidian" && nvim "${@:-.}"
+}
+
+# [OBS]idian [D]aily — jump straight to today's daily note.
+function obsd() {
+	cd "${HOME}/Obsidian" && nvim +"Obsidian today"
+}
+
 # ----------------------------
 # aliases
 # ----------------------------
@@ -124,6 +134,11 @@ alias chen="che ~/.config/nvim" # [CH]ezmoi [E]dit [N]vim
 # docker
 alias dsa='docker stop $(docker ps -aq)' # [D]ocker [S]top [A]ll
 alias dra='docker rm $(docker ps -aq)' # [D]ocker [R]emove [A]ll
+
+# mutagen (re-point VPS sync at a worktree/branch checkout)
+alias mto='mutagen-switch switch'  # [M]utagen point [TO] directory
+alias mrs='mutagen-switch restore' # [M]utagen [R]e[S]tore
+alias mst='mutagen-switch status'  # [M]utagen [ST]atus
 
 # git
 alias gm="git merge"
@@ -173,3 +188,58 @@ alias es='nvim ~/.ssh/config' # [E]dit [S]sh configs
 alias timestamp='date +"%Y%m%d%H%M%S"' # [T]ime [S]tamp
 
 alias ag='open -a "Antigravity" --args --disable-gpu-driver-bug-workarounds --ignore-gpu-blacklist --enable-gpu-rasterization'
+
+# ----------------------------
+# git worktree
+# ----------------------------
+# Usage:
+#   wt feat/something        — new branch from default
+#   wt fix/bug origin/main   — new branch from specific base
+#   wt fix/bug existing-branch — new worktree from existing branch
+function wt() {
+  if [[ -z "$1" ]]; then
+    echo "Usage: wt <branch> [base]"
+    echo "       wt -l              # list worktrees"
+    echo "       wt -r <path>       # remove worktree"
+    return 1
+  fi
+
+  local repo
+  repo="$(git rev-parse --show-toplevel 2>/dev/null)"
+  if [[ -z "$repo" ]]; then
+    echo "Not in a git repo" && return 1
+  fi
+
+  local wt_dir="$repo/../$(basename "$repo")__worktrees"
+
+  # list
+  if [[ "$1" == "-l" ]]; then
+    git worktree list
+    return 0
+  fi
+
+  # remove
+  if [[ "$1" == "-r" ]]; then
+    if [[ -z "$2" ]]; then
+      echo "Usage: wt -r <path|branch>"
+      return 1
+    fi
+    git worktree remove "$2" && git worktree prune
+    return $?
+  fi
+
+  local branch="$1"
+  local base="${2:-origin/$(git_default_branch)}"
+  local folder="${branch//\//-}"
+
+  git fetch --prune --quiet
+  mkdir -p "$wt_dir"
+
+  if git show-ref --verify --quiet "refs/heads/$branch" || git show-ref --verify --quiet "refs/remotes/origin/$branch"; then
+    # existing branch — check it out
+    git worktree add "$wt_dir/$folder" "$branch"
+  else
+    # new branch from base
+    git worktree add "$wt_dir/$folder" -b "$branch" "$base"
+  fi
+}

@@ -13,17 +13,8 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
--- LSP capabilities for folding (nvim-ufo)
-vim.lsp.config('*', {
-  capabilities = {
-    textDocument = {
-      foldingRange = {
-        dynamicRegistration = false,
-        lineFoldingOnly = true,
-      },
-    },
-  },
-})
+-- Note: The default vim.lsp.config['*'] already includes foldingRange capabilities
+-- so no override is needed here.
 
 -- Mason: install LSP servers
 require('mason').setup()

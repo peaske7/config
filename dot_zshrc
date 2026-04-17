@@ -5,14 +5,14 @@
 if [[ ! -f $HOME/.local/share/zinit/zinit.git/zinit.zsh ]]; then
   print -P "%F{33} %F{220}Installing %F{33}ZDHARMA-CONTINUUM%F{220} Initiative Plugin Manager (%F{33}zdharma-continuum/zinit%F{220})…%f"
   command mkdir -p "$HOME/.local/share/zinit" && command chmod g-rwX "$HOME/.local/share/zinit"
-  command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" && \
-    print -P "%F{33} %F{34}Installation successful.%f%b" || \
+  command git clone https://github.com/zdharma-continuum/zinit "$HOME/.local/share/zinit/zinit.git" &&
+    print -P "%F{33} %F{34}Installation successful.%f%b" ||
     print -P "%F{160} The clone has failed.%f%b"
 fi
 
 source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
 autoload -Uz _zinit
-(( ${+_comps} )) && _comps[zinit]=_zinit
+((${+_comps})) && _comps[zinit]=_zinit
 
 # ----------------------------
 # standard
@@ -25,22 +25,22 @@ export SHELL_SESSIONS_DISABLE=1
 
 setopt share_history
 setopt correct
-setopt auto_cd # type directory name to cd into it
-setopt auto_list # automatically list choices
-setopt auto_menu # show completion menu
-setopt auto_param_slash	# if completed param is dir, add slash at end
-setopt menu_complete # cycle through completion entries
-setopt extended_history # record timestamp of command in HISTFILE
+setopt auto_cd                # type directory name to cd into it
+setopt auto_list              # automatically list choices
+setopt auto_menu              # show completion menu
+setopt auto_param_slash       # if completed param is dir, add slash at end
+setopt menu_complete          # cycle through completion entries
+setopt extended_history       # record timestamp of command in HISTFILE
 setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
 
 # history hygiene
 setopt hist_ignore_all_dups # remove ALL older dupes, not just consecutive
-setopt hist_ignore_space # prefix with space to exclude from history
-setopt hist_reduce_blanks # strip extra whitespace from saved commands
-setopt hist_verify # show expansion before executing (!! !$)
-setopt hist_find_no_dups # skip dupes when searching history
-setopt hist_save_no_dups # don't write dupes to history file
-setopt inc_append_history # write after each command, not on exit (crash-proof)
+setopt hist_ignore_space    # prefix with space to exclude from history
+setopt hist_reduce_blanks   # strip extra whitespace from saved commands
+setopt hist_verify          # show expansion before executing (!! !$)
+setopt hist_find_no_dups    # skip dupes when searching history
+setopt hist_save_no_dups    # don't write dupes to history file
+setopt inc_append_history   # write after each command, not on exit (crash-proof)
 
 # navigation - every cd pushes to dir stack (cd -2 to go back 2)
 setopt auto_pushd
@@ -48,39 +48,39 @@ setopt pushd_ignore_dups
 setopt pushd_silent
 
 # globbing
-setopt extended_glob # unlock ^, ~, # in patterns (e.g. ls ^*.log)
-setopt glob_dots # include dotfiles in glob matches
+setopt extended_glob     # unlock ^, ~, # in patterns (e.g. ls ^*.log)
+setopt glob_dots         # include dotfiles in glob matches
 setopt numeric_glob_sort # file1 file2 file10 instead of file1 file10 file2
 
 # completion (advanced)
 setopt complete_in_word # tab-complete from cursor position, not just end
-setopt always_to_end # after mid-word completion, jump cursor to end
-setopt list_packed # compact completion lists
+setopt always_to_end    # after mid-word completion, jump cursor to end
+setopt list_packed      # compact completion lists
 
 # globbing (advanced)
 setopt glob_star_short # **.ts shorthand for **/*.ts
-setopt mark_dirs # append / to directories in glob output
+setopt mark_dirs       # append / to directories in glob output
 
 # quoting and redirection
 setopt rc_quotes # use '' inside single quotes instead of '\''
-setopt multios # implicit tee: echo foo > a > b writes to both
+setopt multios   # implicit tee: echo foo > a > b writes to both
 
 # jobs
 setopt long_list_jobs # show PID in job listings
-setopt notify # report background job status immediately
-setopt check_jobs # warn before exiting with background jobs
+setopt notify         # report background job status immediately
+setopt check_jobs     # warn before exiting with background jobs
 
 # navigation (advanced)
-setopt cdable_vars # cd into variable values (export p=~/projects; cd p)
+setopt cdable_vars       # cd into variable values (export p=~/projects; cd p)
 setopt magic_equal_subst # expand ~ after = in args (--prefix=~/local)
 
 # safety and ux
 setopt interactive_comments # allow # comments in interactive shell
-setopt no_beep # kill the terminal bell
-setopt no_flow_control # disable ctrl-s/ctrl-q terminal freeze
-setopt rm_star_wait # 10-second pause before rm *
-setopt pipe_fail # pipeline returns rightmost non-zero exit
-setopt combining_chars # proper rendering of combining characters
+setopt no_beep              # kill the terminal bell
+setopt no_flow_control      # disable ctrl-s/ctrl-q terminal freeze
+setopt rm_star_wait         # 10-second pause before rm *
+setopt pipe_fail            # pipeline returns rightmost non-zero exit
+setopt combining_chars      # proper rendering of combining characters
 
 # completions
 zstyle ':completion:*:*:*:*:*' menu select
@@ -222,14 +222,17 @@ export GPG_TTY=$(tty)
 function lazy_gcloud {
   unset -f gcloud
 
-  if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then 
-    . "$HOME/google-cloud-sdk/path.zsh.inc"; 
+  if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then
+    . "$HOME/google-cloud-sdk/path.zsh.inc"
   fi
-  if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then 
-    . "$HOME/google-cloud-sdk/completion.zsh.inc"; 
+  if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then
+    . "$HOME/google-cloud-sdk/completion.zsh.inc"
   fi
 }
-function gcloud { lazy_gcloud; gcloud "$@"; }
+function gcloud {
+  lazy_gcloud
+  gcloud "$@"
+}
 
 # conda — lazy-loaded (saves ~1150ms)
 function conda {
@@ -255,8 +258,8 @@ export PATH="$PROTO_HOME/shims:$PROTO_HOME/bin:$PATH"
 # pnpm
 export PNPM_HOME="$HOME/Library/pnpm"
 case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
+*":$PNPM_HOME:"*) ;;
+*) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
 
@@ -283,8 +286,8 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 _uv_comp_cache="$HOME/.cache/zsh/uv_completion.zsh"
 _uvx_comp_cache="$HOME/.cache/zsh/uvx_completion.zsh"
 if [[ ! -d "$HOME/.cache/zsh" ]]; then command mkdir -p "$HOME/.cache/zsh"; fi
-if [[ ! -f "$_uv_comp_cache" ]]; then uv generate-shell-completion zsh > "$_uv_comp_cache"; fi
-if [[ ! -f "$_uvx_comp_cache" ]]; then uvx --generate-shell-completion zsh > "$_uvx_comp_cache"; fi
+if [[ ! -f "$_uv_comp_cache" ]]; then uv generate-shell-completion zsh >"$_uv_comp_cache"; fi
+if [[ ! -f "$_uvx_comp_cache" ]]; then uvx --generate-shell-completion zsh >"$_uvx_comp_cache"; fi
 source "$_uv_comp_cache"
 source "$_uvx_comp_cache"
 unset _uv_comp_cache _uvx_comp_cache
@@ -308,21 +311,26 @@ add-zsh-hook chpwd tmux-git-autofetch
 
 # Add required zsh plugins if not already present
 if [[ ! " ${plugins[@]} " =~ " zsh-autosuggestions " ]]; then
-    plugins+=(zsh-autosuggestions)
+  plugins+=(zsh-autosuggestions)
 fi
 if [[ ! " ${plugins[@]} " =~ " zsh-syntax-highlighting " ]]; then
-    plugins+=(zsh-syntax-highlighting)
+  plugins+=(zsh-syntax-highlighting)
 fi
 
 # Load forge shell plugin (commands, completions, keybindings) if not already loaded
 if [[ -z "$_FORGE_PLUGIN_LOADED" ]]; then
-    eval "$(forge zsh plugin)"
+  eval "$(forge zsh plugin)"
 fi
 
 # Load forge shell theme (prompt with AI context) if not already loaded
 if [[ -z "$_FORGE_THEME_LOADED" ]]; then
-    eval "$(forge zsh theme)"
+  eval "$(forge zsh theme)"
 fi
 # <<< forge initialize <<<
+
+# obsidian
+export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"
+export PATH="$HOME/.local/bin:$PATH"
+
 
 # zprof

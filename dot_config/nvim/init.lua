@@ -1,5 +1,6 @@
--- Set language settings
-vim.cmd("language en_US")
+-- Set language settings (messages only — leave LC_CTYPE alone so
+-- pbcopy receives UTF-8 and Japanese text doesn't get mangled)
+vim.cmd("language messages en_US.UTF-8")
 
 -- The second most important remaps
 vim.g.mapleader = ' '
@@ -225,7 +226,7 @@ require('lazy').setup({
           files = {
             hidden = true,
             ignored = false,
-            exclude = { ".git", "node_modules", ".venv", "target" },
+            exclude = { ".git", "node_modules", ".venv", "target", ".obsidian" },
           },
         },
       },
@@ -297,6 +298,7 @@ require('lazy').setup({
   require 'peaske7.plugins.buffers',
   require 'peaske7.plugins.nvim_tree',
   require 'peaske7.plugins.markdown',
+  require 'peaske7.plugins.obsidian',
   require 'peaske7.plugins.trouble',
 
   -- cosmetic
@@ -460,6 +462,7 @@ require('lazy').setup({
         { "<leader>s", group = 'search' },
         { "<leader>q", group = 'quickfix' },
         { "<leader>x", group = 'trouble' },
+        { "<leader>o", group = 'obsidian' },
       }
 
       wk.setup {
@@ -472,37 +475,42 @@ require('lazy').setup({
 
   {
     'nvim-treesitter/nvim-treesitter',
-    dependencies = {
-      'nvim-treesitter/nvim-treesitter-textobjects',
-
-      {
-        "windwp/nvim-autopairs",
-        config = true
-      }
-    },
+    lazy = false,
+    build = ':TSUpdate',
     config = function()
-      require('nvim-treesitter.configs').setup({
+      require('nvim-treesitter.config').setup({
         ensure_installed = { "rust", "lua", "javascript", "typescript" },
         auto_install = true,
         highlight = {
           enable = true,
         },
       })
-
-      local npairs = require("nvim-autopairs")
-      local rule = require("nvim-autopairs.rule")
-      local conds = require("nvim-autopairs.conds")
-
-      -- Angle brackets are handled as pairs too
-      npairs.add_rules {
-        rule("<", ">")
-            :with_pair(conds.before_regex("%a+"))
-            :with_move(function(opts)
-              return opts.char == ">"
-            end),
-      }
     end,
-    build = ':TSUpdate',
+  },
+  {
+    'nvim-treesitter/nvim-treesitter-textobjects',
+    lazy = false,
+    dependencies = 'nvim-treesitter/nvim-treesitter',
+  },
+  {
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    config = function()
+      local npairs = require("nvim-autopairs")
+      local Rule = require("nvim-autopairs.rule")
+      local cond = require("nvim-autopairs.conds")
+
+      npairs.setup({
+        -- Default config
+      })
+
+      -- Rust angle bracket support: don't auto-pair after word chars (e.g., Vec<)
+      npairs.add_rule(
+        Rule("<", ">", "rust")
+        :with_pair(cond.not_before_regex("%w"))
+        :with_move(cond.move_right())
+      )
+    end,
   },
 
   {
@@ -585,15 +593,6 @@ require('lazy').setup({
   },
 
 
-  {
-    "mbbill/undotree",
-    config = function()
-      vim.keymap.set('n', '<leader>tu', vim.cmd.UndotreeToggle, {
-        desc = "open [t]ree [u]ndo"
-      })
-    end
-  },
-
   { 'akinsho/git-conflict.nvim', version = "*", config = true },
 
   {
@@ -636,15 +635,15 @@ require('lazy').setup({
         expr = true,
         desc = "Goto/Apply Next Edit Suggestion",
       },
-      { "<c-.>",       function() require("sidekick.cli").focus() end,                             desc = "Sidekick Focus",          mode = { "n", "t", "i", "x" } },
-      { "<leader>ea",  function() require("sidekick.cli").toggle() end,                            desc = "Sidekick Toggle CLI" },
-      { "<leader>es",  function() require("sidekick.cli").select() end,                            desc = "Select CLI" },
-      { "<leader>ed",  function() require("sidekick.cli").close() end,                             desc = "Detach a CLI Session" },
-      { "<leader>et",  function() require("sidekick.cli").send({ msg = "{this}" }) end,            mode = { "x", "n" },              desc = "Send This" },
-      { "<leader>ef",  function() require("sidekick.cli").send({ msg = "{file}" }) end,            desc = "Send File" },
-      { "<leader>ev",  function() require("sidekick.cli").send({ msg = "{selection}" }) end,       mode = { "x" },                   desc = "Send Visual Selection" },
-      { "<leader>ep",  function() require("sidekick.cli").prompt() end,                            mode = { "n", "x" },              desc = "Sidekick Select Prompt" },
-      { "<leader>ec",  function() require("sidekick.cli").toggle({ name = "claude", focus = true }) end, desc = "Sidekick Toggle Claude" },
+      { "<c-.>",      function() require("sidekick.cli").focus() end,                                   desc = "Sidekick Focus",        mode = { "n", "t", "i", "x" } },
+      { "<leader>ea", function() require("sidekick.cli").toggle() end,                                  desc = "Sidekick Toggle CLI" },
+      { "<leader>es", function() require("sidekick.cli").select() end,                                  desc = "Select CLI" },
+      { "<leader>ed", function() require("sidekick.cli").close() end,                                   desc = "Detach a CLI Session" },
+      { "<leader>et", function() require("sidekick.cli").send({ msg = "{this}" }) end,                  mode = { "x", "n" },            desc = "Send This" },
+      { "<leader>ef", function() require("sidekick.cli").send({ msg = "{file}" }) end,                  desc = "Send File" },
+      { "<leader>ev", function() require("sidekick.cli").send({ msg = "{selection}" }) end,             mode = { "x" },                 desc = "Send Visual Selection" },
+      { "<leader>ep", function() require("sidekick.cli").prompt() end,                                  mode = { "n", "x" },            desc = "Sidekick Select Prompt" },
+      { "<leader>ec", function() require("sidekick.cli").toggle({ name = "claude", focus = true }) end, desc = "Sidekick Toggle Claude" },
     },
   },
 
