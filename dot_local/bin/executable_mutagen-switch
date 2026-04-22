@@ -89,13 +89,34 @@ cmd_switch() {
 
   if (( force )); then
     echo "⚠ --force: skipping pre-flight safety check"
+    if session_exists "$SWITCH_SESSION"; then
+      echo "Cleaning up stale $SWITCH_SESSION..."
+      mutagen sync terminate "$SWITCH_SESSION"
+    fi
+    local main_status
+    main_status="$(mutagen sync list "$MAIN_SESSION" 2>/dev/null | awk -F': ' '/^Status:/ { print $2; exit }')"
+    if [[ "$main_status" == "[Paused]" ]]; then
+      echo "Resuming paused $MAIN_SESSION..."
+      mutagen sync resume "$MAIN_SESSION"
+    fi
+    if [[ "$main_status" != "Watching for changes" ]]; then
+      echo "Waiting for $MAIN_SESSION to settle..."
+      local elapsed=0
+      while true; do
+        local s
+        s="$(mutagen sync list "$MAIN_SESSION" 2>/dev/null | awk -F': ' '/^Status:/ { print $2; exit }')"
+        [[ "$s" == "Watching for changes" ]] && break
+        (( elapsed >= 120 )) && { echo "error: timed out waiting for $MAIN_SESSION (${elapsed}s)" >&2; exit 1; }
+        sleep 2
+        (( elapsed += 2 ))
+      done
+    fi
   else
     check_safe_to_switch
-  fi
-
-  if session_exists "$SWITCH_SESSION"; then
-    echo "Terminating existing $SWITCH_SESSION..."
-    mutagen sync terminate "$SWITCH_SESSION"
+    if session_exists "$SWITCH_SESSION"; then
+      echo "Terminating existing $SWITCH_SESSION..."
+      mutagen sync terminate "$SWITCH_SESSION"
+    fi
   fi
 
   echo "Pausing $MAIN_SESSION..."
@@ -120,6 +141,17 @@ cmd_switch() {
     "$src" "$BETA"
 
   trap - ERR
+
+  echo "Waiting for $SWITCH_SESSION to sync..."
+  local elapsed=0
+  while true; do
+    local s
+    s="$(mutagen sync list "$SWITCH_SESSION" 2>/dev/null | awk -F': ' '/^Status:/ { print $2; exit }')"
+    [[ "$s" == "Watching for changes" ]] && break
+    (( elapsed >= 120 )) && { echo "error: timed out waiting for $SWITCH_SESSION (${elapsed}s)" >&2; exit 1; }
+    sleep 2
+    (( elapsed += 2 ))
+  done
 
   echo
   echo "Switched. VPS now mirrors: $src"

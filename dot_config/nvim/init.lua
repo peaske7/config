@@ -47,25 +47,25 @@ vim.keymap.set({ 'n', 'v' }, '<Space>', '<Nop>', { silent = true })
 
 -- Remap for dealing with word wrap
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", {
-  expr = true, silent = true
+  expr = true, silent = true, desc = "up (wrap-aware)"
 })
 vim.keymap.set('n', 'j', "v:count == 0 ? 'gj' : 'j'", {
-  expr = true, silent = true
+  expr = true, silent = true, desc = "down (wrap-aware)"
 })
 
 -- The most important remap
-vim.keymap.set("i", "jk", "<Esc>", { noremap = true })
+vim.keymap.set("i", "jk", "<Esc>", { noremap = true, desc = "exit insert mode" })
 
--- Don't know, don't care
-vim.keymap.set("n", "J", "mzJ`z")
+-- Join line without moving cursor
+vim.keymap.set("n", "J", "mzJ`z", { desc = "join line (keep cursor)" })
 
 -- Keep cursor centered
-vim.keymap.set("n", "<C-d>", "<C-d>zz")
-vim.keymap.set("n", "<C-u>", "<C-u>zz")
+vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "half-page down (centered)" })
+vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "half-page up (centered)" })
 
 -- Keep search centered
-vim.keymap.set("n", "n", "nzzzv")
-vim.keymap.set("n", "N", "Nzzzv")
+vim.keymap.set("n", "n", "nzzzv", { desc = "next search (centered)" })
+vim.keymap.set("n", "N", "Nzzzv", { desc = "prev search (centered)" })
 
 -- ufo folding
 vim.o.foldcolumn = '0'
@@ -85,7 +85,7 @@ vim.o.foldenable = true
 vim.o.relativenumber = true
 
 -- terminal mode
-vim.keymap.set("t", "<esc>", "<c-\\><c-n>")
+vim.keymap.set("t", "<esc>", "<c-\\><c-n>", { desc = "exit terminal mode" })
 
 -- Always start in insert mode when opening a terminal
 vim.api.nvim_create_autocmd("TermOpen", {
@@ -163,7 +163,7 @@ vim.keymap.set(
   'x',
   '//',
   [[ y/<C-R>=escape(@", '/\')<CR><CR> ]],
-  { noremap = true }
+  { noremap = true, desc = "search visual selection" }
 )
 
 -- -- replaces all occurrences of the word under the cursor
@@ -213,6 +213,23 @@ if not vim.loop.fs_stat(lazypath) then
   }
 end
 vim.opt.rtp:prepend(lazypath)
+
+-- Focus the rightmost diff window in the current tab (for diffview review mode).
+-- Used by <leader>gr/<leader>gd open, file-switch keymaps, and []c wrappers so
+-- hunk navigation and edits always land on the editable working-tree pane.
+local function focus_right_diff()
+  local best_win, best_col = nil, -1
+  for _, winid in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+    if vim.api.nvim_win_is_valid(winid) and vim.wo[winid].diff then
+      local col = vim.api.nvim_win_get_position(winid)[2]
+      if col > best_col then
+        best_col = col
+        best_win = winid
+      end
+    end
+  end
+  if best_win then pcall(vim.api.nvim_set_current_win, best_win) end
+end
 
 require('lazy').setup({
   {
@@ -469,6 +486,16 @@ require('lazy').setup({
         plugins = {
           marks = true,
         },
+        -- Suppress the hint popup for lone [ / ] only while a diffview view is
+        -- open. Keeps ]c / [c / ]f / [f instant in review mode without touching
+        -- the normal which-key behavior in regular buffers.
+        delay = function(ctx)
+          if ctx.keys == "[" or ctx.keys == "]" then
+            local ok, lib = pcall(require, "diffview.lib")
+            if ok and lib.get_current_view() then return 9999 end
+          end
+          return 200
+        end,
       }
     end,
   },
@@ -566,8 +593,8 @@ require('lazy').setup({
         end
       })
 
-      vim.keymap.set('n', 'zR', require('ufo').openAllFolds)
-      vim.keymap.set('n', 'zM', require('ufo').closeAllFolds)
+      vim.keymap.set('n', 'zR', require('ufo').openAllFolds, { desc = "open all folds" })
+      vim.keymap.set('n', 'zM', require('ufo').closeAllFolds, { desc = "close all folds" })
     end
   },
 
@@ -575,7 +602,8 @@ require('lazy').setup({
     'lewis6991/gitsigns.nvim',
     event = "BufReadPre",
     config = function()
-      require('gitsigns').setup()
+      local gs = require('gitsigns')
+      gs.setup()
 
       vim.keymap.set(
         'n',
@@ -583,6 +611,34 @@ require('lazy').setup({
         '<cmd>Gitsigns toggle_current_line_blame<cr>',
         { noremap = true, silent = true, desc = 'toggle [g]it [l]ine [b]lame' }
       )
+
+      -- Hunk navigation — ]c/[c always acts on the right diff pane inside diffview
+      -- (auto-focuses it from file panel or left pane), falls through to gitsigns
+      -- elsewhere.
+      local function in_diffview()
+        local ok, lib = pcall(require, 'diffview.lib')
+        return ok and lib.get_current_view() ~= nil
+      end
+      vim.keymap.set('n', ']c', function()
+        if in_diffview() then
+          focus_right_diff()
+          vim.cmd('normal! ]c')
+        elseif vim.wo.diff then
+          vim.cmd('normal! ]c')
+        else
+          gs.nav_hunk('next')
+        end
+      end, { desc = 'next hunk' })
+      vim.keymap.set('n', '[c', function()
+        if in_diffview() then
+          focus_right_diff()
+          vim.cmd('normal! [c')
+        elseif vim.wo.diff then
+          vim.cmd('normal! [c')
+        else
+          gs.nav_hunk('prev')
+        end
+      end, { desc = 'prev hunk' })
     end,
   },
 
@@ -594,6 +650,112 @@ require('lazy').setup({
 
 
   { 'akinsho/git-conflict.nvim', version = "*", config = true },
+
+  {
+    'sindrets/diffview.nvim',
+    cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewFileHistory", "DiffviewToggleFiles", "DiffviewFocusFiles" },
+    keys = {
+      -- Toggle working tree diff: same key closes, different mode key switches
+      {
+        "<leader>gd",
+        function()
+          local lib = require('diffview.lib')
+          local view = lib.get_current_view()
+          if view and vim.g.diffview_mode == 'working' then
+            vim.cmd('DiffviewClose')
+            vim.g.diffview_mode = nil
+          else
+            if view then vim.cmd('DiffviewClose') end
+            vim.cmd('DiffviewOpen')
+            vim.g.diffview_mode = 'working'
+          end
+        end,
+        desc = "[g]it [d]iff working tree (toggle)"
+      },
+      -- Toggle branch review: diff working tree (incl. uncommitted) vs merge-base with main.
+      -- Single-ref form keeps the right pane pointed at the working file, so edits land on disk.
+      {
+        "<leader>gr",
+        function()
+          local lib = require('diffview.lib')
+          local view = lib.get_current_view()
+          if view and vim.g.diffview_mode == 'review' then
+            vim.cmd('DiffviewClose')
+            vim.g.diffview_mode = nil
+          else
+            if view then vim.cmd('DiffviewClose') end
+            local mb = vim.fn.trim(vim.fn.system('git merge-base main HEAD'))
+            if vim.v.shell_error ~= 0 or mb == '' then mb = 'main' end
+            vim.cmd('DiffviewOpen ' .. mb)
+            vim.g.diffview_mode = 'review'
+          end
+        end,
+        desc = "[g]it [r]eview branch vs main (toggle)"
+      },
+      -- File history for current file
+      { "<leader>gh", "<cmd>DiffviewFileHistory %<cr>", desc = "[g]it file [h]istory" },
+      -- File history for the whole repo
+      { "<leader>gH", "<cmd>DiffviewFileHistory<cr>",   desc = "[g]it all [H]istory" },
+    },
+    opts = {
+      enhanced_diff_hl = true,
+      view = {
+        -- diff2_horizontal = side-by-side (VSCode-like); right pane is the working tree file and is editable
+        default = { layout = "diff2_horizontal" },
+        merge_tool = { layout = "diff3_mixed", disable_diagnostics = true },
+      },
+      file_panel = {
+        listing_style = "tree",
+        win_config = { position = "left", width = 35 },
+      },
+      keymaps = {
+        -- Reclaim <Tab>/<S-Tab> so sidekick's global nes_jump_or_apply works inside diffview.
+        -- File switching moves to ]f / [f, pairing with ]c / [c for hunks.
+        view = {
+          { "n", "<tab>",   false },
+          { "n", "<s-tab>", false },
+          { "n", "]f", function()
+              require("diffview.actions").select_next_entry()
+              vim.schedule(focus_right_diff)
+            end, { desc = "next file (stay on right pane)" } },
+          { "n", "[f", function()
+              require("diffview.actions").select_prev_entry()
+              vim.schedule(focus_right_diff)
+            end, { desc = "prev file (stay on right pane)" } },
+        },
+        file_panel = {
+          { "n", "<tab>",   false },
+          { "n", "<s-tab>", false },
+          { "n", "]f", function()
+              require("diffview.actions").select_next_entry()
+              vim.schedule(focus_right_diff)
+            end, { desc = "next file (stay on right pane)" } },
+          { "n", "[f", function()
+              require("diffview.actions").select_prev_entry()
+              vim.schedule(focus_right_diff)
+            end, { desc = "prev file (stay on right pane)" } },
+          { "n", "<cr>", function()
+              require("diffview.actions").select_entry()
+              vim.schedule(focus_right_diff)
+            end, { desc = "open file (focus right pane)" } },
+          { "n", "o", function()
+              require("diffview.actions").select_entry()
+              vim.schedule(focus_right_diff)
+            end, { desc = "open file (focus right pane)" } },
+        },
+      },
+      hooks = {
+        diff_buf_read = function()
+          vim.opt_local.wrap = false
+          vim.opt_local.list = false
+          vim.opt_local.colorcolumn = ""
+        end,
+        view_opened = function()
+          vim.schedule(focus_right_diff)
+        end,
+      },
+    },
+  },
 
   {
     "otavioschwanck/arrow.nvim",
@@ -690,15 +852,15 @@ require('lazy').setup({
     },
   },
 
-  {
-    'nvim-orgmode/orgmode',
-    event = 'VeryLazy',
-    config = function()
-      -- Setup orgmode
-      require('orgmode').setup({
-        org_agenda_files = '~/orgfiles/**/*',
-        org_default_notes_file = '~/orgfiles/refile.org',
-      })
-    end,
-  }
+  -- {
+  --   'nvim-orgmode/orgmode',
+  --   event = 'VeryLazy',
+  --   config = function()
+  --     -- Setup orgmode
+  --     require('orgmode').setup({
+  --       org_agenda_files = '~/orgfiles/**/*',
+  --       org_default_notes_file = '~/orgfiles/refile.org',
+  --     })
+  --   end,
+  -- }
 })
