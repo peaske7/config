@@ -14,6 +14,10 @@ source "$HOME/.local/share/zinit/zinit.git/zinit.zsh"
 autoload -Uz _zinit
 ((${+_comps})) && _comps[zinit]=_zinit
 
+# zinit creates `zi`/`zini` aliases, but zoxide owns the native `zi`
+# interactive-jump command. Keep zinit available as `zinit`/`zini`.
+unalias zi 2>/dev/null || true
+
 # ----------------------------
 # standard
 # ----------------------------
@@ -134,7 +138,44 @@ zinit ice as"command" from"gh-r" \
 zinit light starship/starship
 
 # zoxide
-zinit ice lucid wait"0a" depth"1" from="gh-r" as="program" atload'eval "$(zoxide init zsh)"'
+function __zoxide_list_ghq_missing {
+  (( $+commands[ghq] )) || return 0
+
+  comm -13 \
+    <(zoxide query --list | sort -u) \
+    <(ghq list -p | sort -u)
+}
+
+function __zoxide_add_ghq_missing {
+  (( $+commands[ghq] )) || return 0
+
+  local -a missing
+  missing=("${(@f)$(__zoxide_list_ghq_missing)}")
+  (( ${#missing[@]} )) || return 0
+
+  zoxide add -- "${missing[@]}"
+}
+
+function __jay_init_zoxide {
+  # Initialize normally to keep zoxide's z completion, then override z/zi
+  # so they can seed zoxide with ghq repos first.
+  unalias zi 2>/dev/null || true
+  eval "$(zoxide init zsh)"
+
+  function z {
+    if [[ "$#" -gt 0 ]] && ! { [[ "$#" -eq 1 ]] && { [[ -d "$1" ]] || [[ "$1" = "-" ]] || [[ "$1" =~ ^[-+][0-9]$ ]]; }; }; then
+      __zoxide_add_ghq_missing
+    fi
+    __zoxide_z "$@"
+  }
+
+  function zi {
+    __zoxide_add_ghq_missing
+    __zoxide_zi "$@" || true
+  }
+}
+
+zinit ice lucid wait"0a" depth"1" from="gh-r" as="program" atload'__jay_init_zoxide'
 zinit light ajeetdsouza/zoxide
 
 # ----------------------------
@@ -332,6 +373,14 @@ fi
 export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"
 export PATH="$HOME/.local/bin:$PATH"
 
+# marimo
 eval "$(_MARIMO_COMPLETE=zsh_source marimo)"
+
+# uv 
+eval "$(uv generate-shell-completion zsh)"
+eval "$(uvx --generate-shell-completion zsh)"
+
+# Added by ForgeCode installer
+export PATH="/Users/jay/.local/bin:$PATH"
 
 # zprof
