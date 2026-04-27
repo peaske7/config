@@ -62,24 +62,42 @@ check_safe_to_switch() {
   if [[ "${conflicts:-0}" -gt 0 ]]; then
     echo "warning: $MAIN_SESSION has ${conflicts} conflict(s) — restore may leave VPS-side ghosts." >&2
     read -r -p "proceed anyway? [y/N] " reply
-    [[ "$reply" =~ ^[Yy]$ ]] || { echo "aborted"; exit 1; }
+    [[ "$reply" =~ ^[Yy]$ ]] || {
+      echo "aborted"
+      exit 1
+    }
   fi
 }
 # ---------------------------------------------------------------------------
 
 cmd_switch() {
   local force=0
-  while [[ $# -gt 0 ]]; do
-    case "$1" in
-      -f|--force) force=1; shift ;;
-      -*) echo "error: unknown flag: $1" >&2; exit 1 ;;
-      *) break ;;
+  local src=""
+  for arg in "$@"; do
+    case "$arg" in
+    -f | --force) force=1 ;;
+    -*)
+      echo "error: unknown flag: $arg" >&2
+      exit 1
+      ;;
+    *)
+      [[ -n "$src" ]] && {
+        echo "error: multiple paths given: '$src' and '$arg'" >&2
+        exit 1
+      }
+      src="$arg"
+      ;;
     esac
   done
 
-  local src="${1:-}"
-  [[ -z "$src" ]] && { echo "error: path required" >&2; usage; }
-  [[ -d "$src" ]] || { echo "error: $src is not a directory" >&2; exit 1; }
+  [[ -z "$src" ]] && {
+    echo "error: path required" >&2
+    usage
+  }
+  [[ -d "$src" ]] || {
+    echo "error: $src is not a directory" >&2
+    exit 1
+  }
   src="$(cd "$src" && pwd)"
 
   if [[ "$src" == "$(dirname "$MUTAGEN_YML")" ]]; then
@@ -87,7 +105,7 @@ cmd_switch() {
     exit 1
   fi
 
-  if (( force )); then
+  if ((force)); then
     echo "⚠ --force: skipping pre-flight safety check"
     if session_exists "$SWITCH_SESSION"; then
       echo "Cleaning up stale $SWITCH_SESSION..."
@@ -106,9 +124,12 @@ cmd_switch() {
         local s
         s="$(mutagen sync list "$MAIN_SESSION" 2>/dev/null | awk -F': ' '/^Status:/ { print $2; exit }')"
         [[ "$s" == "Watching for changes" ]] && break
-        (( elapsed >= 120 )) && { echo "error: timed out waiting for $MAIN_SESSION (${elapsed}s)" >&2; exit 1; }
+        ((elapsed >= 120)) && {
+          echo "error: timed out waiting for $MAIN_SESSION (${elapsed}s)" >&2
+          exit 1
+        }
         sleep 2
-        (( elapsed += 2 ))
+        ((elapsed += 2))
       done
     fi
   else
@@ -148,9 +169,12 @@ cmd_switch() {
     local s
     s="$(mutagen sync list "$SWITCH_SESSION" 2>/dev/null | awk -F': ' '/^Status:/ { print $2; exit }')"
     [[ "$s" == "Watching for changes" ]] && break
-    (( elapsed >= 120 )) && { echo "error: timed out waiting for $SWITCH_SESSION (${elapsed}s)" >&2; exit 1; }
+    ((elapsed >= 120)) && {
+      echo "error: timed out waiting for $SWITCH_SESSION (${elapsed}s)" >&2
+      exit 1
+    }
     sleep 2
-    (( elapsed += 2 ))
+    ((elapsed += 2))
   done
 
   echo
@@ -175,9 +199,15 @@ cmd_status() {
 }
 
 case "${1:-}" in
-  switch)  shift; cmd_switch "$@" ;;
-  restore) cmd_restore ;;
-  status)  cmd_status ;;
-  -h|--help|"") usage ;;
-  *) echo "unknown command: $1" >&2; usage ;;
+switch)
+  shift
+  cmd_switch "$@"
+  ;;
+restore) cmd_restore ;;
+status) cmd_status ;;
+-h | --help | "") usage ;;
+*)
+  echo "unknown command: $1" >&2
+  usage
+  ;;
 esac

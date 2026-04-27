@@ -53,7 +53,10 @@ def _db(args: argparse.Namespace) -> sqlite3.Connection:
     path = args.db or DB_PATH
     if not path.exists():
         print(f"error: Amie DB not found at {path}", file=sys.stderr)
-        print("hint: is Amie desktop installed and has it recorded meetings?", file=sys.stderr)
+        print(
+            "hint: is Amie desktop installed and has it recorded meetings?",
+            file=sys.stderr,
+        )
         sys.exit(1)
     conn = sqlite3.connect(f"file:{path}?mode=ro", uri=True)
     conn.row_factory = sqlite3.Row
@@ -64,7 +67,9 @@ def _ts(epoch_ms: int | None) -> str:
     """Convert epoch-millis to a human-readable local datetime string."""
     if epoch_ms is None:
         return ""
-    return datetime.fromtimestamp(epoch_ms / 1000, tz=timezone.utc).strftime("%Y-%m-%d %H:%M")
+    return datetime.fromtimestamp(epoch_ms / 1000, tz=timezone.utc).strftime(
+        "%Y-%m-%d %H:%M"
+    )
 
 
 def _duration(seconds: int | None) -> str:
@@ -95,6 +100,7 @@ def _out(data: object, args: argparse.Namespace) -> None:
 
 def _recording_row(r: sqlite3.Row) -> dict:
     """Normalize a recording row into a plain dict."""
+
     def _get(key: str, default=None):
         try:
             return r[key]
@@ -190,7 +196,9 @@ def _pretty_list(recordings: list[dict]) -> None:
         print("No recordings found.")
         return
     for i, r in enumerate(recordings, 1):
-        print(f"  {i:>3}. [{r['status']:<10}] {r['created_at_fmt']}  {_duration(r['duration']):>8}  {r['title']}")
+        print(
+            f"  {i:>3}. [{r['status']:<10}] {r['created_at_fmt']}  {_duration(r['duration']):>8}  {r['title']}"
+        )
         if r["short_summary"]:
             print(f"       {r['short_summary'][:120]}")
     print(f"\n  {len(recordings)} recording(s)")
@@ -221,7 +229,11 @@ def _pretty_show(r: dict, brief: bool = False) -> None:
                 pass
         if isinstance(items, list):
             for item in items:
-                text = item if isinstance(item, str) else json.dumps(item, ensure_ascii=False)
+                text = (
+                    item
+                    if isinstance(item, str)
+                    else json.dumps(item, ensure_ascii=False)
+                )
                 print(f"    - {text}")
         else:
             print(f"    {items}")
@@ -230,7 +242,9 @@ def _pretty_show(r: dict, brief: bool = False) -> None:
 def _pretty_transcript(data: dict) -> None:
     r = data["recording"]
     print(f"  Transcript for: {r['title']}")
-    print(f"  Duration: {_duration(r['duration'])}  |  Segments: {len(data['segments'])}")
+    print(
+        f"  Duration: {_duration(r['duration'])}  |  Segments: {len(data['segments'])}"
+    )
     print(f"  {'-' * 60}")
     for seg in data["segments"]:
         start = _fmt_ms(seg["start"])
@@ -401,8 +415,7 @@ def cmd_speakers(args: argparse.Namespace) -> None:
     data = {
         "recording": _recording_row(rec),
         "speakers": [
-            {"id": s["id"], "name": s["name"], "email": s["email"]}
-            for s in speakers
+            {"id": s["id"], "name": s["name"], "email": s["email"]} for s in speakers
         ],
     }
     _out(data, args)
@@ -652,9 +665,13 @@ def _agent_help() -> None:
 def main() -> None:
     # Shared flags available on all subcommands
     common = argparse.ArgumentParser(add_help=False)
-    common.add_argument("--json", action="store_true", help="Output as JSON (for agents / piping)")
+    common.add_argument(
+        "--json", action="store_true", help="Output as JSON (for agents / piping)"
+    )
     common.add_argument("--db", type=Path, default=None, help="Override database path")
-    common.add_argument("--limit", type=int, default=None, help=f"Row limit (default {DEFAULT_LIMIT})")
+    common.add_argument(
+        "--limit", type=int, default=None, help=f"Row limit (default {DEFAULT_LIMIT})"
+    )
 
     parser = argparse.ArgumentParser(
         prog="amie",
@@ -673,30 +690,50 @@ def main() -> None:
     sub.add_parser("list", help="Recent recordings", parents=[common])
 
     # latest
-    sub.add_parser("latest", help="Most recent recording with summary", parents=[common])
+    sub.add_parser(
+        "latest", help="Most recent recording with summary", parents=[common]
+    )
 
     # show
-    p_show = sub.add_parser("show", help="Full detail for one recording", parents=[common])
-    p_show.add_argument("recording", help="Recording ID, short ID prefix, or numeric index from `list`")
+    p_show = sub.add_parser(
+        "show", help="Full detail for one recording", parents=[common]
+    )
+    p_show.add_argument(
+        "recording", help="Recording ID, short ID prefix, or numeric index from `list`"
+    )
 
     # transcript
-    p_trans = sub.add_parser("transcript", help="Segment-by-segment transcript", parents=[common])
-    p_trans.add_argument("recording", help="Recording ID, short ID prefix, or numeric index")
+    p_trans = sub.add_parser(
+        "transcript", help="Segment-by-segment transcript", parents=[common]
+    )
+    p_trans.add_argument(
+        "recording", help="Recording ID, short ID prefix, or numeric index"
+    )
 
     # summary
     p_sum = sub.add_parser("summary", help="Short + long summary", parents=[common])
-    p_sum.add_argument("recording", help="Recording ID, short ID prefix, or numeric index")
+    p_sum.add_argument(
+        "recording", help="Recording ID, short ID prefix, or numeric index"
+    )
 
     # speakers
     p_spk = sub.add_parser("speakers", help="Speaker roster", parents=[common])
-    p_spk.add_argument("recording", help="Recording ID, short ID prefix, or numeric index")
+    p_spk.add_argument(
+        "recording", help="Recording ID, short ID prefix, or numeric index"
+    )
 
     # search
-    p_search = sub.add_parser("search", help="Full-text search across titles, summaries, transcripts", parents=[common])
+    p_search = sub.add_parser(
+        "search",
+        help="Full-text search across titles, summaries, transcripts",
+        parents=[common],
+    )
     p_search.add_argument("query", help="Search query")
 
     # span
-    p_span = sub.add_parser("span", help="Recordings within a date range", parents=[common])
+    p_span = sub.add_parser(
+        "span", help="Recordings within a date range", parents=[common]
+    )
     p_span.add_argument("start_date", help="Start date (YYYY-MM-DD, inclusive)")
     p_span.add_argument("end_date", help="End date (YYYY-MM-DD, inclusive)")
 
