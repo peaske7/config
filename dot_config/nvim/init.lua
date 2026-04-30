@@ -166,21 +166,25 @@ vim.keymap.set(
   { noremap = true, desc = "search visual selection" }
 )
 
+-- Send visual selection to any tmux pane.
+-- See lua/peaske7/tmux_send.lua for the implementation and config options.
+require("peaske7.tmux_send").setup()
+
 -- -- replaces all occurrences of the word under the cursor
--- vim.keymap.set(
---   'n',
---   'S',
---   [[:%s/\V\<<C-r><C-w>\>//g<Left><Left>]],
---   { noremap = true }
--- )
+vim.keymap.set(
+  'n',
+  'S',
+  [[:%s/\V\<<C-r><C-w>\>//g<Left><Left>]],
+  { noremap = true }
+)
 --
 -- -- same thing but for visual mode
--- vim.keymap.set(
---   'x',
---   'S',
---   [["zy:%s/\V<C-r><C-r>=escape(@z,'/\')<CR>//gce<Left><Left><Left><Left>]],
---   { noremap = true }
--- )
+vim.keymap.set(
+  'x',
+  'S',
+  [["zy:%s/\V<C-r><C-r>=escape(@z,'/\')<CR>//gce<Left><Left><Left><Left>]],
+  { noremap = true }
+)
 
 -- Check and create .rgignore if it doesn't exist
 local home = os.getenv "HOME"
@@ -196,10 +200,6 @@ if not rgignore_file then
 else
   rgignore_file:close()
 end
-
--- Disable legacy ts_context_commentstring CursorHold autocmd;
--- Comment.nvim's pre_hook handles this on-demand instead.
-vim.g.skip_ts_context_commentstring_module = true
 
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
 if not vim.loop.fs_stat(lazypath) then
@@ -408,26 +408,10 @@ require('lazy').setup({
   },
 
   {
-    "zbirenbaum/copilot.lua",
-    cmd = "Copilot",
-    event = "InsertEnter",
-    config = function()
-      require("copilot").setup({
-        suggestion = { enabled = false },
-        panel = { enabled = false },
-      })
-    end,
-  },
-
-  {
     'saghen/blink.cmp',
     version = '1.*',
     dependencies = {
       'rafamadriz/friendly-snippets',
-      {
-        'giuxtaposition/blink-cmp-copilot',
-        dependencies = { "zbirenbaum/copilot.lua" },
-      },
     },
     opts = {
       keymap = {
@@ -441,14 +425,7 @@ require('lazy').setup({
         documentation = { auto_show = true },
       },
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'buffer', 'copilot' },
-        providers = {
-          copilot = {
-            name = "copilot",
-            module = "blink-cmp-copilot",
-            async = true,
-          },
-        },
+        default = { 'lsp', 'path', 'snippets', 'buffer' },
       },
       signature = { enabled = true },
     },
@@ -557,22 +534,6 @@ require('lazy').setup({
         enable_tailwind = false,
       })
     end
-  },
-
-  {
-    'numToStr/Comment.nvim',
-    dependencies = {
-      {
-        "JoosepAlviste/nvim-ts-context-commentstring",
-        opts = { enable_autocmd = false },
-      },
-    },
-    event = "BufReadPre",
-    config = function()
-      require("Comment").setup {
-        pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
-      }
-    end,
   },
 
   {
@@ -715,33 +676,33 @@ require('lazy').setup({
           { "n", "<tab>",   false },
           { "n", "<s-tab>", false },
           { "n", "]f", function()
-              require("diffview.actions").select_next_entry()
-              vim.schedule(focus_right_diff)
-            end, { desc = "next file (stay on right pane)" } },
+            require("diffview.actions").select_next_entry()
+            vim.schedule(focus_right_diff)
+          end, { desc = "next file (stay on right pane)" } },
           { "n", "[f", function()
-              require("diffview.actions").select_prev_entry()
-              vim.schedule(focus_right_diff)
-            end, { desc = "prev file (stay on right pane)" } },
+            require("diffview.actions").select_prev_entry()
+            vim.schedule(focus_right_diff)
+          end, { desc = "prev file (stay on right pane)" } },
         },
         file_panel = {
           { "n", "<tab>",   false },
           { "n", "<s-tab>", false },
           { "n", "]f", function()
-              require("diffview.actions").select_next_entry()
-              vim.schedule(focus_right_diff)
-            end, { desc = "next file (stay on right pane)" } },
+            require("diffview.actions").select_next_entry()
+            vim.schedule(focus_right_diff)
+          end, { desc = "next file (stay on right pane)" } },
           { "n", "[f", function()
-              require("diffview.actions").select_prev_entry()
-              vim.schedule(focus_right_diff)
-            end, { desc = "prev file (stay on right pane)" } },
+            require("diffview.actions").select_prev_entry()
+            vim.schedule(focus_right_diff)
+          end, { desc = "prev file (stay on right pane)" } },
           { "n", "<cr>", function()
-              require("diffview.actions").select_entry()
-              vim.schedule(focus_right_diff)
-            end, { desc = "open file (focus right pane)" } },
+            require("diffview.actions").select_entry()
+            vim.schedule(focus_right_diff)
+          end, { desc = "open file (focus right pane)" } },
           { "n", "o", function()
-              require("diffview.actions").select_entry()
-              vim.schedule(focus_right_diff)
-            end, { desc = "open file (focus right pane)" } },
+            require("diffview.actions").select_entry()
+            vim.schedule(focus_right_diff)
+          end, { desc = "open file (focus right pane)" } },
         },
       },
       hooks = {
