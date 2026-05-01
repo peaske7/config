@@ -25,7 +25,8 @@ local config = {
   keymap_pick = "<leader>L",
   paste_settle_ms = 150,    -- delay before bouncing focus back, lets paste pipeline complete
   poll_interval_ms = 100,
-  poll_timeout_iters = 300, -- 30s at 100ms cadence
+  poll_timeout_iters = 300,    -- 30s at 100ms cadence
+  reset_on_layout_change = true, -- invalidate cached pane when window layout shifts
 }
 
 local function cache_path()
@@ -33,6 +34,15 @@ local function cache_path()
   local key = vim.fn.trim(vim.fn.system({ "tmux", "display-message", "-p", fmt }))
   key = key:gsub("[^%w@%-_.]", "_")
   return vim.fn.stdpath("cache") .. "/tmux_send." .. config.scope .. "." .. key
+end
+
+-- Fingerprint the current window's panes. Add/remove invalidates the cache,
+-- but pure resizes don't — resizing is a frequent mid-task action and
+-- shouldn't force the user back through the picker.
+local function layout_signature()
+  local ids = vim.fn.systemlist({ "tmux", "list-panes", "-F", "#{pane_id}" })
+  table.sort(ids)
+  return table.concat(ids, ",")
 end
 
 local function pane_alive(pane_id)
@@ -100,13 +110,17 @@ local function send(force_pick)
     local marker = cache_path()
     local target
     if not force_pick and vim.fn.filereadable(marker) == 1 then
-      local cached = vim.fn.readfile(marker)[1] or ""
-      if pane_alive(cached) then target = cached end
+      local cached = vim.fn.readfile(marker)
+      local cached_pane = cached[1] or ""
+      local cached_sig = cached[2] or ""
+      local layout_ok = not config.reset_on_layout_change
+        or cached_sig == layout_signature()
+      if pane_alive(cached_pane) and layout_ok then target = cached_pane end
     end
     if not target then
       target = pick_pane()
       if not target then return end
-      vim.fn.writefile({ target }, marker)
+      vim.fn.writefile({ target, layout_signature() }, marker)
     end
 
     -- Get calling client and (optionally) capture origin pane for stay-mode.

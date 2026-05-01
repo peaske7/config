@@ -139,7 +139,7 @@ zinit light starship/starship
 
 # zoxide
 function __zoxide_list_ghq_missing {
-  (( $+commands[ghq] )) || return 0
+  (($+commands[ghq])) || return 0
 
   comm -13 \
     <(zoxide query --list | sort -u) \
@@ -147,11 +147,11 @@ function __zoxide_list_ghq_missing {
 }
 
 function __zoxide_add_ghq_missing {
-  (( $+commands[ghq] )) || return 0
+  (($+commands[ghq])) || return 0
 
   local -a missing
   missing=("${(@f)$(__zoxide_list_ghq_missing)}")
-  (( ${#missing[@]} )) || return 0
+  ((${#missing[@]})) || return 0
 
   zoxide add -- "${missing[@]}"
 }
@@ -163,7 +163,7 @@ function __jay_init_zoxide {
   eval "$(zoxide init zsh)"
 
   function z {
-    if [[ "$#" -gt 0 ]] && ! { [[ "$#" -eq 1 ]] && { [[ -d "$1" ]] || [[ "$1" = "-" ]] || [[ "$1" =~ ^[-+][0-9]$ ]]; }; }; then
+    if [[ "$" -gt 0 ]] && ! { [[ "$" -eq 1 ]] && { [[ -d "$1" ]] || [[ "$1" = "-" ]] || [[ "$1" =~ ^[-+][0-9]$ ]]; }; }; then
       __zoxide_add_ghq_missing
     fi
     __zoxide_z "$@"
@@ -376,11 +376,21 @@ export PATH="$HOME/.local/bin:$PATH"
 # marimo
 eval "$(_MARIMO_COMPLETE=zsh_source marimo)"
 
-# uv 
+# uv
 eval "$(uv generate-shell-completion zsh)"
 eval "$(uvx --generate-shell-completion zsh)"
 
 # Added by ForgeCode installer
 export PATH="/Users/jay/.local/bin:$PATH"
+
+# >>> lymo init >>>
+# Managed by `lymo setup`. Re-run `lymo shell install` or `lymo shell uninstall`.
+fpath=("/Users/jay/.zsh/completions" $fpath)
+((!${+functions[compdef]})) && { autoload -Uz compinit && compinit; }
+# <<< lymo init <<<
+
+# Composio CLI
+export COMPOSIO_INSTALL_DIR="/Users/jay/.composio"
+export PATH="$COMPOSIO_INSTALL_DIR:$PATH"
 
 # zprof
