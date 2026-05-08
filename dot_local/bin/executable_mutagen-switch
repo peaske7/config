@@ -101,7 +101,12 @@ cmd_switch() {
   src="$(cd "$src" && pwd)"
 
   if [[ "$src" == "$(dirname "$MUTAGEN_YML")" ]]; then
-    echo "error: source is the main checkout — nothing to switch" >&2
+    if ((force)); then
+      echo "Source is the main checkout — restoring instead."
+      cmd_restore
+      exit 0
+    fi
+    echo "error: source is the main checkout — nothing to switch (pass -f to restore)" >&2
     exit 1
   fi
 

@@ -20,12 +20,12 @@ local M = {}
 
 local config = {
   scope = "window", -- "window" | "session" — cache key granularity
-  focus = "stay",   -- "follow" | "stay"   — focus moves to target / bounces back
+  focus = "follow", -- "follow" | "stay"   — focus moves to target / bounces back
   keymap_send = "<leader>l",
   keymap_pick = "<leader>L",
-  paste_settle_ms = 150,    -- delay before bouncing focus back, lets paste pipeline complete
+  paste_settle_ms = 150,         -- delay before bouncing focus back, lets paste pipeline complete
   poll_interval_ms = 100,
-  poll_timeout_iters = 300,    -- 30s at 100ms cadence
+  poll_timeout_iters = 300,      -- 30s at 100ms cadence
   reset_on_layout_change = true, -- invalidate cached pane when window layout shifts
 }
 
@@ -114,7 +114,7 @@ local function send(force_pick)
       local cached_pane = cached[1] or ""
       local cached_sig = cached[2] or ""
       local layout_ok = not config.reset_on_layout_change
-        or cached_sig == layout_signature()
+          or cached_sig == layout_signature()
       if pane_alive(cached_pane) and layout_ok then target = cached_pane end
     end
     if not target then

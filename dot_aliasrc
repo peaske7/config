@@ -243,3 +243,10 @@ function wt() {
     git worktree add "$wt_dir/$folder" -b "$branch" "$base"
   fi
 }
+
+# ----------------------------
+# machine-local additions (untracked by chezmoi)
+# ----------------------------
+if [[ -r ~/.aliasrc.local ]]; then
+  . ~/.aliasrc.local
+fi

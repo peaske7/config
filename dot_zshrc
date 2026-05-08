@@ -33,7 +33,7 @@ setopt auto_cd                # type directory name to cd into it
 setopt auto_list              # automatically list choices
 setopt auto_menu              # show completion menu
 setopt auto_param_slash       # if completed param is dir, add slash at end
-setopt menu_complete          # cycle through completion entries
+# setopt menu_complete        # disabled: caused space-after-TAB to wipe tentative completion when pressed fast
 setopt extended_history       # record timestamp of command in HISTFILE
 setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
 
@@ -275,23 +275,6 @@ function gcloud {
   gcloud "$@"
 }
 
-# conda — lazy-loaded (saves ~1150ms)
-function conda {
-  unset -f conda
-  __conda_setup="$('/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2>/dev/null)"
-  if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-  else
-    if [ -f "/opt/anaconda3/etc/profile.d/conda.sh" ]; then
-      . "/opt/anaconda3/etc/profile.d/conda.sh"
-    else
-      export PATH="/opt/anaconda3/bin:$PATH"
-    fi
-  fi
-  unset __conda_setup
-  conda "$@"
-}
-
 # proto
 export PROTO_HOME="$HOME/.proto"
 export PATH="$PROTO_HOME/shims:$PROTO_HOME/bin:$PATH"
@@ -336,8 +319,6 @@ unset _uv_comp_cache _uvx_comp_cache
 # use orbstack
 export DOCKER_HOST="unix://$HOME/.orbstack/run/docker.sock"
 
-export PATH="/Users/jay/.antigravity/antigravity/bin:$PATH"
-
 # mise — shims mode (saves ~120ms vs eval activate)
 export PATH="$HOME/.local/share/mise/shims:$PATH"
 
@@ -373,12 +354,19 @@ fi
 export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"
 export PATH="$HOME/.local/bin:$PATH"
 
-# marimo
-eval "$(_MARIMO_COMPLETE=zsh_source marimo)"
+# Run a command and eval its stdout as zsh completion code.
+# Strips the leading `#compdef <name>` header that errors under eval
+# (interactive_comments doesn't apply inside eval'd strings in zsh).
+# Silently skips if the named binary isn't on PATH.
+_eval_completion() {
+  local cmd=$1; shift
+  command -v "$cmd" >/dev/null || return
+  eval "$("$@" 2>/dev/null | sed '/^#compdef/d')"
+}
 
-# uv
-eval "$(uv generate-shell-completion zsh)"
-eval "$(uvx --generate-shell-completion zsh)"
+_eval_completion marimo env _MARIMO_COMPLETE=zsh_source marimo
+_eval_completion uv     uv generate-shell-completion zsh
+_eval_completion uvx    uvx --generate-shell-completion zsh
 
 # Added by ForgeCode installer
 export PATH="/Users/jay/.local/bin:$PATH"

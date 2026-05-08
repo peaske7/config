@@ -83,6 +83,7 @@ Surfaced in [which-key](https://github.com/folke/which-key.nvim) — hit `<leade
 | `<leader>wfd` | n | write full date (`YYYY/MM/DD`) |
 | `<leader>cs` | x | send selection to last-used tmux pane (cached) |
 | `<leader>cS` | x | send selection — force pane re-pick |
+| `<leader>ox` | n/x | toggle Markdown strikethrough for current todo/line or selection |
 
 `<leader>cs` / `<leader>cS` use tmux `display-panes` to pick a target pane on first use, then cache the pane id at `$XDG_CACHE_HOME/nvim_send_last_pane`. Useful for piping context into Claude/REPL/zsh running in another pane.
 
@@ -180,6 +181,7 @@ Servers installed via Mason. Custom handling for `lua_ls` (vim runtime) and `sve
 | `<leader>ol` | follow link |
 | `<leader>om` | template |
 | `<leader>op` | paste image |
+| `<leader>ox` | toggle strikethrough for current todo/line or selection |
 
 New notes land in `Inbox/`. Daily notes use `YYYY/MM/DD.md`. Picker integration via `<C-x>` (new) and `<C-l>` (insert link).
 
