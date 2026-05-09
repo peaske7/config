@@ -1,0 +1,25 @@
+# Ghostty config — matches alacritty parity where possible.
+# Switched from alacritty so image.nvim / diagram.nvim can render via the
+# Kitty graphics protocol (alacritty has no graphics protocol support).
+
+font-family = M+1Code Nerd Font
+font-size = 14
+
+background-opacity = 0.98
+window-padding-x = 25
+window-padding-y = 20
+window-padding-balance = true
+
+# tmux's default-terminal is "tmux-256color"; ghostty's TERM stays xterm-ghostty
+# inside the GUI but tmux re-derives its own. Nothing to set here.
+
+# Mac shortcut parity with alacritty / iterm muscle memory
+macos-option-as-alt = true
+
+# Image rendering — kitty graphics protocol is the default; nothing to enable.
+
+# Shift+Enter → backslash + CR. This is Claude Code's documented multi-line
+# escape (same bytes as typing `\` then Enter). Sending it from the terminal
+# means tmux passes the bytes through untouched, no in-tmux key routing
+# required. Ghostty 1.3 has no default keybind for shift+enter.
+keybind = shift+enter=text:\\\r

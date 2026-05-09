@@ -118,6 +118,37 @@ vim.keymap.set("n", "<leader>wfd", "<cmd>pu=strftime('%Y/%m/%d')<cr>", {
 -- toggle highlight
 vim.keymap.set("n", "<leader>h", "<cmd>set hlsearch!<cr>", { noremap = true, silent = true, desc = "toggle [h]ighlight" })
 
+-- yank current buffer path
+vim.keymap.set("n", "<leader>yr", function()
+  local path = vim.fn.expand("%:.")
+  if path == "" then
+    vim.notify("no file in buffer", vim.log.levels.WARN)
+    return
+  end
+  vim.fn.setreg("+", path)
+  vim.notify("yanked: " .. path)
+end, { noremap = true, silent = true, desc = "[y]ank [r]elative path" })
+
+vim.keymap.set("n", "<leader>ya", function()
+  local path = vim.fn.expand("%:p")
+  if path == "" then
+    vim.notify("no file in buffer", vim.log.levels.WARN)
+    return
+  end
+  vim.fn.setreg("+", path)
+  vim.notify("yanked: " .. path)
+end, { noremap = true, silent = true, desc = "[y]ank [a]bsolute path" })
+
+vim.keymap.set("n", "<leader>yd", function()
+  if vim.fn.expand("%") == "" then
+    vim.notify("no file in buffer", vim.log.levels.WARN)
+    return
+  end
+  local dir = vim.fn.expand("%:.:h") .. "/"
+  vim.fn.setreg("+", dir)
+  vim.notify("yanked: " .. dir)
+end, { noremap = true, silent = true, desc = "[y]ank [d]irectory (relative)" })
+
 -- Highlight on yank
 vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function()
@@ -315,6 +346,7 @@ require('lazy').setup({
   require 'peaske7.plugins.buffers',
   require 'peaske7.plugins.nvim_tree',
   require 'peaske7.plugins.markdown',
+  require 'peaske7.plugins.diagrams',
   require 'peaske7.plugins.obsidian',
   require 'peaske7.plugins.trouble',
 
@@ -457,6 +489,7 @@ require('lazy').setup({
         { "<leader>q", group = 'quickfix' },
         { "<leader>x", group = 'trouble' },
         { "<leader>o", group = 'obsidian' },
+        { "<leader>y", group = 'yank' },
       }
 
       wk.setup {
@@ -480,14 +513,28 @@ require('lazy').setup({
   {
     'nvim-treesitter/nvim-treesitter',
     lazy = false,
+    branch = 'main',
     build = ':TSUpdate',
     config = function()
-      require('nvim-treesitter.config').setup({
-        ensure_installed = { "rust", "lua", "javascript", "typescript" },
-        auto_install = true,
-        highlight = {
-          enable = true,
-        },
+      -- nvim-treesitter `main` branch: parsers are installed via .install(),
+      -- and highlighting is opt-in per buffer via vim.treesitter.start().
+      -- Sync wait on first launch so highlighting works immediately;
+      -- subsequent launches are instant (already-installed = no-op).
+      require('nvim-treesitter').install({
+        -- core
+        "rust", "lua", "javascript", "typescript", "tsx",
+        -- markdown + injected code blocks
+        "markdown", "markdown_inline",
+        -- common code-block languages in docs/summaries and PRDs
+        "bash", "python", "sql", "json", "yaml", "terraform",
+      }):wait(300000)
+
+      -- Enable treesitter highlighting on any buffer whose filetype has a
+      -- parser. pcall swallows the error for filetypes without one.
+      vim.api.nvim_create_autocmd('FileType', {
+        callback = function(args)
+          pcall(vim.treesitter.start, args.buf)
+        end,
       })
     end,
   },
