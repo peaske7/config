@@ -91,6 +91,15 @@ zstyle ':completion:*:*:*:*:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}' # case insensitive tab completion
 
 # ----------------------------
+# OS-specific env hygiene (run early so later failures can't skip it)
+# ----------------------------
+# DOCKER_HOST: orbstack is macOS-only; kill any leaked value on other OSes
+# so supabase/docker fall back to the system socket. Set the macOS export later.
+if [[ "$OSTYPE" != darwin* ]]; then
+  unset DOCKER_HOST
+fi
+
+# ----------------------------
 # Zinit plugins
 # ----------------------------
 # completions: blockf prevents plugin's own compinit,
@@ -294,13 +303,15 @@ export PATH="$HOME/.codeium/windsurf/bin:$PATH"
 # alias claude="/Users/jay/.claude/local/claude"
 
 # Docker CLI completions (fpath only — compinit handled by Zinit)
-fpath=(/Users/jay/.docker/completions $fpath)
+if [[ "$OSTYPE" == darwin* ]]; then
+  fpath=(/Users/jay/.docker/completions $fpath)
+fi
 
 # bun completions
 [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # workmux completions
-eval "$(workmux completions zsh)"
+command -v workmux >/dev/null 2>&1 && eval "$(workmux completions zsh)"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
@@ -316,16 +327,20 @@ source "$_uv_comp_cache"
 source "$_uvx_comp_cache"
 unset _uv_comp_cache _uvx_comp_cache
 
-# use orbstack
-export DOCKER_HOST="unix://$HOME/.orbstack/run/docker.sock"
+# use orbstack (macOS only); non-darwin unset is handled at the top of zshrc
+if [[ "$OSTYPE" == darwin* ]]; then
+  export DOCKER_HOST="unix://$HOME/.orbstack/run/docker.sock"
+fi
 
 # mise — shims mode (saves ~120ms vs eval activate)
 export PATH="$HOME/.local/share/mise/shims:$PATH"
 
-tmux-git-autofetch() {
-  (/Users/jay/.tmux/plugins/tmux-git-autofetch/git-autofetch.tmux --current &)
-}
-add-zsh-hook chpwd tmux-git-autofetch
+if [[ "$OSTYPE" == darwin* ]]; then
+  tmux-git-autofetch() {
+    (/Users/jay/.tmux/plugins/tmux-git-autofetch/git-autofetch.tmux --current &)
+  }
+  add-zsh-hook chpwd tmux-git-autofetch
+fi
 
 # >>> forge initialize >>>
 # !! Contents within this block are managed by 'forge zsh setup' !!
@@ -351,7 +366,9 @@ fi
 # <<< forge initialize <<<
 
 # obsidian
-export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"
+if [[ "$OSTYPE" == darwin* ]]; then
+  export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"
+fi
 export PATH="$HOME/.local/bin:$PATH"
 
 # Run a command and eval its stdout as zsh completion code.
