@@ -19,6 +19,8 @@ local function split_task_line(line)
   for _, pattern in ipairs({
     "^(%s*>?%s*[-*+]%s+%[[^%]]%]%s+)(.*)$",
     "^(%s*>?%s*%d+[.)]%s+%[[^%]]%]%s+)(.*)$",
+    "^(%s*>?%s*[-*+]%s+)(.+)$",
+    "^(%s*>?%s*%d+[.)]%s+)(.+)$",
   }) do
     local prefix, body = line:match(pattern)
     if prefix then return prefix, body end

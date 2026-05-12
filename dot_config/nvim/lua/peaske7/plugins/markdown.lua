@@ -1,9 +1,8 @@
 return {
   {
-    "iamcco/markdown-preview.nvim",
-    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    dir = "/Users/jay/Developer/github.com/peaske7/readit/nvim-readit",
+    name = "readit",
     ft = { "markdown" },
-    build = function() vim.fn["mkdp#util#install"]() end,
   },
 
   {

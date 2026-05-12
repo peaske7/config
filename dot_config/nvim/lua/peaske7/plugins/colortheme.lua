@@ -99,7 +99,42 @@ return {
     config = function()
       require("kanagawa").setup({
         theme = "wave",
-        transparent = false,
+        transparent = true,
+        overrides = function(colors)
+          return {
+            -- Brighter Visual so selections stay readable over ghostty's bg
+            Visual = { bg = "#2D4F67" },
+            -- Clear UI chrome kanagawa leaves solid in transparent mode
+            StatusLine = { bg = "NONE" },
+            StatusLineNC = { bg = "NONE" },
+            WinBar = { bg = "NONE" },
+            WinBarNC = { bg = "NONE" },
+            TabLine = { bg = "NONE" },
+            TabLineFill = { bg = "NONE" },
+            TabLineSel = { bg = "NONE" },
+            -- nvim-tree has its own statusline/winsep highlights
+            NvimTreeNormal = { bg = "NONE" },
+            NvimTreeNormalNC = { bg = "NONE" },
+            NvimTreeWinSeparator = { bg = "NONE" },
+            NvimTreeStatusLine = { bg = "NONE" },
+            NvimTreeStatusLineNC = { bg = "NONE" },
+            -- Floating windows: fully transparent so floats inherit ghostty's
+            -- bg (perfect color match by definition). Border + title do the
+            -- visual delineation; no bg fill needed.
+            NormalFloat = { bg = "NONE" },
+            FloatBorder = { fg = "#7E9CD8", bg = "NONE" },
+            FloatTitle = { fg = "#7AA89F", bg = "NONE", bold = true },
+            -- Completion menu (blink.cmp falls back to Pmenu) — keep this
+            -- opaque so suggestions stay readable over arbitrary code.
+            Pmenu = { bg = "#1F1F28" },
+            PmenuSel = { bg = "#2D4F67", bold = true },
+            PmenuSbar = { bg = "#1F1F28" },
+            PmenuThumb = { bg = "#54546D" },
+            -- Restore CursorLine so picker selection + current line are visible
+            CursorLine = { bg = "#2A2A37" },
+            CursorLineNr = { fg = "#C8C093", bold = true },
+          }
+        end,
       })
 
       vim.cmd("colorscheme kanagawa")
