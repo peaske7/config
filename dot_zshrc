@@ -158,11 +158,14 @@ function __zoxide_list_ghq_missing {
 function __zoxide_add_ghq_missing {
   (($+commands[ghq])) || return 0
 
-  local -a missing
-  missing=("${(@f)$(__zoxide_list_ghq_missing)}")
-  ((${#missing[@]})) || return 0
+  # ${(@f)""} splits empty output into a single empty element, not an empty
+  # array — so check the raw string before splitting, or we call `zoxide add`
+  # with a blank path and clap errors with "a value is required for <PATHS>".
+  local missing
+  missing="$(__zoxide_list_ghq_missing)"
+  [[ -n "$missing" ]] || return 0
 
-  zoxide add -- "${missing[@]}"
+  zoxide add -- "${(@f)missing}"
 }
 
 function __jay_init_zoxide {
@@ -172,7 +175,7 @@ function __jay_init_zoxide {
   eval "$(zoxide init zsh)"
 
   function z {
-    if [[ "$" -gt 0 ]] && ! { [[ "$" -eq 1 ]] && { [[ -d "$1" ]] || [[ "$1" = "-" ]] || [[ "$1" =~ ^[-+][0-9]$ ]]; }; }; then
+    if [[ "$#" -gt 0 ]] && ! { [[ "$#" -eq 1 ]] && { [[ -d "$1" ]] || [[ "$1" = "-" ]] || [[ "$1" =~ ^[-+][0-9]$ ]]; }; }; then
       __zoxide_add_ghq_missing
     fi
     __zoxide_z "$@"
@@ -342,29 +345,6 @@ if [[ "$OSTYPE" == darwin* ]]; then
   add-zsh-hook chpwd tmux-git-autofetch
 fi
 
-# >>> forge initialize >>>
-# !! Contents within this block are managed by 'forge zsh setup' !!
-# !! Do not edit manually - changes will be overwritten !!
-
-# Add required zsh plugins if not already present
-if [[ ! " ${plugins[@]} " =~ " zsh-autosuggestions " ]]; then
-  plugins+=(zsh-autosuggestions)
-fi
-if [[ ! " ${plugins[@]} " =~ " zsh-syntax-highlighting " ]]; then
-  plugins+=(zsh-syntax-highlighting)
-fi
-
-# Load forge shell plugin (commands, completions, keybindings) if not already loaded
-if [[ -z "$_FORGE_PLUGIN_LOADED" ]]; then
-  eval "$(forge zsh plugin)"
-fi
-
-# Load forge shell theme (prompt with AI context) if not already loaded
-if [[ -z "$_FORGE_THEME_LOADED" ]]; then
-  eval "$(forge zsh theme)"
-fi
-# <<< forge initialize <<<
-
 # obsidian
 if [[ "$OSTYPE" == darwin* ]]; then
   export PATH="$PATH:/Applications/Obsidian.app/Contents/MacOS"
@@ -385,13 +365,10 @@ _eval_completion marimo env _MARIMO_COMPLETE=zsh_source marimo
 _eval_completion uv     uv generate-shell-completion zsh
 _eval_completion uvx    uvx --generate-shell-completion zsh
 
-# Added by ForgeCode installer
-export PATH="/Users/jay/.local/bin:$PATH"
-
 # >>> lymo init >>>
 # Managed by `lymo setup`. Re-run `lymo shell install` or `lymo shell uninstall`.
 fpath=("/Users/jay/.zsh/completions" $fpath)
-((!${+functions[compdef]})) && { autoload -Uz compinit && compinit; }
+(( ! ${+functions[compdef]} )) && { autoload -Uz compinit && compinit; }
 # <<< lymo init <<<
 
 # Composio CLI

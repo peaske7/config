@@ -118,12 +118,20 @@ return {
             NvimTreeWinSeparator = { bg = "NONE" },
             NvimTreeStatusLine = { bg = "NONE" },
             NvimTreeStatusLineNC = { bg = "NONE" },
-            -- Floating windows: fully transparent so floats inherit ghostty's
-            -- bg (perfect color match by definition). Border + title do the
-            -- visual delineation; no bg fill needed.
-            NormalFloat = { bg = "NONE" },
-            FloatBorder = { fg = "#7E9CD8", bg = "NONE" },
-            FloatTitle = { fg = "#7AA89F", bg = "NONE", bold = true },
+            -- Floating windows: dark winterBlue panel (kanagawa palette,
+            -- cool-tilted slate). Border fg is sumiInk4 (muted lavender-
+            -- gray) — visible hairline without the chromatic punch of
+            -- sage/blue. Border bg still matches panel so ascii border
+            -- chars don't halo.
+            NormalFloat = { bg = "#252535" },
+            FloatBorder = { fg = "#54546D", bg = "#252535" },
+            FloatTitle = { fg = "#7AA89F", bg = "#252535", bold = true },
+            -- Modal backdrop highlights for snacks / lazy: solid black bg
+            -- so the backdrop window has something to dim with. Without
+            -- this, kanagawa transparent leaves the backdrop invisible
+            -- regardless of the plugin's winblend setting.
+            SnacksBackdrop = { bg = "#000000" },
+            LazyBackdrop = { bg = "#000000" },
             -- Completion menu (blink.cmp falls back to Pmenu) — keep this
             -- opaque so suggestions stay readable over arbitrary code.
             Pmenu = { bg = "#1F1F28" },

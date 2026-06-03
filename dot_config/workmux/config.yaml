@@ -4,13 +4,9 @@ agent: claude
 mode: session
 
 # shadow the built-in claude to always skip permissions in worktrees
-# forge-wm wraps forge with a background pane monitor that calls
-# `workmux set-window-status` based on terminal output patterns
 agents:
   claude: "claude --dangerously-skip-permissions"
-  forge:
-    command: "forge-wm"
-    type: claude
+
 
 # default pane layout: claude on the left (focused), shell on the right
 panes:

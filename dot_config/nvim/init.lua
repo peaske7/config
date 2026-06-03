@@ -10,6 +10,12 @@ vim.g.maplocalleader = ' '
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
+-- disable unused language providers (no perl/ruby/node/python3 plugins in use)
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_ruby_provider = 0
+vim.g.loaded_node_provider = 0
+vim.g.loaded_python3_provider = 0
+
 -- Set highlight on search
 vim.wo.nu = true
 vim.wo.signcolumn = 'yes'
@@ -152,7 +158,7 @@ end, { noremap = true, silent = true, desc = "[y]ank [d]irectory (relative)" })
 -- Highlight on yank
 vim.api.nvim_create_autocmd('TextYankPost', {
   callback = function()
-    vim.highlight.on_yank()
+    vim.hl.on_yank()
   end,
   group = vim.api.nvim_create_augroup('YankHighlight', { clear = true }),
   pattern = '*',
@@ -178,16 +184,8 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
   end
 })
 
-vim.api.nvim_create_autocmd('User', {
-  pattern = 'GitConflictDetected',
-  callback = function()
-    vim.notify('Conflict detected in ' .. vim.fn.expand('<afile>'))
-    vim.keymap.set('n', 'cww', function()
-      engage.conflict_buster()
-      create_buffer_local_mappings()
-    end)
-  end
-})
+-- Pmenu opacity: completions stay fully opaque for legibility over code.
+vim.opt.pumblend = 0
 
 -- searches for visually selected text
 vim.keymap.set(
@@ -267,6 +265,14 @@ require('lazy').setup({
     "folke/snacks.nvim",
     priority = 1000,
     lazy = false,
+    config = function(_, opts)
+      -- Snacks bails on backdrop when Normal.bg is nil (kanagawa
+      -- transparent mode). Override the check — ghostty's bg-opacity is
+      -- ~0.98 so there IS something visible to dim against, the plugin's
+      -- assumption is wrong for this setup.
+      require("snacks.util").is_transparent = function() return false end
+      require("snacks").setup(opts)
+    end,
     opts = {
       -- Picker (replaces telescope)
       picker = {
@@ -276,6 +282,20 @@ require('lazy').setup({
             ignored = false,
             exclude = { ".git", "node_modules", ".venv", "target", ".obsidian" },
           },
+        },
+        -- Modal-style backdrop: dims editor content behind the picker so
+        -- it reads as a focused overlay (web modal pattern). 60 = winblend
+        -- of the dim layer — lower = more opaque dim, higher = subtler.
+        layout = {
+          backdrop = 60,
+        },
+        -- Rounded borders: with FloatBorder bg matching NormalFloat (see
+        -- colortheme.lua), the ascii chars sit on the panel edge without
+        -- haloing — visible delineation between input/list/preview panes.
+        win = {
+          input = { border = "rounded" },
+          list = { border = "rounded" },
+          preview = { border = "rounded" },
         },
       },
       -- Notifier (replaces fidget.nvim)
@@ -346,9 +366,9 @@ require('lazy').setup({
   require 'peaske7.plugins.buffers',
   require 'peaske7.plugins.nvim_tree',
   require 'peaske7.plugins.markdown',
-  require 'peaske7.plugins.diagrams',
   require 'peaske7.plugins.obsidian',
   require 'peaske7.plugins.trouble',
+  require 'peaske7.plugins.live_preview',
 
   -- cosmetic
   require 'peaske7.plugins.colortheme',
@@ -404,8 +424,6 @@ require('lazy').setup({
         go = { "gofumpt", "goimports" },
         rust = { "rustfmt" },
         sql = { "sqlfmt" },
-        haskell = { "fourmolu" },
-        nix = { "nixpkgs-fmt" },
       },
       format_on_save = function(bufnr)
         -- Disable for files over 500KB
@@ -490,6 +508,7 @@ require('lazy').setup({
         { "<leader>x", group = 'trouble' },
         { "<leader>o", group = 'obsidian' },
         { "<leader>y", group = 'yank' },
+        { "<leader>l", group = 'live preview' },
       }
 
       wk.setup {
@@ -860,13 +879,6 @@ require('lazy').setup({
   --   },
   -- },
 
-  {
-    "nvzone/floaterm",
-    dependencies = "nvzone/volt",
-    opts = {},
-    cmd = "FloatermToggle",
-  },
-
   -- {
   --   'nvim-orgmode/orgmode',
   --   event = 'VeryLazy',
@@ -878,4 +890,10 @@ require('lazy').setup({
   --     })
   --   end,
   -- }
+}, {
+  -- Lazy UI: backdrop dims editor behind the Lazy float (modal pattern).
+  -- 60 = winblend of the dim layer; lower = more opaque dim.
+  ui = {
+    backdrop = 60,
+  },
 })
