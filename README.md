@@ -282,3 +282,26 @@ chezmoi edit ~/.zshrc        # or use `che ~/.zshrc` / `chez`
 chezmoi apply -v             # or `cha`
 chezmoi update -v            # pull + apply
 ```
+
+## Windows
+
+This repo is primarily macOS/Linux, but a Windows box can join as a full chezmoi
+target. `.chezmoiignore` splits by OS: it skips Mac/Linux-only entries on Windows
+(zsh, tmux, ghostty, workmux, raycast, `~/Library`, `~/.local/bin`) and skips the
+Windows-only pwsh profile everywhere else.
+
+| Piece | Location | Notes |
+|-------|----------|-------|
+| Shell | PowerShell 7 (`pwsh`) | WezTerm defaults to it via `dot_config/wezterm/wezterm.lua`, guarded by `target_triple` (no-op on macOS/Linux) |
+| Aliases/functions | `Documents/PowerShell/profile.ps1` | Port of `dot_aliasrc`; zsh aliases become pwsh functions (`@args` passthrough). `chep` edits it |
+| Prompt / UX | starship + PSReadLine + zoxide | `scoop install starship zoxide fzf`; PSReadLine gives inline history suggestions |
+
+### Claude skills
+
+`~/.claude/skills` is a directory junction to chezmoi-managed `~/.agents/skills`,
+so `chezmoi apply` stays the single source of truth. Recreate on a new Windows box:
+
+```powershell
+Remove-Item "$HOME\.claude\skills" -Force -Recurse -ErrorAction SilentlyContinue
+New-Item -ItemType Junction -Path "$HOME\.claude\skills" -Target "$HOME\.agents\skills"
+```
