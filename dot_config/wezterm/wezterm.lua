@@ -9,4 +9,11 @@ if wezterm.target_triple:find('windows') then
   config.default_prog = { 'pwsh.exe', '-NoLogo' }
 end
 
+-- Nerd Font so starship / powerline glyphs render. Install per-machine:
+--   Windows: scoop install FiraCode-NF
+--   macOS:   brew install --cask font-fira-code-nerd-font
+-- WezTerm falls back to a system font if it isn't installed, so this is safe
+-- to set unconditionally.
+config.font = wezterm.font('FiraCode Nerd Font')
+
 return config
