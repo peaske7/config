@@ -13,4 +13,8 @@
 .local/bin/**
 Library
 Library/**
+{{- else -}}
+{{/* Windows-only configs that make no sense on macOS/Linux. */}}
+Documents/PowerShell
+Documents/PowerShell/**
 {{- end -}}
