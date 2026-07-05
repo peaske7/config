@@ -1,0 +1,16 @@
+{{- if eq .chezmoi.os "windows" -}}
+{{/* Mac/Linux-only configs that make no sense on native Windows. */}}
+.zshrc
+.aliasrc
+.tmux.conf
+.raycast-scripts
+.raycast-scripts/**
+.config/ghostty
+.config/ghostty/**
+.config/workmux
+.config/workmux/**
+.local/bin
+.local/bin/**
+Library
+Library/**
+{{- end -}}
